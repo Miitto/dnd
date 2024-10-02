@@ -1,5 +1,3 @@
-use tauri::Manager;
-
 mod dice;
 mod items;
 mod paths;
@@ -16,9 +14,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
-            let mut resource_path = app.path().resource_dir().unwrap();
-            resource_path.push("resources");
-            dbg!(&resource_path);
+            let resource_path = paths::resource_dir(app.handle());
 
             let d8 = dice::Dice { sides: 8, count: 1 };
             let piercing = items::weapon::DamageType {
@@ -40,8 +36,6 @@ pub fn run() {
                 weight: 2.0,
                 subtype: vec!["Martial".to_string(), "Finesse".to_string()],
             };
-
-            dbg!(&rapier);
 
             let rapier_json = serde_json::to_string(&rapier).unwrap();
 

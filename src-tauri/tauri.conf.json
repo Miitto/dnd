@@ -13,7 +13,7 @@
         "withGlobalTauri": true,
         "windows": [
             {
-                "title": "dnd",
+                "title": "D&D",
                 "width": 800,
                 "height": 600
             }

@@ -59,7 +59,5 @@ fn impl_single_serialize_macro(ast: &syn::DeriveInput) -> TokenStream {
         }
     };
 
-    dbg!(gen.to_string());
-
     gen.into()
 }
