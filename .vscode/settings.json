@@ -6,5 +6,6 @@
         "*.lock": true,
         "**/dist": true,
         "**/gen": true
-    }
+    },
+    "rust-analyzer.check.ignore": ["dead_code"]
 }
