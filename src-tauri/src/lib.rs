@@ -18,33 +18,17 @@ pub fn run() {
         .setup(|app| {
             let resource_path = paths::resource_dir(app.handle());
 
-            let d8 = dice::Dice { sides: 8, count: 1 };
-            let piercing = items::weapon::DamageType {
-                name: "Piercing".to_string(),
-            };
-            let standard = items::Rarity {
-                name: "Standard".to_string(),
-            };
-            let finesse = items::Property {
-                name: "Finesse".to_string(),
-            };
+            let rapier_path = resource_path.join("rapier.json");
 
-            let rapier = items::weapon::MeleeWeapon {
-                name: "Rapier".to_string(),
-                damage: d8,
-                damage_type: piercing,
-                rarity: standard,
-                properties: vec![finesse],
-                weight: 2.0,
-                subtype: vec!["Martial".to_string(), "Finesse".to_string()],
-            };
+            // Read rapier from the file
+            let rapier = std::fs::read_to_string(rapier_path).expect("Unable to read rapier.json");
 
-            let rapier_json = serde_json::to_string(&rapier).unwrap();
+            // Parse the rapier
+            let rapier: items::weapon::MeleeWeapon =
+                serde_json::from_str(&rapier).expect("Unable to parse rapier.json");
 
-            let mut rapier_path = resource_path.clone();
-            rapier_path.push("rapier.json");
-
-            std::fs::write(rapier_path, rapier_json).unwrap();
+            // Print the rapier
+            println!("{:#?}", rapier);
 
             Ok(())
         })
