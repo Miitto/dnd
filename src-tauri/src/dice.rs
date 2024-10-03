@@ -4,4 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct Dice {
     pub sides: i32,
     pub count: i32,
+    pub modifier: i32,
 }
