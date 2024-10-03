@@ -1,5 +1,6 @@
 use proc_macro::TokenStream;
 use quote::quote;
+use syn::{spanned::Spanned, Error};
 
 #[proc_macro_derive(SingleSerialize)]
 pub fn single_serialize_macro_derive(input: TokenStream) -> TokenStream {
@@ -16,29 +17,51 @@ fn impl_single_serialize_macro(ast: &syn::DeriveInput) -> TokenStream {
 
     let data = match &ast.data {
         syn::Data::Struct(d) => d,
-        _ => panic!("Only structs are supported"),
+        _ => {
+            let span = match &ast.data {
+                syn::Data::Enum(e) => e.enum_token.span,
+                syn::Data::Union(u) => u.union_token.span,
+                syn::Data::Struct(_) => unreachable!("Reached Nested Struct in SingleSerialize"),
+            };
+            return syn::Error::into_compile_error(Error::new(span, "Only Structs are supported"))
+                .into();
+        }
     };
 
     let fields = match &data.fields {
         syn::Fields::Named(f) => &f.named,
-        _ => panic!("Only named fields are supported"),
+        _ => {
+            return syn::Error::into_compile_error(Error::new(
+                name.span(),
+                "Only Support Named Fields",
+            ))
+            .into()
+        }
     };
 
-    if fields.len() != 1 {
-        panic!("Only structs with a single field are supported");
+    if let Some(second) = fields.iter().nth(1) {
+        return syn::Error::into_compile_error(Error::new(
+            second.span(),
+            "Only Structs with a single field are supported",
+        ))
+        .into();
     }
 
-    let field = match fields.first() {
-        Some(f) => f,
-        None => panic!("Struct must have a single field"),
-    };
+    let field = fields.first().unwrap();
 
     let field_name = match &field.ident {
         Some(i) => i,
-        None => panic!("Struct field must have a name"),
+        None => {
+            return syn::Error::into_compile_error(Error::new(
+                name.span(),
+                "Only Support Named Fields",
+            ))
+            .into()
+        }
     };
 
     let gen = quote! {
+        #[automatically_derived]
         impl Serialize for #name {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
@@ -48,6 +71,7 @@ fn impl_single_serialize_macro(ast: &syn::DeriveInput) -> TokenStream {
             }
         }
 
+        #[automatically_derived]
         impl<'de> Deserialize<'de> for #name {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
