@@ -7,5 +7,6 @@
         "**/dist": true,
         "**/gen": true
     },
-    "rust-analyzer.check.ignore": ["dead_code"]
+    "rust-analyzer.check.ignore": ["dead_code"],
+    "cSpell.words": ["bindgen", "leptos"]
 }

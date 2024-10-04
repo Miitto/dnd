@@ -1,10 +1,9 @@
 use tauri::Manager;
 
-mod dice;
-mod items;
 mod paths;
-mod stores;
+mod types;
 use stores::Store;
+use types::*;
 
 // TODO: Re-enable Checking for dead_code
 
@@ -20,26 +19,10 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
-            let mut store = Store::new();
+            let store =
+                Store::from_path(paths::resource_dir(app.handle())).expect("Failed to load store");
 
-            let resource_path = paths::resource_dir(app.handle());
-
-            let rapier_path = resource_path.join("rapier.json");
-
-            // Read rapier from the file
-            let rapier = std::fs::read_to_string(rapier_path).expect("Unable to read rapier.json");
-
-            // Parse the rapier
-            let rapier: items::weapon::MeleeWeapon =
-                serde_json::from_str(&rapier).expect("Unable to parse rapier.json");
-
-            // Print the rapier
-            store
-                .weapons
-                .melee
-                .lock()
-                .expect("Failed to Lock Melee Store")
-                .push(rapier);
+            dbg!(&store);
 
             app.manage(store);
 

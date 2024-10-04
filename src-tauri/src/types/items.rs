@@ -1,5 +1,6 @@
 use macros::SingleSerialize;
 use serde::{Deserialize, Serialize};
+
 pub mod weapon;
 
 pub trait Item {
