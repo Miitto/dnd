@@ -71,3 +71,9 @@ impl Weapon for MeleeWeapon {
         &self.subtype
     }
 }
+
+impl PartialEq<String> for MeleeWeapon {
+    fn eq(&self, other: &String) -> bool {
+        self.name.to_lowercase() == other.to_lowercase()
+    }
+}
