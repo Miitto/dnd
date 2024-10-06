@@ -1,4 +1,5 @@
-use leptos::{component, view, IntoView, Params, SignalWith};
+use dnd::types::items::weapon::MeleeWeapon as MeleeWeaponT;
+use leptos::{component, create_signal, view, IntoView, Params, SignalWith};
 use leptos_router::{use_params, Outlet, Params, Route, A};
 
 #[component(transparent)]
@@ -61,6 +62,8 @@ pub fn MeleeWeaponPage() -> impl IntoView {
                 .unwrap_or_default()
         })
     };
+
+    let (weapon, set_weapon) = create_signal(Option::<MeleeWeaponT>::None);
 
     let has_name = move || name().is_some();
 
