@@ -35,6 +35,16 @@ impl DamageType {
     }
 }
 
+impl WeaponType {
+    pub fn is_melee(&self) -> bool {
+        matches!(self, WeaponType::Melee(_))
+    }
+
+    pub fn is_ranged(&self) -> bool {
+        !self.is_melee()
+    }
+}
+
 impl Item for WeaponType {
     fn name(&self) -> &str {
         match self {

@@ -4,10 +4,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use super::items::{
-    weapon::{MeleeWeapon, WeaponType},
-    Item,
-};
+use super::items::{weapon::WeaponType, Item};
 
 #[derive(Debug)]
 pub struct WeaponStore {
@@ -34,14 +31,7 @@ impl WeaponStore {
             Ok(w) => w,
             Err(poisoned) => poisoned.into_inner(),
         };
-        weapons
-            .iter()
-            .filter(|w| match w.as_ref() {
-                WeaponType::Melee(_) => true,
-                _ => false,
-            })
-            .cloned()
-            .collect()
+        weapons.iter().filter(|w| w.is_melee()).cloned().collect()
     }
 
     pub fn find_melee(&self, name: &str) -> Option<Arc<WeaponType>> {
@@ -51,12 +41,9 @@ impl WeaponStore {
         };
         weapons
             .iter()
-            .filter(|w| match w.as_ref() {
-                WeaponType::Melee(m) => true,
-                _ => false,
-            })
+            .filter(|w| w.is_melee())
             .find(|w| w.name() == name)
-            .map(|w| Arc::clone(w))
+            .map(Arc::clone)
     }
 }
 
