@@ -1,7 +1,15 @@
-# Tauri + Leptos
+# Development
 
-This template should help get you started developing with Tauri and Leptos.
+1. Install npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+2. Install the tailwind css cli: https://tailwindcss.com/docs/installation
+3. Run the following command in the root of the project to start the tailwind CSS compiler:
 
-## Recommended IDE Setup
+```bash
+npx tailwindcss -i ./input.css -o ./assets/tailwind.css --watch
+```
 
-[VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+Run the following command in the root of the project to start the Dioxus dev server:
+
+```bash
+dx serve --hot-reload --platform desktop
+```
