@@ -16,7 +16,7 @@ impl Rarity {
     where
         S: Into<String>,
     {
-        Self { 0: name.into() }
+        Self(name.into())
     }
 }
 

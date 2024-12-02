@@ -6,16 +6,22 @@ use std::{
 
 use super::items::{weapon::WeaponType, Item};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct WeaponStore {
-    weapons: Mutex<Vec<Arc<crate::items::weapon::WeaponType>>>,
+    pub weapons: Arc<Mutex<Vec<Arc<crate::items::weapon::WeaponType>>>>,
+}
+
+impl Default for WeaponStore {
+    fn default() -> Self {
+        WeaponStore {
+            weapons: Arc::new(Mutex::new(Vec::new())),
+        }
+    }
 }
 
 impl WeaponStore {
     pub fn new() -> Self {
-        WeaponStore {
-            weapons: Mutex::new(Vec::new()),
-        }
+        Self::default()
     }
 
     pub fn push(&self, wpn: WeaponType) {
@@ -47,15 +53,21 @@ impl WeaponStore {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Store {
     pub weapons: WeaponStore,
 }
 
-impl Store {
-    pub fn new() -> Self {
+impl Default for Store {
+    fn default() -> Self {
         let weapons = WeaponStore::new();
         Store { weapons }
+    }
+}
+
+impl Store {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn from_path<P>(path: P) -> Result<Self, std::io::Error>
@@ -63,8 +75,6 @@ impl Store {
         P: AsRef<Path>,
     {
         let items_path = path.as_ref().join("items");
-
-        dbg!(&items_path);
 
         let mut items_dir: Vec<DirEntry> = Vec::new();
         std::fs::read_dir(items_path)?.for_each(|entry| {
@@ -79,8 +89,6 @@ impl Store {
                 })
                 .unwrap_or(Ok(()));
         });
-
-        dbg!(&items_dir);
 
         let weapons_iter = items_dir.iter().filter_map(|entry| {
             Some(entry).filter(|entry| {
@@ -103,8 +111,6 @@ impl Store {
         let store = Store::new();
 
         weapons_iter.for_each(|weapon| {
-            dbg!(&weapon);
-
             let path = weapon.path();
             let json = std::fs::read_to_string(&path)
                 .map(|contents| serde_json::from_str::<WeaponType>(&contents));
