@@ -3,15 +3,12 @@
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
 
-use dnd_types::{items::weapon::WeaponType, stores::Store, *};
+mod layouts;
+mod nav;
 
-#[derive(Clone, Routable, Debug, PartialEq)]
-enum Route {
-    #[route("/")]
-    Home {},
-    #[route("/blog/:id")]
-    Weapons { id: i32 },
-}
+mod routes;
+use dnd_types::stores::Store;
+use routes::Routes;
 
 fn main() {
     // Init logger
@@ -34,55 +31,14 @@ fn App() -> Element {
     use_context_provider(|| store);
 
     rsx! {
-        Router::<Route> {}
+        Router::<Routes> {}
     }
 }
 
 #[component]
-fn Weapons() -> Element {
-    let mut melee_count = 0;
-    let mut ranged_count = 0;
-
-    let store = use_context::<Store>();
-    let weapon_store = store.weapons;
-    let lock_r = weapon_store.weapons.lock();
-
-    if lock_r.is_err() {
-        return rsx! {
-            Link { to: Route::Home {}, "Return Home"}
-            "Loading Failed"
-        };
-    }
-
-    let lock = lock_r.unwrap();
-
-    lock.iter().for_each(|el| match **el {
-        WeaponType::Melee(_) => {
-            melee_count += 1;
-        }
-    });
-
+pub fn PageNotFound(segments: Vec<String>) -> Element {
     rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
-        "Melee Weapons: {melee_count}"
-    }
-}
-
-#[component]
-fn Home() -> Element {
-    let mut count = use_signal(|| 0);
-
-    rsx! {
-        Link {
-            to: Route::Weapons {
-                id: count()
-            },
-            "Go to blog"
-        }
-        div {
-            h1 { "High-Five counter: {count}" }
-            button { class: "text-red-100 bg-red", onclick: move |_| count += 1, "Up high!" }
-            button { onclick: move |_| count -= 1, "Down low!" }
-        }
+        "Page Not Found",
+        Link { to: Routes::Home {}, "Return Home" }
     }
 }
