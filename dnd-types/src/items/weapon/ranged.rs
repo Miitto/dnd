@@ -4,7 +4,7 @@ use crate::items::damage::Damage;
 use crate::items::{Item, Property, Rarity};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MeleeWeapon {
+pub struct RangedWeapon {
     pub name: String,
     pub damage: Dice,
     pub damage_type: DamageType,
@@ -12,9 +12,10 @@ pub struct MeleeWeapon {
     pub properties: Vec<Property>,
     pub weight: f32,
     pub subtype: Vec<String>,
+    pub range: u32,
 }
 
-impl MeleeWeapon {
+impl RangedWeapon {
     #[allow(dead_code)]
     pub fn new<S, VP>(
         name: S,
@@ -26,6 +27,7 @@ impl MeleeWeapon {
         properties: VP,
         weight: f32,
         subtype: Vec<S>,
+        range: u32,
     ) -> Self
     where
         S: Into<String>,
@@ -39,11 +41,12 @@ impl MeleeWeapon {
             properties: properties.into(),
             weight,
             subtype: subtype.into_iter().map(|s| s.into()).collect(),
+            range,
         }
     }
 }
 
-impl Item for MeleeWeapon {
+impl Item for RangedWeapon {
     fn name(&self) -> &str {
         &self.name
     }
@@ -57,7 +60,7 @@ impl Item for MeleeWeapon {
     }
 }
 
-impl Weapon for MeleeWeapon {
+impl Weapon for RangedWeapon {
     fn damage(&self) -> &Dice {
         &self.damage
     }
@@ -75,7 +78,7 @@ impl Weapon for MeleeWeapon {
     }
 }
 
-impl PartialEq<String> for MeleeWeapon {
+impl PartialEq<String> for RangedWeapon {
     fn eq(&self, other: &String) -> bool {
         self.name.to_lowercase() == other.to_lowercase()
     }

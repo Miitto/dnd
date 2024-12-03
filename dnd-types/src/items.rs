@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+pub mod damage;
 pub mod weapon;
 
 pub trait Item {
