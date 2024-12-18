@@ -1,0 +1,29 @@
+{
+    "Melee": {
+        "name": "Longsword",
+        "damage": {
+            "dice": { "sides": 8, "count": 1 },
+            "damage_type": "Slashing"
+        },
+        "rarity": "Standard",
+        "properties": [
+            {
+                "name": "Versatile (1d10)",
+                "description": "This weapon can be used with one or two hands. A damage value in parentheses appears with the property - the damage when the weapon is used with two hands to make a melee attack.",
+                "effects": [
+                    {
+                        "effect_type": {
+                            "type": "damage",
+                            "dice": { "sides": 10, "count": 1 },
+                            "damage_type": "Slashing"
+                        },
+                        "when": "wielding with two hands",
+                        "optional": true
+                    }
+                ]
+            }
+        ],
+        "weight": 2.0,
+        "subtype": ["Martial", "Sword"]
+    }
+}

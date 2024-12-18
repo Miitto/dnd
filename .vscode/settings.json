@@ -4,9 +4,7 @@
     },
     "files.exclude": {
         "*.lock": true,
-        "**/dist": true,
-        "**/gen": true
+        "**/dist": true
     },
-    "rust-analyzer.check.ignore": ["dead_code"],
-    "cSpell.words": ["bindgen", "leptos"]
+    "cSpell.words": ["bindgen", "dioxus", "leptos"]
 }
