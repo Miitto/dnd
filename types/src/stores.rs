@@ -4,11 +4,15 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use super::items::{weapon::WeaponType, Item};
+use anyhow::Result;
+
+use crate::fs;
+
+use super::items::{weapon::Weapon, Item};
 
 #[derive(Debug, Clone)]
 pub struct WeaponStore {
-    pub weapons: Arc<Mutex<Vec<Arc<crate::items::weapon::WeaponType>>>>,
+    pub weapons: Arc<Mutex<Vec<Arc<crate::items::weapon::Weapon>>>>,
 }
 
 impl Default for WeaponStore {
@@ -24,7 +28,7 @@ impl WeaponStore {
         Self::default()
     }
 
-    pub fn push(&self, wpn: WeaponType) {
+    pub fn push(&self, wpn: Weapon) {
         let mut weapons = match self.weapons.lock() {
             Ok(w) => w,
             Err(poisoned) => poisoned.into_inner(),
@@ -32,7 +36,7 @@ impl WeaponStore {
         weapons.push(Arc::new(wpn));
     }
 
-    pub fn melee(&self) -> Vec<Arc<WeaponType>> {
+    pub fn melee(&self) -> Vec<Arc<Weapon>> {
         let weapons = match self.weapons.lock() {
             Ok(w) => w,
             Err(poisoned) => poisoned.into_inner(),
@@ -40,7 +44,7 @@ impl WeaponStore {
         weapons.iter().filter(|w| w.is_melee()).cloned().collect()
     }
 
-    pub fn find_weapon(&self, name: &str) -> Option<Arc<WeaponType>> {
+    pub fn find_weapon(&self, name: &str) -> Option<Arc<Weapon>> {
         let weapons = match self.weapons.lock() {
             Ok(w) => w,
             Err(poisoned) => poisoned.into_inner(),
@@ -48,7 +52,7 @@ impl WeaponStore {
         weapons.iter().find(|w| w.name() == name).map(Arc::clone)
     }
 
-    pub fn find_melee(&self, name: &str) -> Option<Arc<WeaponType>> {
+    pub fn find_melee(&self, name: &str) -> Option<Arc<Weapon>> {
         let weapons = match self.weapons.lock() {
             Ok(w) => w,
             Err(poisoned) => poisoned.into_inner(),
@@ -78,62 +82,31 @@ impl Store {
         Self::default()
     }
 
-    pub fn from_path<P>(path: P) -> Result<Self, std::io::Error>
+    pub fn from_path<P>(path: P) -> Result<Self>
     where
         P: AsRef<Path>,
     {
-        let items_path = path.as_ref().join("items");
-
-        let mut items_dir: Vec<DirEntry> = Vec::new();
-        std::fs::read_dir(items_path)?.for_each(|entry| {
-            let _ = entry
-                .map(|entry| {
-                    if entry.path().is_dir() {
-                        visit_dirs(&entry.path(), &mut items_dir)
-                    } else {
-                        items_dir.push(entry);
-                        Ok(())
-                    }
-                })
-                .unwrap_or(Ok(()));
-        });
-
-        let weapons_iter = items_dir.iter().filter_map(|entry| {
-            Some(entry).filter(|entry| {
-                entry.file_type().map(|ft| ft.is_file()).unwrap_or(false)
-                    && entry
-                        .path()
-                        .extension()
-                        .map(|ext| ext == "json")
-                        .unwrap_or(false)
-                    && entry
-                        .path()
-                        .parent()
-                        .unwrap()
-                        .file_name()
-                        .map(|name| name == "weapons")
-                        .unwrap_or(false)
-            })
-        });
-
         let store = Store::new();
 
-        weapons_iter.for_each(|weapon| {
-            let path = weapon.path();
-            let json = std::fs::read_to_string(&path)
-                .map(|contents| serde_json::from_str::<WeaponType>(&contents));
+        {
+            let weapons_store = &mut store
+                .weapons
+                .weapons
+                .lock()
+                .expect("Failed to lock weapons on store create");
 
-            match json {
-                Ok(Ok(weapon)) => store.weapons.push(weapon),
-                Ok(Err(err)) => eprintln!("Error parsing weapon: {}", err),
-                Err(err) => eprintln!("Error reading weapon file: {}", err),
-            }
-        });
+            let weapons = fs::weapons::weapon::get_weapons(path)?
+                .into_iter()
+                .map(Arc::new);
+
+            weapons_store.extend(weapons);
+        }
 
         Ok(store)
     }
 }
 
+#[allow(dead_code)]
 fn visit_dirs(dir: &Path, vec: &mut Vec<DirEntry>) -> std::io::Result<()> {
     if dir.is_dir() {
         for entry in std::fs::read_dir(dir)? {

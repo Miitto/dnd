@@ -1,0 +1,16 @@
+{
+    "name": "Rapier",
+    "damage": {
+        "dice": { "sides": 8, "count": 1 },
+        "damage_type": "Piercing"
+    },
+    "rarity": "Standard",
+    "properties": [
+        {
+            "name": "Finesse"
+        }
+    ],
+    "weight": 2.0,
+    "subtype": ["Martial", "Sword"],
+    "range": 0
+}

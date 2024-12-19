@@ -1,8 +1,5 @@
 use dioxus::prelude::*;
-use types::{
-    items::{weapon::WeaponType, Item},
-    stores::Store,
-};
+use types::{items::Item, stores::Store};
 
 use crate::routes::Routes;
 
@@ -25,11 +22,10 @@ pub fn Weapons() -> Element {
 
         let lock = lock_r.unwrap();
 
-        lock.iter().for_each(|el| match **el {
-            WeaponType::Melee(_) => {
+        lock.iter().for_each(|el| {
+            if el.is_melee() {
                 melee_count += 1;
-            }
-            WeaponType::Ranged(_) => {
+            } else {
                 ranged_count += 1;
             }
         });

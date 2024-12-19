@@ -1,0 +1,24 @@
+{
+    "name": "Longsword",
+    "damage": {
+        "dice": { "sides": 8, "count": 1 },
+        "damage_type": "Slashing"
+    },
+    "rarity": "Standard",
+    "properties": [
+        {
+            "name": "Versatile",
+            "parameters": [
+                {
+                    "damage": {
+                        "dice": { "sides": 10, "count": 1 },
+                        "damage_type": "Slashing"
+                    }
+                }
+            ]
+        }
+    ],
+    "weight": 2.0,
+    "subtype": ["Martial", "Sword"],
+    "range": 0
+}

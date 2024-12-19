@@ -9,14 +9,22 @@ fn npx() -> Command {
     Command::new(NPM)
 }
 
+const BUILD_CSS_ON_BUILD: bool = false;
+
 fn main() {
+    if BUILD_CSS_ON_BUILD {
+        build_css();
+    }
+}
+
+fn build_css() {
     npx()
         .args([
             "tailwindcss",
             "-i",
             "./input.css",
             "-o",
-            "./assets/styling/tailwind.css",
+            "./ui/assets/styling/tailwind.css",
         ])
         .status()
         .expect("Failed to run npx for tailwindcss");

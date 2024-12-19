@@ -7,3 +7,4 @@ edition = "2021"
 dioxus = { workspace = true }
 server = { workspace = true }
 types.workspace = true
+anyhow.workspace = true

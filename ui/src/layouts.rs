@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::{nav::Nav, routes::Routes};
+use crate::{
+    nav::{Breadcrumbs, Nav},
+    routes::Routes,
+};
 
 #[derive(Clone, Copy)]
 struct DarkMode(bool);
@@ -14,9 +17,12 @@ pub fn NavLayout() -> Element {
     let text = if dark_mode().0 { "dark" } else { "" };
 
     rsx! {
-        div { class: "{text} h-full bg-background text-foreground",
+        div { class: "{text} h-full bg-background text-foreground flex flex-col md:flex-row",
             Nav {}
-            main { class: "p-4", Outlet::<Routes> {} }
+            div { class: "flex flex-col",
+                Breadcrumbs {}
+                main { class: "p-4", Outlet::<Routes> {} }
+            }
         }
     }
 }

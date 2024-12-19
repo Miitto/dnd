@@ -4,9 +4,10 @@
     "effects": [
         {
             "effect_type": {
-                "type": "attribute",
-                "replace": "strength",
-                "with": "dexterity"
+                "attribute": {
+                    "replace": "strength",
+                    "with": "dexterity"
+                }
             },
             "when": "On Attack",
             "optional": true

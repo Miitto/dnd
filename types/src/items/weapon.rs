@@ -2,89 +2,74 @@ use serde::{Deserialize, Serialize};
 
 use super::{damage::Damage, Item, Property, Rarity};
 
-mod melee;
-mod ranged;
-pub use melee::*;
-pub use ranged::*;
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum WeaponType {
-    Melee(MeleeWeapon),
-    Ranged(RangedWeapon),
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Weapon {
+    pub name: String,
+    pub damage: Damage,
+    pub rarity: Rarity,
+    pub properties: Vec<Property>,
+    pub weight: f32,
+    pub subtype: Vec<String>,
+    pub range: u32,
 }
 
-pub trait Weapon: Item {
-    fn damage(&self) -> &Damage;
-    fn weight(&self) -> f32;
-    fn subtype(&self) -> &[String];
-}
+impl Weapon {
+    #[allow(dead_code)]
+    pub fn new<S, VP>(
+        name: S,
+        damage: Damage,
+        rarity: Rarity,
+        properties: VP,
+        weight: f32,
+        subtype: Vec<S>,
+        range: u32,
+    ) -> Self
+    where
+        S: Into<String>,
+        VP: Into<Vec<Property>>,
+    {
+        Self {
+            name: name.into(),
+            damage,
+            rarity,
+            properties: properties.into(),
+            weight,
+            subtype: subtype.into_iter().map(|s| s.into()).collect(),
+            range,
+        }
+    }
 
-impl WeaponType {
     pub fn is_melee(&self) -> bool {
-        matches!(self, WeaponType::Melee(_))
+        self.range == 0
     }
 
     pub fn is_ranged(&self) -> bool {
-        !self.is_melee()
-    }
-
-    pub fn as_melee(&self) -> Option<&MeleeWeapon> {
-        match self {
-            WeaponType::Melee(m) => Some(m),
-            _ => None,
-        }
-    }
-
-    pub fn as_ranged(&self) -> Option<&RangedWeapon> {
-        match self {
-            WeaponType::Ranged(r) => Some(r),
-            _ => None,
-        }
+        self.range > 0
     }
 }
 
-impl Item for WeaponType {
+impl Item for Weapon {
     fn name(&self) -> &str {
-        match self {
-            WeaponType::Melee(m) => m.name(),
-            WeaponType::Ranged(r) => r.name(),
-        }
+        &self.name
     }
 
     fn rarity(&self) -> &Rarity {
-        match self {
-            WeaponType::Melee(m) => m.rarity(),
-            WeaponType::Ranged(r) => r.rarity(),
-        }
+        &self.rarity
     }
 
     fn properties(&self) -> &[Property] {
-        match self {
-            WeaponType::Melee(m) => m.properties(),
-            WeaponType::Ranged(r) => r.properties(),
-        }
+        &self.properties
     }
 }
 
-impl Weapon for WeaponType {
-    fn damage(&self) -> &Damage {
-        match self {
-            WeaponType::Melee(m) => m.damage(),
-            WeaponType::Ranged(r) => r.damage(),
-        }
+impl PartialEq<String> for Weapon {
+    fn eq(&self, other: &String) -> bool {
+        self.name.to_lowercase() == other.to_lowercase()
     }
+}
 
-    fn weight(&self) -> f32 {
-        match self {
-            WeaponType::Melee(m) => m.weight(),
-            WeaponType::Ranged(r) => r.weight(),
-        }
-    }
-
-    fn subtype(&self) -> &[String] {
-        match self {
-            WeaponType::Melee(m) => m.subtype(),
-            WeaponType::Ranged(r) => r.subtype(),
-        }
+impl PartialEq<Weapon> for Weapon {
+    fn eq(&self, other: &Weapon) -> bool {
+        self.name.to_lowercase() == other.name.to_lowercase()
     }
 }

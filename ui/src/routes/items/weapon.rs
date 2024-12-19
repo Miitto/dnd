@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
-use types::items::weapon::Weapon as WeaponTrait;
-use types::items::{EffectType, Item};
+use types::items::properties::EffectType;
 use types::stores::Store;
 
 #[component]
@@ -11,44 +10,58 @@ pub fn Weapon(id: String) -> Element {
 
     rsx! {
         if let Some(weapon) = weapon() {
-            h1 { "{weapon.name()}" }
+            h1 { "{weapon.name}" }
 
             div { class: "flex",
                 div { class: "w-1/2",
-                    p { "Damage: {weapon.damage()}" }
-                    p { "Rarity: {weapon.rarity()}" }
-                    p { "Weight: {weapon.weight()}" }
+                    p {
+                        b { "Damage:" }
+                        " {weapon.damage}"
+                    }
+                    p {
+                        b { "Rarity:" }
+                        " {weapon.rarity}"
+                    }
+                    p {
+                        b { "Weight:" }
+                        " {weapon.weight}"
+                    }
                     h2 { "Properties" }
-                    for property in weapon.properties() {
-                        h3 { "{property.name}" }
-                        if let Some(description) = &property.description {
-                            p { "{description}" }
-                        }
-                        h4 { "Effects" }
-                        for effect in &property.effects {
-                            hr {}
-                            span {
-                                "Optional: "
-                                input {
-                                    r#type: "checkbox",
-                                    disabled: true,
-                                    checked: effect.optional,
+                    div { class: "pl-2",
+                        for property in weapon.properties.iter() {
+                            h3 { "{property.name}" }
+                            if let Some(description) = &property.description {
+                                p { "{description}" }
+                            }
+                            h4 { "Effects" }
+                            for effect in &property.effects {
+                                hr {}
+                                span {
+                                    "Optional: "
+                                    input {
+                                        r#type: "checkbox",
+                                        disabled: true,
+                                        checked: effect.optional,
+                                    }
                                 }
-                            }
-                            if let Some(when) = &effect.when {
-                                p { "When: {when}" }
-                            }
-                            p {
-                                match &effect.effect_type {
-                                    EffectType::Damage(dmg) => format!("Damage: {}", dmg),
-                                    EffectType::Attribute(attr) => attr.to_string(),
+                                if let Some(when) = &effect.when {
+                                    p { "When: {when}" }
                                 }
+                                p {
+                                    match &effect.effect_type {
+                                        EffectType::Damage(dmg) => format!("Damage: {}", dmg),
+                                        EffectType::Attribute(attr) => attr.to_string(),
+                                    }
+                                }
+                                hr {}
                             }
-                            hr {}
                         }
                     }
                     br {}
-                    p { "Subtype: {weapon.subtype().join(\", \")}" }
+                    p {
+                        b { "Subtype:" }
+                        " {weapon.subtype.join(\", \")}"
+                    }
                 }
             }
         } else {
