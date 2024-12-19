@@ -1,7 +1,9 @@
 use dioxus::prelude::*;
 
+pub mod backgrounds;
 mod home;
 mod items;
+pub mod races;
 
 use crate::layouts::*;
 use crate::Capitalize;
@@ -9,17 +11,37 @@ use crate::PageNotFound;
 use home::Home;
 use items::*;
 
+use backgrounds::{background::Background, Backgrounds};
+use races::{race::Race, Races};
+
 #[derive(Routable, Clone, Debug, PartialEq)]
+#[rustfmt::skip]
 pub enum Routes {
     #[layout(NavLayout)]
     #[route("/")]
     Home {},
-    #[route("/items")]
-    Items {},
-    #[route("/items/weapons")]
-    Weapons {},
-    #[route("/items/weapons/:id")]
-    Weapon { id: String },
+    #[nest("/items")]
+        #[route("/")]
+        Items {},
+        #[nest("/weapons")]
+            #[route("/")]
+            Weapons {},
+            #[route("/:id")]
+            Weapon { id: String },
+        #[end_nest]
+    #[end_nest]
+    #[nest("/races")]
+        #[route("/")]
+        Races {},
+        #[route("/:id")]
+        Race { id: String },
+    #[end_nest]
+    #[nest("/backgrounds")]
+        #[route("/")]
+        Backgrounds {},
+        #[route("/:id")]
+        Background { id: String },
+    #[end_nest]
     #[end_layout]
     #[route("/:..segments")]
     PageNotFound { segments: Vec<String> },
@@ -34,39 +56,33 @@ pub struct Segment {
 impl Routes {
     pub fn segments(&self) -> Option<Vec<Segment>> {
         Some(match self {
-            Routes::Home {} => vec![Segment {
-                name: "Home".to_string(),
-                href: Routes::Home {}.into(),
-            }],
-            Routes::Items {} => vec![Segment {
-                name: "Items".to_string(),
-                href: Routes::Items {}.into(),
-            }],
-            Routes::Weapons {} => vec![
-                Segment {
-                    name: "Items".to_string(),
-                    href: Routes::Items {}.into(),
-                },
-                Segment {
-                    name: "Weapons".to_string(),
-                    href: Routes::Weapons {}.into(),
-                },
-            ],
-            Routes::Weapon { id } => vec![
-                Segment {
-                    name: "Items".to_string(),
-                    href: Routes::Items {}.into(),
-                },
-                Segment {
-                    name: "Weapons".to_string(),
-                    href: Routes::Weapons {}.into(),
-                },
-                Segment {
-                    name: id.to_string().capitalize(),
-                    href: Routes::Weapon { id: id.to_string() }.into(),
-                },
-            ],
+            Routes::Home {} => vec![self.as_segment("Home")],
+            Routes::Items {} => vec![self.as_segment("Items")],
+            Routes::Weapons {} => Routes::Items {}.add_segment(self.as_segment("Weapons")),
+            Routes::Weapon { id } => {
+                Routes::Weapons {}.add_segment(self.as_segment(id.capitalize()))
+            }
+            Routes::Races {} => vec![self.as_segment("Races")],
+            Routes::Race { id } => Routes::Races {}.add_segment(self.as_segment(id.capitalize())),
+            Routes::Backgrounds {} => vec![self.as_segment("Backgrounds")],
+            Routes::Background { id } => {
+                Routes::Backgrounds {}.add_segment(self.as_segment(id.capitalize()))
+            }
             _ => return None,
         })
+    }
+
+    fn add_segment(&self, seg: Segment) -> Vec<Segment> {
+        let mut segments = self.segments().unwrap();
+        segments.push(seg);
+
+        segments
+    }
+
+    fn as_segment<T: AsRef<str>>(&self, name: T) -> Segment {
+        Segment {
+            name: name.as_ref().to_string(),
+            href: self.clone().into(),
+        }
     }
 }

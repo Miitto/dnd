@@ -6,7 +6,7 @@ use types::stores::Store;
 pub fn Weapon(id: String) -> Element {
     let store = use_context::<Store>();
     let weapon_store = store.weapons;
-    let weapon = use_memo(move || weapon_store.find_weapon(&id));
+    let weapon = use_memo(move || weapon_store.get(&id));
 
     rsx! {
         if let Some(weapon) = weapon() {

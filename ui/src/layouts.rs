@@ -17,9 +17,9 @@ pub fn NavLayout() -> Element {
     let text = if dark_mode().0 { "dark" } else { "" };
 
     rsx! {
-        div { class: "{text} h-full bg-background text-foreground flex flex-col md:flex-row",
+        div { class: "{text} flex-grow bg-background text-foreground flex flex-col md:flex-row flex-auto flex-shrink-0 h-full",
             Nav {}
-            div { class: "flex flex-col",
+            div { class: "flex flex-col flex-grow",
                 Breadcrumbs {}
                 main { class: "p-4 py-2", Outlet::<Routes> {} }
             }

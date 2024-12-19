@@ -21,6 +21,12 @@ pub fn Navbar() -> Element {
             li {
                 Link { to: Routes::Items {}, "Items" }
             }
+            li {
+                Link { to: Routes::Races {}, "Races" }
+            }
+            li {
+                Link { to: Routes::Backgrounds {}, "Backgrounds" }
+            }
         }
     }
 }

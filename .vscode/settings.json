@@ -6,5 +6,13 @@
         "*.lock": true,
         "**/dist": true
     },
-    "cSpell.words": ["bindgen", "dioxus", "leptos"]
+    "cSpell.words": [
+        "Bahamut",
+        "bindgen",
+        "Chronepsis",
+        "dioxus",
+        "Dragonborn",
+        "leptos",
+        "Tiamat"
+    ]
 }

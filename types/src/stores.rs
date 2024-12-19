@@ -1,123 +1,90 @@
 use std::{
-    fs::DirEntry,
     path::Path,
     sync::{Arc, Mutex},
 };
 
 use anyhow::Result;
 
-use crate::fs;
-
-use super::items::{weapon::Weapon, Item};
+use crate::{
+    background::Background,
+    fs::{background::get_backgrounds, race::get_races, weapons::weapon::get_weapons},
+    items::weapon::Weapon,
+    race::Race,
+    ForceLock,
+};
 
 #[derive(Debug, Clone)]
-pub struct WeaponStore {
-    pub weapons: Arc<Mutex<Vec<Arc<crate::items::weapon::Weapon>>>>,
+pub struct InnerStore<T> {
+    pub store: Arc<Mutex<Vec<Arc<T>>>>,
 }
 
-impl Default for WeaponStore {
+impl<T> Default for InnerStore<T> {
     fn default() -> Self {
-        WeaponStore {
-            weapons: Arc::new(Mutex::new(Vec::new())),
+        InnerStore {
+            store: Arc::new(Mutex::new(Vec::new())),
         }
     }
 }
 
-impl WeaponStore {
-    pub fn new() -> Self {
-        Self::default()
+impl<T> InnerStore<T> {
+    pub fn all(&self) -> Vec<Arc<T>> {
+        let store = self.store.force_lock();
+        store.clone()
     }
+}
 
-    pub fn push(&self, wpn: Weapon) {
-        let mut weapons = match self.weapons.lock() {
-            Ok(w) => w,
-            Err(poisoned) => poisoned.into_inner(),
-        };
-        weapons.push(Arc::new(wpn));
+impl<T> InnerStore<T>
+where
+    T: PartialEq<str>,
+{
+    pub fn get(&self, name: &str) -> Option<Arc<T>> {
+        let store = self.store.force_lock();
+        store.iter().find(|&w| **w == *name).map(Arc::clone)
     }
+}
 
+impl InnerStore<Weapon> {
     pub fn melee(&self) -> Vec<Arc<Weapon>> {
-        let weapons = match self.weapons.lock() {
-            Ok(w) => w,
-            Err(poisoned) => poisoned.into_inner(),
-        };
-        weapons.iter().filter(|w| w.is_melee()).cloned().collect()
-    }
-
-    pub fn find_weapon(&self, name: &str) -> Option<Arc<Weapon>> {
-        let weapons = match self.weapons.lock() {
-            Ok(w) => w,
-            Err(poisoned) => poisoned.into_inner(),
-        };
-        weapons.iter().find(|w| w.name() == name).map(Arc::clone)
-    }
-
-    pub fn find_melee(&self, name: &str) -> Option<Arc<Weapon>> {
-        let weapons = match self.weapons.lock() {
-            Ok(w) => w,
-            Err(poisoned) => poisoned.into_inner(),
-        };
-        weapons
+        self.all()
             .iter()
             .filter(|w| w.is_melee())
-            .find(|w| w.name() == name)
-            .map(Arc::clone)
+            .cloned()
+            .collect()
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Store {
-    pub weapons: WeaponStore,
+    pub weapons: InnerStore<Weapon>,
+    pub races: InnerStore<Race>,
+    pub backgrounds: InnerStore<Background>,
 }
 
-impl Default for Store {
-    fn default() -> Self {
-        let weapons = WeaponStore::new();
-        Store { weapons }
-    }
+macro_rules! impl_store {
+    ($store:ident, $type:ty, $get_fn:ident, $path:ident, $sub:ident) => {{
+        let store = &mut $store.$sub.store.lock().expect(concat!(
+            "Failed to lock ",
+            stringify!($store),
+            " store on create"
+        ));
+
+        let items = $get_fn(&$path)?.into_iter().map(Arc::new);
+
+        store.extend(items);
+    }};
 }
 
 impl Store {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     pub fn from_path<P>(path: P) -> Result<Self>
     where
         P: AsRef<Path>,
     {
-        let store = Store::new();
+        let store = Store::default();
 
-        {
-            let weapons_store = &mut store
-                .weapons
-                .weapons
-                .lock()
-                .expect("Failed to lock weapons on store create");
-
-            let weapons = fs::weapons::weapon::get_weapons(path)?
-                .into_iter()
-                .map(Arc::new);
-
-            weapons_store.extend(weapons);
-        }
+        impl_store!(store, Weapon, get_weapons, path, weapons);
+        impl_store!(store, Race, get_races, path, races);
+        impl_store!(store, Background, get_backgrounds, path, backgrounds);
 
         Ok(store)
     }
-}
-
-#[allow(dead_code)]
-fn visit_dirs(dir: &Path, vec: &mut Vec<DirEntry>) -> std::io::Result<()> {
-    if dir.is_dir() {
-        for entry in std::fs::read_dir(dir)? {
-            let entry = entry?;
-            let path = entry.path();
-            if path.is_dir() {
-                visit_dirs(&path, vec)?;
-            } else {
-                vec.push(entry);
-            }
-        }
-    }
-    Ok(())
 }

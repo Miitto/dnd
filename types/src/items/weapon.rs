@@ -73,3 +73,9 @@ impl PartialEq<Weapon> for Weapon {
         self.name.to_lowercase() == other.name.to_lowercase()
     }
 }
+
+impl PartialEq<str> for Weapon {
+    fn eq(&self, other: &str) -> bool {
+        self.name.to_lowercase() == other.to_lowercase()
+    }
+}
