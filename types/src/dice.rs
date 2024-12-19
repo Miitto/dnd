@@ -28,3 +28,9 @@ impl Display for Dice {
         write!(f, "{}d{}{}", self.count, self.sides, modifier)
     }
 }
+
+impl PartialEq for Dice {
+    fn eq(&self, other: &Self) -> bool {
+        self.sides == other.sides && self.count == other.count && self.modifier == other.modifier
+    }
+}

@@ -21,7 +21,7 @@ pub fn NavLayout() -> Element {
             Nav {}
             div { class: "flex flex-col",
                 Breadcrumbs {}
-                main { class: "p-4", Outlet::<Routes> {} }
+                main { class: "p-4 py-2", Outlet::<Routes> {} }
             }
         }
     }
