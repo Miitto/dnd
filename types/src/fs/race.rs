@@ -11,13 +11,9 @@ pub fn get_races<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Race>> {
 
     let race_path = resource_path.join(RACE_PATH);
 
-    dbg!(&race_path);
-
     let mut race_dirs = Vec::new();
 
     recurse_dirs(&race_path, &mut race_dirs)?;
-
-    println!("Found {} files in race dir", race_dirs.len());
 
     let races = race_dirs
         .iter()

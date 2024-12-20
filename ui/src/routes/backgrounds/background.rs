@@ -1,3 +1,4 @@
+use crate::components::info::Pair;
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -34,18 +35,6 @@ pub fn Background(id: String) -> Element {
             }
         } else {
             "background not found"
-        }
-    }
-}
-
-#[component]
-fn Pair(name: String, value: String) -> Element {
-    rsx! {
-        li {
-            p {
-                b { "{name}:" }
-                " {value}"
-            }
         }
     }
 }

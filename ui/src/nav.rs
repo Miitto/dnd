@@ -27,6 +27,9 @@ pub fn Navbar() -> Element {
             li {
                 Link { to: Routes::Backgrounds {}, "Backgrounds" }
             }
+            li {
+                Link { to: Routes::Classes {}, "Classes" }
+            }
         }
     }
 }
@@ -39,7 +42,7 @@ pub fn Breadcrumbs() -> Element {
 
     rsx! {
         if let Some(segments) = segments {
-            nav { class: "p-4 py-2",
+            nav { class: "p-4 py-2 flex-grow",
                 ul { class: "flex flex-row gap-2",
                     for (idx , segment) in segments.iter().enumerate() {
                         li {

@@ -1,6 +1,7 @@
 use std::{fs::DirEntry, path::Path};
 
 pub mod background;
+pub mod classes;
 pub mod constants;
 pub mod race;
 pub mod weapons;

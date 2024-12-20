@@ -2,6 +2,7 @@
 
 use dioxus::{logger::tracing, prelude::*};
 
+pub mod components;
 mod layouts;
 mod nav;
 mod routes;
@@ -60,5 +61,36 @@ impl Capitalize for str {
 impl Capitalize for String {
     fn capitalize(&self) -> String {
         self.as_str().capitalize()
+    }
+}
+
+pub trait Ordinal {
+    fn ordinal(&self) -> String;
+}
+
+impl Ordinal for u8 {
+    fn ordinal(&self) -> String {
+        let suffix = match self % 10 {
+            1 => "st",
+            2 => "nd",
+            3 => "rd",
+            _ => "th",
+        };
+
+        format!("{}{}", self, suffix)
+    }
+}
+
+pub trait DashIfZero {
+    fn dash_if_zero(&self) -> String;
+}
+
+impl DashIfZero for u8 {
+    fn dash_if_zero(&self) -> String {
+        if *self == 0 {
+            "-".to_string()
+        } else {
+            self.to_string()
+        }
     }
 }

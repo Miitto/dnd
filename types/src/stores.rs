@@ -1,5 +1,5 @@
 use std::{
-    path::Path,
+    path::{Path, PathBuf},
     sync::{Arc, Mutex},
 };
 
@@ -7,7 +7,11 @@ use anyhow::Result;
 
 use crate::{
     background::Background,
-    fs::{background::get_backgrounds, race::get_races, weapons::weapon::get_weapons},
+    classes::class::Class,
+    fs::{
+        background::get_backgrounds, classes::class::get_classes, race::get_races,
+        weapons::weapon::get_weapons,
+    },
     items::weapon::Weapon,
     race::Race,
     ForceLock,
@@ -55,9 +59,11 @@ impl InnerStore<Weapon> {
 
 #[derive(Debug, Clone, Default)]
 pub struct Store {
+    path: Option<PathBuf>,
     pub weapons: InnerStore<Weapon>,
     pub races: InnerStore<Race>,
     pub backgrounds: InnerStore<Background>,
+    pub classes: InnerStore<Class>,
 }
 
 macro_rules! impl_store {
@@ -79,12 +85,27 @@ impl Store {
     where
         P: AsRef<Path>,
     {
-        let store = Store::default();
+        let mut store = Store::default();
+
+        let path = path.as_ref().to_path_buf();
+
+        store.path = Some(path.clone());
 
         impl_store!(store, Weapon, get_weapons, path, weapons);
         impl_store!(store, Race, get_races, path, races);
         impl_store!(store, Background, get_backgrounds, path, backgrounds);
+        impl_store!(store, Class, get_classes, path, classes);
 
         Ok(store)
+    }
+
+    pub fn rebuild(&mut self) -> Result<()> {
+        if let Some(path) = self.path.as_ref() {
+            *self = Store::from_path(path.clone())?;
+        } else {
+            return Err(anyhow::anyhow!("No path set for store"));
+        }
+
+        Ok(())
     }
 }

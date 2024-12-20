@@ -1,3 +1,4 @@
+use crate::components::info::Pair;
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -28,10 +29,12 @@ pub fn Race(id: String) -> Element {
                     li {
                         p { class: "inline-flex gap-x-2",
                             b { "Size:" }
-                            span { "{race.size.description}" }
-                            span {
-                                "Your size is: "
-                                b { "{race.size.size}" }
+                            span { class: "inline-flex flex-wrap gap-x-2",
+                                span { "{race.size.description}" }
+                                span {
+                                    "Your size is: "
+                                    b { "{race.size.size}" }
+                                }
                             }
                         }
                     }
@@ -48,13 +51,18 @@ pub fn Race(id: String) -> Element {
                     for table in race.tables.iter() {
                         hr {}
 
-                        table { class: "border",
-                            for (idx , row) in table.iter().enumerate() {
-                                tr { class: "*:px-2 *:py-1 first:border-b even:bg-muted",
-                                    for cell in row.iter() {
-                                        if idx == 0 {
-                                            th { class: "text-left", "{cell}" }
-                                        } else {
+                        table { class: "border w-full",
+                            thead { class: "border-b",
+                                tr { class: "*:px-2 *:py-1 *:text-left",
+                                    for header in table[0].iter() {
+                                        th { "{header}" }
+                                    }
+                                }
+                            }
+                            tbody {
+                                for row in table[1..].iter() {
+                                    tr { class: "*:px-2 *:py-1 even:bg-muted",
+                                        for cell in row.iter() {
                                             td { "{cell}" }
                                         }
                                     }
@@ -66,18 +74,6 @@ pub fn Race(id: String) -> Element {
             }
         } else {
             "race not found"
-        }
-    }
-}
-
-#[component]
-fn Pair(name: String, value: String) -> Element {
-    rsx! {
-        li {
-            p {
-                b { "{name}:" }
-                " {value}"
-            }
         }
     }
 }

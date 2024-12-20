@@ -11,13 +11,9 @@ pub fn get_backgrounds<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Backgroun
 
     let background_path = resource_path.join(BACKGROUND_PATH);
 
-    dbg!(&background_path);
-
     let mut background_dirs = Vec::new();
 
     recurse_dirs(&background_path, &mut background_dirs)?;
-
-    println!("Found {} files in background dir", background_dirs.len());
 
     let backgrounds = background_dirs
         .iter()

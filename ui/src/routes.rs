@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 pub mod backgrounds;
+pub mod classes;
 mod home;
 mod items;
 pub mod races;
@@ -12,6 +13,7 @@ use home::Home;
 use items::*;
 
 use backgrounds::{background::Background, Backgrounds};
+use classes::{class::Class, Classes};
 use races::{race::Race, Races};
 
 #[derive(Routable, Clone, Debug, PartialEq)]
@@ -42,15 +44,15 @@ pub enum Routes {
         #[route("/:id")]
         Background { id: String },
     #[end_nest]
+    #[nest("/classes")]
+        #[route("/")]
+        Classes {},
+        #[route("/:id")]
+        Class { id: String },
+    #[end_nest]
     #[end_layout]
     #[route("/:..segments")]
     PageNotFound { segments: Vec<String> },
-}
-
-#[derive(Debug)]
-pub struct Segment {
-    pub name: String,
-    pub href: NavigationTarget,
 }
 
 impl Routes {
@@ -67,6 +69,10 @@ impl Routes {
             Routes::Backgrounds {} => vec![self.as_segment("Backgrounds")],
             Routes::Background { id } => {
                 Routes::Backgrounds {}.add_segment(self.as_segment(id.capitalize()))
+            }
+            Routes::Classes {} => vec![self.as_segment("Classes")],
+            Routes::Class { id } => {
+                Routes::Classes {}.add_segment(self.as_segment(id.capitalize()))
             }
             _ => return None,
         })
@@ -85,4 +91,10 @@ impl Routes {
             href: self.clone().into(),
         }
     }
+}
+
+#[derive(Debug)]
+pub struct Segment {
+    pub name: String,
+    pub href: NavigationTarget,
 }
