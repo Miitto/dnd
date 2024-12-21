@@ -5,7 +5,7 @@ use crate::routes::Routes;
 #[component]
 pub fn Nav() -> Element {
     rsx! {
-        nav { class: "flex w-full p-4 py-2 md:border-r border-b md:border-b-0 h-fit md:h-full md:w-fit md:sticky md:top-0 md:left-0",
+        nav { class: "flex w-full p-4 py-2 md:border-r border-b md:border-b-0 h-fit md:h-dvh md:w-fit md:sticky md:top-0 md:left-0",
             Navbar {}
         }
     }

@@ -11,6 +11,11 @@
 		height: 100%;
     }
 
+	html {
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
     ul {
         list-style-type: none;
     }

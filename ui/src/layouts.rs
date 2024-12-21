@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use types::stores::Store;
 
 use crate::{
     nav::{Breadcrumbs, Nav},
@@ -17,34 +16,32 @@ pub fn NavLayout() -> Element {
 
     let text = if dark_mode().0 { "dark" } else { "" };
 
-    let mut store = use_context::<Store>();
+    let mut pin_breadcrumbs = use_signal(|| true);
 
-    let mut result = use_signal(|| false);
+    let sticky = if pin_breadcrumbs() {
+        "sticky top-0"
+    } else {
+        ""
+    };
+
+    let pin_txt = if pin_breadcrumbs() { "Unpin" } else { "Pin" };
 
     rsx! {
         div { class: "{text} flex-grow bg-background text-foreground flex flex-col md:flex-row flex-auto flex-shrink-0 h-full",
             Nav {}
             div { class: "flex flex-col flex-grow",
-                div { class: "flex flex-row",
+                div { class: "flex flex-row bg-background border-b {sticky}",
                     Breadcrumbs {}
                     button {
                         onclick: move |_| {
-                            let mut inner = result.write();
-                            let result = store.rebuild();
-                            *inner = result.is_err();
+                            let mut v = pin_breadcrumbs.write();
+                            *v = !*v;
                         },
                         class: "px-4",
-                        "Rebuild"
+                        "{pin_txt}"
                     }
                 }
                 main { class: "px-4 pt-2 pb-8", Outlet::<Routes> {} }
-            }
-        }
-        div {
-            if result() {
-                div { class: "bg-red-500 text-white p-4 fixed bottom-1 right-1",
-                    "Failed to rebuild store"
-                }
             }
         }
     }
