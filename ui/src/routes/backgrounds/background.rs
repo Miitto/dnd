@@ -1,4 +1,4 @@
-use crate::components::info::Pair;
+use crate::components::info::PairLi;
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -18,19 +18,13 @@ pub fn Background(id: String) -> Element {
                 }
 
                 ul { class: "list-disc pl-6",
-                    Pair {
-                        name: "Skill Proficiencies",
-                        value: background.skill_string(),
-                    }
+                    PairLi { name: "Skill Proficiencies", {background.skill_string()} }
 
-                    Pair {
-                        name: "Tool Proficiencies",
-                        value: background.tool_string(),
-                    }
+                    PairLi { name: "Tool Proficiencies", {background.tool_string()} }
 
-                    Pair { name: "Languages", value: "{background.languages}" }
+                    PairLi { name: "Languages", "{background.languages}" }
 
-                    Pair { name: "Equipment", value: background.equip_string() }
+                    PairLi { name: "Equipment", {background.equip_string()} }
                 }
             }
         } else {

@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -32,5 +34,18 @@ impl From<Attribute> for String {
 impl std::fmt::Display for Attribute {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", String::from(*self))
+    }
+}
+
+impl Borrow<str> for Attribute {
+    fn borrow(&self) -> &str {
+        match self {
+            Attribute::Strength => "Strength",
+            Attribute::Dexterity => "Dexterity",
+            Attribute::Constitution => "Constitution",
+            Attribute::Intelligence => "Intelligence",
+            Attribute::Wisdom => "Wisdom",
+            Attribute::Charisma => "Charisma",
+        }
     }
 }

@@ -37,7 +37,7 @@ pub fn NavLayout() -> Element {
                         "Rebuild"
                     }
                 }
-                main { class: "p-4 py-2", Outlet::<Routes> {} }
+                main { class: "px-4 pt-2 pb-8", Outlet::<Routes> {} }
             }
         }
         div {

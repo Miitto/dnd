@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use crate::attributes::Attribute;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -49,6 +51,35 @@ impl From<Skill> for Attribute {
 
 impl std::fmt::Display for Skill {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        match self {
+            Skill::AnimalHandling => write!(f, "Animal Handling"),
+            Skill::SleightOfHand => write!(f, "Sleight of Hand"),
+            _ => write!(f, "{:?}", self),
+        }
+    }
+}
+
+impl Borrow<str> for Skill {
+    fn borrow(&self) -> &str {
+        match self {
+            Skill::Acrobatics => "Acrobatics",
+            Skill::AnimalHandling => "Animal Handling",
+            Skill::Arcana => "Arcana",
+            Skill::Athletics => "Athletics",
+            Skill::Deception => "Deception",
+            Skill::History => "History",
+            Skill::Insight => "Insight",
+            Skill::Intimidation => "Intimidation",
+            Skill::Investigation => "Investigation",
+            Skill::Medicine => "Medicine",
+            Skill::Nature => "Nature",
+            Skill::Perception => "Perception",
+            Skill::Performance => "Performance",
+            Skill::Persuasion => "Persuasion",
+            Skill::Religion => "Religion",
+            Skill::SleightOfHand => "Sleight of Hand",
+            Skill::Stealth => "Stealth",
+            Skill::Survival => "Survival",
+        }
     }
 }

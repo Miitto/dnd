@@ -1,7 +1,7 @@
 use std::fs::DirEntry;
 use std::path::Path;
 
-use crate::classes::class::Class;
+use crate::classes::Class;
 
 use crate::fs::constants::{CLASS_BASE_NAME, CLASS_PATH};
 

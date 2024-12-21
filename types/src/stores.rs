@@ -7,7 +7,7 @@ use anyhow::Result;
 
 use crate::{
     background::Background,
-    classes::class::Class,
+    classes::Class,
     fs::{
         background::get_backgrounds, classes::class::get_classes, race::get_races,
         weapons::weapon::get_weapons,

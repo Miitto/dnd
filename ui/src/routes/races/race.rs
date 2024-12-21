@@ -1,4 +1,4 @@
-use crate::components::info::Pair;
+use crate::components::info::PairLi;
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -24,8 +24,8 @@ pub fn Race(id: String) -> Element {
                             }
                         }
                     }
-                    Pair { name: "Age", value: "{race.age}" }
-                    Pair { name: "Alignment", value: "{race.alignment}" }
+                    PairLi { name: "Age", "{race.age}" }
+                    PairLi { name: "Alignment", "{race.alignment}" }
                     li {
                         p { class: "inline-flex gap-x-2",
                             b { "Size:" }
@@ -38,14 +38,11 @@ pub fn Race(id: String) -> Element {
                             }
                         }
                     }
-                    Pair {
-                        name: "Speed",
-                        value: "Your base walking speed is {race.speed} feet.",
-                    }
-                    Pair { name: "Languages", value: "{race.languages}" }
+                    PairLi { name: "Speed", "Your base walking speed is {race.speed} feet." }
+                    PairLi { name: "Languages", "{race.languages}" }
                     hr {}
                     for (key , val) in &race.unique {
-                        Pair { name: "{key}", value: "{val}" }
+                        PairLi { name: "{key}", "{val}" }
                     }
 
                     for table in race.tables.iter() {

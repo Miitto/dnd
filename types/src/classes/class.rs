@@ -1,7 +1,11 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::deserialize_hashmap;
-use crate::{attributes::Attribute, skill::Skill, StartsWithVowel as _};
+use crate::{attributes::Attribute, StartsWithVowel as _};
+
+use super::cantrip::ClassCantrip;
+use super::skills::ClassSkills;
+use super::table_entry::TableEntry;
+use super::{deserialize_hashmap_array_to_feature, ClassFeature};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum CastType {
@@ -174,8 +178,11 @@ pub struct Class {
     pub hit_die: u8,
     pub proficiencies: ClassProficiencies,
     pub equipment: Vec<String>,
-    pub features: HashMap<u8, ClassLevel>,
+    #[serde(deserialize_with = "deserialize_hashmap_array_to_feature")]
+    pub features: HashMap<u8, Vec<ClassFeature>>,
     pub spellcasting: Option<Attribute>,
+    #[serde(default)]
+    pub ritual_casting: bool,
     pub spell_lists: Option<Vec<String>>,
     pub cast_type: Option<CastType>,
     #[serde(default = "default_cast_level")]
@@ -271,73 +278,4 @@ pub struct ClassProficiencies {
     pub tools: Vec<String>,
     pub saving_throws: Vec<Attribute>,
     pub skills: ClassSkills,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct ClassSkills {
-    pub options: Vec<Skill>,
-    pub choose: u8,
-}
-
-pub type ClassLevel = HashMap<String, String>;
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct ClassCantrip {
-    pub list: Vec<String>,
-    pub progression: HashMap<u8, u8>,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct CantripProgression {
-    pub level: u8,
-    pub count: u8,
-}
-
-impl ClassCantrip {
-    pub fn count(&self, level: u8) -> u8 {
-        let mut count = 0;
-        let mut highest = 0;
-
-        for (lvl, cnt) in self.progression.iter() {
-            if *lvl <= level && *lvl > highest {
-                count = *cnt;
-                highest = *lvl;
-            }
-        }
-
-        count
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct TableEntry {
-    #[serde(default)]
-    pub interpolate: bool,
-    #[serde(flatten)]
-    #[serde(deserialize_with = "deserialize_hashmap")]
-    pub entries: HashMap<u8, String>,
-}
-
-impl TableEntry {
-    pub fn get(&self, level: u8) -> String {
-        if !self.interpolate {
-            return self
-                .entries
-                .get(&level)
-                .unwrap_or(&String::new())
-                .to_string();
-        }
-
-        let mut highest = 0;
-        for lvl in self.entries.keys() {
-            if *lvl <= level && *lvl > highest {
-                highest = *lvl;
-            }
-        }
-
-        self.entries
-            .get(&highest)
-            .unwrap_or(&String::new())
-            .to_string()
-    }
 }

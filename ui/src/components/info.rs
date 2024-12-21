@@ -1,13 +1,20 @@
 use dioxus::prelude::*;
 
 #[component]
-pub fn Pair(name: String, value: String) -> Element {
+pub fn Pair(name: String, children: Element) -> Element {
+    rsx! {
+        p { class: "inline-flex gap-x-2",
+            b { "{name}:" }
+            {children}
+        }
+    }
+}
+
+#[component]
+pub fn PairLi(name: String, children: Element) -> Element {
     rsx! {
         li {
-            p {
-                b { "{name}:" }
-                " {value}"
-            }
+            Pair { name, children }
         }
     }
 }
