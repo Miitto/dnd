@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{asi::ASI, size::DescribedSize};
+use crate::{common::DescribedSize, common::ASI, CategoryMut};
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Race {
@@ -28,5 +28,11 @@ impl PartialEq<Race> for Race {
 impl PartialEq<str> for Race {
     fn eq(&self, other: &str) -> bool {
         self.name == other
+    }
+}
+
+impl CategoryMut for Race {
+    fn category_mut(&mut self) -> &mut String {
+        &mut self.category
     }
 }

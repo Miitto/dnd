@@ -1,13 +1,14 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::{attributes::Attribute, StartsWithVowel as _};
+use crate::{common::Attribute, StartsWithVowel as _};
 
 use super::cantrip::ClassCantrip;
 use super::skills::ClassSkills;
+use super::subclass::Subclass;
 use super::table_entry::TableEntry;
 use super::{deserialize_hashmap_array_to_feature, ClassFeature};
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum CastType {
     Prepared,
     Known,
@@ -161,13 +162,24 @@ impl CastLevel {
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClassSubclasses {
-    pub options: Vec<String>,
-    #[serde(default = "default_subclass_unlock")]
+    #[serde(skip)]
+    pub options: HashMap<String, Subclass>,
+    #[serde(default = "default_subclass_unlock", rename = "subclass_unlock")]
     pub unlocked: u8,
 }
 
 fn default_subclass_unlock() -> u8 {
     3
+}
+
+impl ClassSubclasses {
+    pub fn get(&self, subclass: &str) -> Option<&Subclass> {
+        self.options.get(subclass)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.options.is_empty()
+    }
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -188,6 +200,7 @@ pub struct Class {
     #[serde(default = "default_cast_level")]
     pub cast_level: CastLevel,
     pub cantrips: Option<ClassCantrip>,
+    #[serde(flatten)]
     pub subclasses: ClassSubclasses,
     pub table_entries: HashMap<String, TableEntry>,
 }
@@ -271,11 +284,26 @@ impl PartialEq<String> for Class {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub struct ClassProficiencies {
+    #[serde(default)]
     pub armor: Vec<String>,
+    #[serde(default)]
     pub weapons: Vec<String>,
+    #[serde(default)]
     pub tools: Vec<String>,
+    #[serde(default)]
     pub saving_throws: Vec<Attribute>,
+    #[serde(default)]
     pub skills: ClassSkills,
+}
+
+impl ClassProficiencies {
+    pub fn is_empty(&self) -> bool {
+        self.armor.is_empty()
+            && self.weapons.is_empty()
+            && self.tools.is_empty()
+            && self.saving_throws.is_empty()
+            && self.skills.options.is_empty()
+    }
 }

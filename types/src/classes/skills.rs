@@ -1,8 +1,8 @@
 use std::fmt::Display;
 
-use crate::skill::Skill;
+use crate::common::Skill;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, PartialEq)]
 pub struct ClassSkills {
     pub options: Vec<Skill>,
     pub choose: u8,

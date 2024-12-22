@@ -9,7 +9,7 @@ use crate::{
     background::Background,
     classes::Class,
     fs::{
-        background::get_backgrounds, classes::class::get_classes, race::get_races,
+        classes::class::get_classes, get_backgrounds, get_feats, get_races,
         weapons::weapon::get_weapons,
     },
     items::weapon::Weapon,
@@ -64,24 +64,22 @@ pub struct Store {
     pub races: InnerStore<Race>,
     pub backgrounds: InnerStore<Background>,
     pub classes: InnerStore<Class>,
+    pub feats: InnerStore<crate::feat::Feat>,
 }
 
 macro_rules! impl_store {
     ($store:ident, $type:ty, $get_fn:ident, $path:ident, $sub:ident) => {{
-        let store = &mut $store.$sub.store.lock().expect(concat!(
-            "Failed to lock ",
-            stringify!($store),
-            " store on create"
-        ));
+        let store = &mut $store.$sub.store.lock().expect("Failed to lock $type");
 
-        let items = $get_fn(&$path)?.into_iter().map(Arc::new);
-
-        store.extend(items);
+        match $get_fn(&$path) {
+            Ok(items) => store.extend(items.into_iter().map(Arc::new)),
+            Err(e) => eprintln!("Failed to get $type: {:?}", e),
+        }
     }};
 }
 
 impl Store {
-    pub fn from_path<P>(path: P) -> Result<Self>
+    pub fn from_path<P>(path: P) -> Self
     where
         P: AsRef<Path>,
     {
@@ -95,13 +93,14 @@ impl Store {
         impl_store!(store, Race, get_races, path, races);
         impl_store!(store, Background, get_backgrounds, path, backgrounds);
         impl_store!(store, Class, get_classes, path, classes);
+        impl_store!(store, crate::feat::Feat, get_feats, path, feats);
 
-        Ok(store)
+        store
     }
 
     pub fn rebuild(&mut self) -> Result<()> {
         if let Some(path) = self.path.as_ref() {
-            *self = Store::from_path(path.clone())?;
+            *self = Store::from_path(path.clone());
         } else {
             return Err(anyhow::anyhow!("No path set for store"));
         }

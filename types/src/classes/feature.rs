@@ -8,6 +8,18 @@ pub struct ClassFeature {
     pub description: String,
 }
 
+impl PartialEq<str> for ClassFeature {
+    fn eq(&self, other: &str) -> bool {
+        self.name == other
+    }
+}
+
+impl PartialEq<ClassFeature> for ClassFeature {
+    fn eq(&self, other: &ClassFeature) -> bool {
+        self.name == other.name
+    }
+}
+
 pub fn deserialize_hashmap_array_to_feature<'de, D>(
     deserializer: D,
 ) -> Result<HashMap<u8, Vec<ClassFeature>>, D::Error>

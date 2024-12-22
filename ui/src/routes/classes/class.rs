@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use dioxus::prelude::*;
 use types::{
-    classes::{Class as ClassT, ClassFeature},
+    classes::{Class as ClassT, ClassFeature as ClassFeatureT, ClassProficiencies},
     is_asi_level, proficiency_bonus,
     stores::Store,
 };
@@ -35,11 +35,7 @@ pub fn Class(id: String) -> Element {
                 }
                 br {}
                 h3 { "Proficiencies" }
-                Pair { name: "Armor", "{class.proficiencies.armor.join(\", \")}" }
-                Pair { name: "Weapons", "{class.proficiencies.weapons.join(\", \")}" }
-                Pair { name: "Tools", "{class.proficiencies.tools.join(\", \")}" }
-                Pair { name: "Saving Throws", "{class.proficiencies.saving_throws.join(\", \")}" }
-                Pair { name: "Skills", "{class.proficiencies.skills}" }
+                Proficiencies { proficiencies: class.proficiencies.clone() }
 
                 br {}
                 h3 { "Equipment" }
@@ -73,10 +69,8 @@ pub fn Class(id: String) -> Element {
                 }
 
                 if let Some(features) = class.features.get(&0) {
-                    for ClassFeature { name , description } in features.iter() {
-                        br {}
-                        h3 { "{name}" }
-                        p { "{description}" }
+                    for feature in features.iter() {
+                        ClassFeature { feature: feature.clone() }
                     }
                 }
 
@@ -84,10 +78,8 @@ pub fn Class(id: String) -> Element {
                     if let Some(features) = class.features.get(&lvl) {
                         hr { class: "my-4" }
                         h2 { class: "font-bold", "{lvl.ordinal()} level" }
-                        for ClassFeature { name , description } in features.iter() {
-                            br {}
-                            h3 { "{name}" }
-                            p { "{description}" }
+                        for feature in features.iter() {
+                            ClassFeature { feature: feature.clone() }
                         }
                     }
                 }
@@ -127,7 +119,7 @@ pub fn ClassTable(class: Arc<ClassT>) -> Element {
                                     li { "ASI" }
                                 }
                                 for (_ , feature) in class.features.iter().filter(|(&lvl, _)| lvl == level) {
-                                    for ClassFeature { name , .. } in feature.iter() {
+                                    for ClassFeatureT { name , .. } in feature.iter() {
                                         li { "{name}" }
                                     }
                                 }
@@ -144,5 +136,35 @@ pub fn ClassTable(class: Arc<ClassT>) -> Element {
                 }
             }
         }
+    }
+}
+
+#[component]
+pub fn Proficiencies(proficiencies: ClassProficiencies) -> Element {
+    rsx! {
+        if !proficiencies.armor.is_empty() {
+            Pair { name: "Armor", "{proficiencies.armor.join(\", \")}" }
+        }
+        if !proficiencies.weapons.is_empty() {
+            Pair { name: "Weapons", "{proficiencies.weapons.join(\", \")}" }
+        }
+        if !proficiencies.tools.is_empty() {
+            Pair { name: "Tools", "{proficiencies.tools.join(\", \")}" }
+        }
+        if !proficiencies.saving_throws.is_empty() {
+            Pair { name: "Saving Throws", "{proficiencies.saving_throws.join(\", \")}" }
+        }
+        if !proficiencies.skills.options.is_empty() {
+            Pair { name: "Skills", "{proficiencies.skills}" }
+        }
+    }
+}
+
+#[component]
+pub fn ClassFeature(feature: ClassFeatureT) -> Element {
+    rsx! {
+        br {}
+        h3 { "{feature.name}" }
+        p { "{feature.description}" }
     }
 }

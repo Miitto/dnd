@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::attributes::Attribute;
+use crate::common::Attribute;
 
 use super::damage::Damage;
 

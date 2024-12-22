@@ -47,10 +47,7 @@
             "14": 4
         }
     },
-    "subclasses": {
-        "unlocked": 3,
-        "options": ["Alchemist", "Armorer", "Artillerist", "Battle Smith"]
-    },
+    "subclass_unlock": 3,
     "table_entries": {
         "Infusions Known": {
             "interpolate": true,

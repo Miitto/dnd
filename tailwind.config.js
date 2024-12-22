@@ -20,6 +20,9 @@ module.exports = {
             screens: {
                 header: "800px",
             },
+            listStyleType: {
+                circle: "circle",
+            },
             colors: {
                 border: "hsl(var(--border) / <alpha-value>)",
                 input: "hsl(var(--input) / <alpha-value>)",

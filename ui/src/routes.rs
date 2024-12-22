@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 
 pub mod backgrounds;
 pub mod classes;
+mod feats;
 mod home;
 mod items;
 pub mod races;
@@ -13,7 +14,8 @@ use home::Home;
 use items::*;
 
 use backgrounds::{background::Background, Backgrounds};
-use classes::{class::Class, Classes};
+use classes::{Class, Classes, Subclass};
+use feats::{feat::Feat, Feats};
 use races::{race::Race, Races};
 
 #[derive(Routable, Clone, Debug, PartialEq)]
@@ -49,6 +51,14 @@ pub enum Routes {
         Classes {},
         #[route("/:id")]
         Class { id: String },
+        #[route("/:class_id/:subclass_id")]
+        Subclass { class_id: String, subclass_id: String },
+    #[end_nest]
+    #[nest("/feats")]
+        #[route("/")]
+        Feats {},
+        #[route("/:id")]
+        Feat { id: String },
     #[end_nest]
     #[end_layout]
     #[route("/:..segments")]
@@ -74,6 +84,15 @@ impl Routes {
             Routes::Class { id } => {
                 Routes::Classes {}.add_segment(self.as_segment(id.capitalize()))
             }
+            Routes::Subclass {
+                class_id,
+                subclass_id,
+            } => Routes::Class {
+                id: class_id.clone(),
+            }
+            .add_segment(self.as_segment(subclass_id.capitalize())),
+            Routes::Feats {} => vec![self.as_segment("Feats")],
+            Routes::Feat { id } => Routes::Feats {}.add_segment(self.as_segment(id.capitalize())),
             _ => return None,
         })
     }

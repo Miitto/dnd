@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::dice::Dice;
+use crate::common::Dice;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DamageType(String);

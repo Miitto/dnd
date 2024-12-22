@@ -1,4 +1,4 @@
-use crate::skill::Skill;
+use crate::common::Skill;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Background {
@@ -42,5 +42,11 @@ impl PartialEq<Background> for Background {
 impl PartialEq<str> for Background {
     fn eq(&self, other: &str) -> bool {
         self.name == other
+    }
+}
+
+impl crate::CategoryMut for Background {
+    fn category_mut(&mut self) -> &mut String {
+        &mut self.category
     }
 }

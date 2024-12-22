@@ -1,7 +1,7 @@
 use std::fs::DirEntry;
 use std::path::Path;
 
-use crate::classes::Class;
+use crate::classes::{Class, Subclass};
 
 use crate::fs::constants::{CLASS_BASE_NAME, CLASS_PATH};
 
@@ -38,9 +38,10 @@ pub fn get_classes<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Class>> {
             .collect();
 
         let class_file = class_files.iter().find(|file| {
-            file.file_name()
-                .to_str()
-                .map(|s| s.starts_with(CLASS_BASE_NAME))
+            file.path()
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .map(|s| s == CLASS_BASE_NAME)
                 .unwrap_or(false)
         });
 
@@ -50,22 +51,28 @@ pub fn get_classes<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Class>> {
             continue;
         };
 
-        let read = std::fs::read_to_string(&class_file);
+        let mut class: Class = crate::fs::parse_file(&class_file)?;
 
-        let json = if let Ok(json) = read {
-            json
-        } else {
-            eprintln!("Failed to read file: {:?}", class_file);
-            continue;
-        };
+        for subclass_file in class_files.iter().filter(|file| {
+            file.path()
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .map(|s| s != CLASS_BASE_NAME)
+                .unwrap_or(false)
+        }) {
+            let subclass: Subclass = match crate::fs::parse_file(subclass_file.path()) {
+                Ok(subclass) => subclass,
+                Err(e) => {
+                    eprintln!("Error parsing subclass file: {:?}", e);
+                    continue;
+                }
+            };
 
-        let class: Class = match serde_json::from_str(&json) {
-            Ok(class) => class,
-            Err(e) => {
-                eprintln!("Failed to parse class: {:?}", e);
-                continue;
-            }
-        };
+            class
+                .subclasses
+                .options
+                .insert(subclass.name.clone(), subclass);
+        }
 
         classes.push(class);
     }

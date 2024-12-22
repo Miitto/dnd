@@ -34,7 +34,7 @@ pub fn Backgrounds() -> Element {
     });
 
     rsx! {
-        h1 { class: "underline", "Races" }
+        h1 { class: "underline", "Backgrounds" }
         for (category , backgrounds) in backgrounds_map {
             h2 { class: "text-lg font-semibold", "{category.capitalize()}" }
             ul { class: "list-disc pl-6",

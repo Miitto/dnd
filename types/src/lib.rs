@@ -1,16 +1,21 @@
 use std::sync::Mutex;
 
-pub mod asi;
-pub mod attributes;
 pub mod background;
 pub mod classes;
-pub mod dice;
+pub mod common;
+pub mod feat;
 pub mod fs;
 pub mod items;
 pub mod race;
-pub mod size;
-pub mod skill;
 pub mod stores;
+
+pub trait Category {
+    fn category(&self) -> String;
+}
+
+pub trait CategoryMut {
+    fn category_mut(&mut self) -> &mut String;
+}
 
 pub trait ForceLock<T> {
     fn force_lock(&self) -> std::sync::MutexGuard<'_, T>;

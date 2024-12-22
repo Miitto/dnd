@@ -1,8 +1,8 @@
 use std::borrow::Borrow;
 
-use crate::attributes::Attribute;
+use crate::common::Attribute;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum Skill {
     Acrobatics,
     AnimalHandling,
