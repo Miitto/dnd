@@ -1,10 +1,10 @@
 use dioxus::prelude::*;
-use types::{
-    classes::{CastType, ClassFeature},
-    stores::Store,
-};
+use types::{classes::CastType, stores::Store};
 
-use crate::{routes::classes::class::Proficiencies, Ordinal};
+use crate::{
+    routes::classes::class::{ClassFeature, Proficiencies},
+    Ordinal,
+};
 
 #[component]
 pub fn Subclass(class_id: String, subclass_id: String) -> Element {
@@ -60,10 +60,8 @@ pub fn Subclass(class_id: String, subclass_id: String) -> Element {
                     if let Some(features) = subclass.features.get(&lvl) {
                         hr { class: "my-4" }
                         h2 { class: "font-bold", "{lvl.ordinal()} level" }
-                        for ClassFeature { name , description } in features.iter() {
-                            br {}
-                            h3 { "{name}" }
-                            p { "{description}" }
+                        for feature in features.iter() {
+                            ClassFeature { feature: feature.clone() }
                         }
                     }
                 }

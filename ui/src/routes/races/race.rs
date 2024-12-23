@@ -51,15 +51,15 @@ pub fn Race(id: String) -> Element {
                         table { class: "border w-full",
                             thead { class: "border-b",
                                 tr { class: "*:px-2 *:py-1 *:text-left",
-                                    for header in table[0].iter() {
+                                    for header in table.rows[0].columns.iter() {
                                         th { "{header}" }
                                     }
                                 }
                             }
                             tbody {
-                                for row in table[1..].iter() {
+                                for row in table.rows[1..].iter() {
                                     tr { class: "*:px-2 *:py-1 even:bg-muted",
-                                        for cell in row.iter() {
+                                        for cell in row.columns.iter() {
                                             td { "{cell}" }
                                         }
                                     }

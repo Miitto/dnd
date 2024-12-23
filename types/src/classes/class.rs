@@ -6,7 +6,7 @@ use super::cantrip::ClassCantrip;
 use super::skills::ClassSkills;
 use super::subclass::Subclass;
 use super::table_entry::TableEntry;
-use super::{deserialize_hashmap_array_to_feature, ClassFeature};
+use super::ClassFeature;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum CastType {
@@ -190,7 +190,6 @@ pub struct Class {
     pub hit_die: u8,
     pub proficiencies: ClassProficiencies,
     pub equipment: Vec<String>,
-    #[serde(deserialize_with = "deserialize_hashmap_array_to_feature")]
     pub features: HashMap<u8, Vec<ClassFeature>>,
     pub spellcasting: Option<Attribute>,
     #[serde(default)]

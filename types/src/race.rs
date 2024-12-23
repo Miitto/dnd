@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
-use crate::{common::DescribedSize, common::ASI, CategoryMut};
+use crate::{
+    common::{DescribedSize, Table, ASI},
+    CategoryMut,
+};
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Race {
@@ -12,7 +15,7 @@ pub struct Race {
     pub size: DescribedSize,
     pub speed: u32,
     pub languages: String,
-    pub tables: Vec<Vec<Vec<String>>>,
+    pub tables: Vec<Table>,
     #[serde(default)]
     pub category: String,
     #[serde(flatten)]

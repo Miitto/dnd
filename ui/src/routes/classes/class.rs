@@ -7,7 +7,11 @@ use types::{
     stores::Store,
 };
 
-use crate::{components::info::Pair, DashIfZero, Ordinal};
+use crate::{
+    components::info::{Description, Pair, Table},
+    routes::Routes,
+    DashIfZero, Ordinal,
+};
 
 #[component]
 pub fn Class(id: String) -> Element {
@@ -75,11 +79,31 @@ pub fn Class(id: String) -> Element {
                 }
 
                 for lvl in (1..=20) {
-                    if let Some(features) = class.features.get(&lvl) {
+                    if lvl == class.subclasses.unlocked || class.features.contains_key(&lvl) {
                         hr { class: "my-4" }
                         h2 { class: "font-bold", "{lvl.ordinal()} level" }
-                        for feature in features.iter() {
-                            ClassFeature { feature: feature.clone() }
+
+                        if lvl == class.subclasses.unlocked {
+                            h3 { "Subclasses" }
+                            ul { class: "list-disc pl-6",
+                                for (name , _) in class.subclasses.options.iter() {
+                                    li {
+                                        Link {
+                                            to: Routes::Subclass {
+                                                class_id: class.name.clone(),
+                                                subclass_id: name.clone(),
+                                            },
+                                            "{name}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if let Some(features) = class.features.get(&lvl) {
+                            for feature in features.iter() {
+                                ClassFeature { feature: feature.clone() }
+                            }
                         }
                     }
                 }
@@ -165,6 +189,11 @@ pub fn ClassFeature(feature: ClassFeatureT) -> Element {
     rsx! {
         br {}
         h3 { "{feature.name}" }
-        p { "{feature.description}" }
+        Description { description: feature.description }
+        if !feature.tables.is_empty() {
+            for table in feature.tables.iter() {
+                Table { table: table.clone() }
+            }
+        }
     }
 }

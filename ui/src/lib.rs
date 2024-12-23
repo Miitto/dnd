@@ -29,7 +29,15 @@ pub fn App() -> Element {
         document::Link { rel: "icon", href: FAVICON }
         document::Stylesheet { href: TAILWIND_CSS }
 
-        Router::<Routes> {}
+        Router::<Routes> {
+            config: || {
+                RouterConfig::default()
+                    .on_update(|_| {
+                        document::eval("window.scrollTo(0, 0)");
+                        None
+                    })
+            },
+        }
     }
 }
 
