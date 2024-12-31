@@ -4,8 +4,14 @@ use serde::{Deserialize, Serialize};
 
 use anyhow::{Context, Result};
 
-use crate::items::properties::{AttributeReplacement, EffectType, PropertyEffect};
-use crate::items::{damage::Damage, properties::Property, weapon::Weapon, Rarity};
+use crate::{
+    common::Damage,
+    items::{
+        properties::{AttributeReplacement, EffectType, Property, PropertyEffect},
+        weapon::Weapon,
+        Rarity,
+    },
+};
 
 use crate::fs::constants::*;
 

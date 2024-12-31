@@ -35,3 +35,5 @@ pub const BACKGROUND_PATH: &str = "backgrounds";
 pub const CLASS_PATH: &str = "classes";
 pub const CLASS_BASE_NAME: &str = "class";
 pub const FEAT_PATH: &str = "feats";
+pub const SPELL_PATH: &str = "spells";
+pub const SPELL_LIST_PATH: &str = combine!(SPELL_PATH, "/lists");

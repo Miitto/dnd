@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{damage::Damage, Item, Property, Rarity};
+use super::{Item, Property, Rarity};
+use crate::common::Damage;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Weapon {

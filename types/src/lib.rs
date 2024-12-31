@@ -7,6 +7,7 @@ pub mod feat;
 pub mod fs;
 pub mod items;
 pub mod race;
+pub mod spells;
 pub mod stores;
 
 pub trait Category {

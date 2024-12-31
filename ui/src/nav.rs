@@ -33,6 +33,9 @@ pub fn Navbar() -> Element {
             li {
                 Link { to: Routes::Feats {}, "Feats" }
             }
+            li {
+                Link {to: Routes::SpellLists {}, "Spell Lists"}
+            }
         }
     }
 }

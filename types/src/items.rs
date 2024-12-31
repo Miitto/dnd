@@ -1,7 +1,6 @@
 use properties::Property;
 use serde::{Deserialize, Serialize};
 
-pub mod damage;
 pub mod properties;
 pub mod weapon;
 

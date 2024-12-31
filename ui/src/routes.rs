@@ -6,6 +6,8 @@ mod feats;
 mod home;
 mod items;
 pub mod races;
+pub mod spell_lists;
+pub mod spells;
 
 use crate::layouts::*;
 use crate::Capitalize;
@@ -17,6 +19,8 @@ use backgrounds::{background::Background, Backgrounds};
 use classes::{Class, Classes, Subclass};
 use feats::{feat::Feat, Feats};
 use races::{race::Race, Races};
+use spell_lists::{spell_list::SpellList, SpellLists};
+use spells::spell::Spell;
 
 #[derive(Routable, Clone, Debug, PartialEq)]
 #[rustfmt::skip]
@@ -60,6 +64,18 @@ pub enum Routes {
         #[route("/:id")]
         Feat { id: String },
     #[end_nest]
+    #[nest("/spell_lists")]
+        #[route("/")]
+        SpellLists {},
+        #[route("/:id")]
+        SpellList { id: String },
+    #[end_nest]
+    #[nest("/spells")]
+        //#[route("/")]
+        //Spells {},
+        #[route("/:id")]
+        Spell { id: String },
+    #[end_nest]
     #[end_layout]
     #[route("/:..segments")]
     PageNotFound { segments: Vec<String> },
@@ -93,6 +109,10 @@ impl Routes {
             .add_segment(self.as_segment(subclass_id.capitalize())),
             Routes::Feats {} => vec![self.as_segment("Feats")],
             Routes::Feat { id } => Routes::Feats {}.add_segment(self.as_segment(id.capitalize())),
+            Routes::SpellLists {} => vec![self.as_segment("Spell Lists")],
+            Routes::SpellList { id } => {
+                Routes::SpellLists {}.add_segment(self.as_segment(id.capitalize()))
+            }
             _ => return None,
         })
     }
