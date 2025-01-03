@@ -1,7 +1,7 @@
 use std::{fs::DirEntry, path::Path};
 
 pub mod classes;
-mod constants;
+pub mod constants;
 pub mod spells;
 pub mod weapons;
 

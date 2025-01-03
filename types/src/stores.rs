@@ -79,6 +79,11 @@ impl<T> HashStore<T> {
         let store = self.store.force_lock();
         store.clone()
     }
+
+    pub fn set(&self, name: String, item: T) {
+        let mut store = self.store.force_lock();
+        store.insert(name, Arc::new(item));
+    }
 }
 
 impl<T> HashStore<T>
@@ -94,16 +99,20 @@ where
 #[derive(Debug, Clone, Default)]
 pub struct Store {
     path: Option<PathBuf>,
-    pub weapons: VecStore<Weapon>,
-    pub races: VecStore<Race>,
-    pub backgrounds: VecStore<Background>,
-    pub classes: VecStore<Class>,
-    pub feats: VecStore<crate::feat::Feat>,
-    pub spells: HashStore<Spell>,
-    pub spell_lists: VecStore<SpellList>,
+    pub weapons: Arc<VecStore<Weapon>>,
+    pub races: Arc<VecStore<Race>>,
+    pub backgrounds: Arc<VecStore<Background>>,
+    pub classes: Arc<VecStore<Class>>,
+    pub feats: Arc<VecStore<crate::feat::Feat>>,
+    pub spells: Arc<HashStore<Spell>>,
+    pub spell_lists: Arc<VecStore<SpellList>>,
 }
 
 impl Store {
+    pub fn get_path(&self) -> Option<&Path> {
+        self.path.as_deref()
+    }
+
     pub fn from_path<P>(path: P) -> Self
     where
         P: AsRef<Path>,

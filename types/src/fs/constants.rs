@@ -36,4 +36,6 @@ pub const CLASS_PATH: &str = "classes";
 pub const CLASS_BASE_NAME: &str = "class";
 pub const FEAT_PATH: &str = "feats";
 pub const SPELL_PATH: &str = "spells";
+pub const SPELL_CANTRIPS_PATH: &str = combine!(SPELL_PATH, "/cantrips");
+pub const SPELL_LEVELS_PATH: &str = combine!(SPELL_PATH, "/levelled");
 pub const SPELL_LIST_PATH: &str = combine!(SPELL_PATH, "/lists");

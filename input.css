@@ -47,13 +47,6 @@
 	input, select, textarea {
 		@apply px-3 py-2 rounded border bg-input text-foreground
 	}
-
-    input[type='number']::-webkit-outer-spin-button,
-	input[type='number']::-webkit-inner-spin-button,
-	input[type='number'] {
-		-webkit-appearance: none;
-		-moz-appearance: textfield !important;
-	}
 }
 
 @layer base {

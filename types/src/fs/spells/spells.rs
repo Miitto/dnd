@@ -52,3 +52,13 @@ pub fn get_spells<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Spell>> {
 
     Ok(spells)
 }
+
+impl Spell {
+    pub fn serialize(&self) -> Result<String> {
+        serde_json::to_string(self).map_err(Into::into)
+    }
+
+    pub fn serialize_pretty(&self) -> Result<String> {
+        serde_json::to_string_pretty(self).map_err(Into::into)
+    }
+}

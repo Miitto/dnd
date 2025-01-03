@@ -13,6 +13,22 @@ impl DamageType {
     {
         Self(name.into())
     }
+
+    pub fn set(&mut self, name: String) {
+        self.0 = name;
+    }
+}
+
+impl From<DamageType> for String {
+    fn from(val: DamageType) -> Self {
+        val.0
+    }
+}
+
+impl From<&str> for DamageType {
+    fn from(val: &str) -> Self {
+        Self(val.to_string())
+    }
 }
 
 impl std::fmt::Display for DamageType {

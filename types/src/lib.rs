@@ -48,6 +48,16 @@ impl StartsWithVowel for String {
     }
 }
 
+pub trait IsFalse {
+    fn is_false(&self) -> bool;
+}
+
+impl IsFalse for bool {
+    fn is_false(&self) -> bool {
+        !self
+    }
+}
+
 pub fn proficiency_bonus(level: u8) -> u8 {
     match level {
         1..=4 => 2,

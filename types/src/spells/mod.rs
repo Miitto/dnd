@@ -6,13 +6,15 @@ use std::fmt::{Display, Formatter};
 pub use list::{SpellEntry, SpellList};
 pub use spell::Spell;
 
+use crate::IsFalse;
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Components {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "bool::is_false")]
     pub verbal: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "bool::is_false")]
     pub somatic: bool,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub material: Vec<String>,
 }
 
