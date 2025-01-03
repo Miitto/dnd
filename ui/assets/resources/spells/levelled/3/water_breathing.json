@@ -1,0 +1,17 @@
+{
+  "name": "Water Breathing",
+  "level": 3,
+  "school": "Transmutation",
+  "components": {
+    "verbal": true,
+    "somatic": true,
+    "material": [
+      "a short reed or piece of straw"
+    ]
+  },
+  "cast_time": "1 action",
+  "range": "30",
+  "duration": "24 hours",
+  "description": "This spell grants up to ten willing creatures you can see within range the ability to breathe underwater until the spell ends. Affected creatures also retain their normal mode of respiration.",
+  "ritual": true
+}
