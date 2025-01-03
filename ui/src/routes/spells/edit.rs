@@ -198,14 +198,24 @@ pub fn SpellEdit(id: String) -> Element {
                         p.join(
                             format!(
                                 "{}.json",
-                                spell().name.to_lowercase().replace(" ", "_").replace("-", "_"),
+                                spell()
+                                    .name
+                                    .to_lowercase()
+                                    .replace(" ", "_")
+                                    .replace("-", "_")
+                                    .replace("/", "_")
+                                    .replace("'", "_"),
                             ),
                         )
                     });
                 if let Some(p) = named {
                     let dir = p.parent().expect("Failed to get parent directory");
                     std::fs::create_dir_all(dir).expect("Failed to create directory");
-                    std::fs::write(p, serialized()).expect("Failed to write spell to file");
+                    if let Err(err) = std::fs::write(p, serialized()) {
+                        dioxus::logger::tracing::error!(
+                            "Failed to write spell to file: {:?}", err
+                        );
+                    }
                 }
             },
             "Save"
@@ -375,6 +385,7 @@ fn SaveBlock(attr: Signal<Option<Attribute>>, on_save: Signal<Option<OnSave>>) -
                         value: "{on_save().unwrap_or_default()}",
                         onchange: move |e| on_save.set(Some(e.value().into())),
                         option { value: "Half", "Half" }
+                        option { value: "Debuff", "Debuff" }
                         option { value: "None", "None" }
                     }
                 }

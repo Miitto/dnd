@@ -46,6 +46,7 @@ pub enum OnSave {
     Half,
     #[default]
     None,
+    Debuff,
 }
 
 impl Display for OnSave {
@@ -53,6 +54,7 @@ impl Display for OnSave {
         match self {
             OnSave::Half => write!(f, "Half"),
             OnSave::None => write!(f, "None"),
+            OnSave::Debuff => write!(f, "Debuff"),
         }
     }
 }
@@ -62,6 +64,7 @@ impl From<&str> for OnSave {
         match val {
             "Half" => OnSave::Half,
             "None" => OnSave::None,
+            "Debuff" => OnSave::Debuff,
             _ => OnSave::None,
         }
     }
