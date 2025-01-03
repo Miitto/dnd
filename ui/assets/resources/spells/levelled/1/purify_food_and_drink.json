@@ -1,0 +1,14 @@
+{
+  "name": "Purify Food and Drink",
+  "level": 1,
+  "school": "Transmutation",
+  "components": {
+    "verbal": true,
+    "somatic": true
+  },
+  "cast_time": "1 action",
+  "range": "10",
+  "duration": "Instantaneous",
+  "description": "All nonmagical food and drink within a 5-foot-radius sphere centered on a point of your choice within range is purified and rendered free of poison and disease.",
+  "ritual": true
+}

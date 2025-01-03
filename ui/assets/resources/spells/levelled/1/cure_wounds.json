@@ -3,7 +3,7 @@
     "level": 1,
     "school": "Evocation",
     "cast_time": "1 action",
-    "range": 0,
+    "range": "Touch",
     "components": {
         "verbal": true,
         "somatic": true
