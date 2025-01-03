@@ -101,3 +101,13 @@ impl DashIfZero for u8 {
         }
     }
 }
+
+pub trait Sanitize {
+    fn sanitize(&self) -> String;
+}
+
+impl Sanitize for String {
+    fn sanitize(&self) -> String {
+        self.replace("’", "'")
+    }
+}

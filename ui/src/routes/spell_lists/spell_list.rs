@@ -134,7 +134,15 @@ pub fn SpellList(id: String, page: u8) -> Element {
                                 }
                                 td { class: "italic", "{spell.school}" }
                                 td { "{spell.cast_time}" }
-                                td { "{spell.range} feet" }
+                                td {
+                                    {
+                                        format!(
+                                            "{}{}",
+                                            spell.range,
+                                            if spell.range.parse::<i32>().is_ok() { " feet" } else { "" },
+                                        )
+                                    }
+                                }
                                 td { "{spell.duration}" }
                                 td { "{spell.components}" }
                             }

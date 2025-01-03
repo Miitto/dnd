@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use dioxus::prelude::*;
 
-use types::{spells::OnSave, stores::Store};
+use types::{common::Dice, spells::OnSave, stores::Store};
 
 use crate::components::{
     info::Pair,
-    inputs::{AttrDropdown, StringList},
+    inputs::{AttrDropdown, DiceInput, MultiDamageInput, StringList},
 };
 
 use types::spells::Components as ComponentsT;
@@ -17,8 +17,17 @@ use types::common::Attribute;
 pub fn SpellEdit(id: String) -> Element {
     let store = use_context::<Store>();
 
+    let cantrip_path = store
+        .get_path()
+        .map(|p| p.join(types::fs::constants::SPELL_CANTRIPS_PATH));
+    let levelled_path = store
+        .get_path()
+        .map(|p| p.join(types::fs::constants::SPELL_LEVELS_PATH));
+
     let all = store.spells;
     let lists = store.spell_lists;
+
+    let all_clone = all.clone();
 
     let spell = use_memo(move || {
         let spell = all.get(&id).unwrap_or_default();
@@ -57,7 +66,7 @@ pub fn SpellEdit(id: String) -> Element {
     let level = use_signal(move || spell().level);
     let school = use_signal(move || spell().school.clone());
     let cast_time = use_signal(move || spell().cast_time.clone());
-    let range = use_signal(move || spell().range);
+    let range = use_signal(move || spell().range.clone());
     let duration = use_signal(move || spell().duration.clone());
 
     let components = use_signal(move || spell().components.clone());
@@ -65,12 +74,37 @@ pub fn SpellEdit(id: String) -> Element {
     let save_attr = use_signal(move || spell().save);
     let on_save = use_signal(move || spell().on_save);
 
-    let mut description = use_signal(move || spell().description.clone());
+    let description = use_signal(move || spell().description.clone());
 
-    let mut at_higher_levels = use_signal(move || spell().at_higher_levels.clone());
+    let at_higher_levels = use_signal(move || spell().at_higher_levels.clone());
 
     let mut ritual = use_signal(move || spell().ritual);
     let mut concentration = use_signal(move || spell().concentration);
+
+    let mut damages = use_signal(move || spell().damage.clone());
+    let mut heal = use_signal(move || spell().heal);
+
+    let serialized = use_memo(move || {
+        let mut s = (*spell()).clone();
+        s.level = level();
+        s.school = school();
+        s.cast_time = cast_time();
+        s.range = range();
+        s.duration = duration();
+        s.components = components();
+        s.save = save_attr();
+        s.on_save = on_save();
+        s.description = description();
+        s.at_higher_levels = at_higher_levels();
+        s.ritual = ritual();
+        s.concentration = concentration();
+        s.damage = damages();
+        s.heal = heal();
+
+        all_clone.set(s.name.clone(), s.clone());
+
+        s.serialize_pretty().unwrap_or_default()
+    });
     // endregion
 
     rsx! {
@@ -83,35 +117,7 @@ pub fn SpellEdit(id: String) -> Element {
             duration,
         }
         hr {}
-
-        ComponentBlock { components }
-        hr {}
-
-        SaveBlock { attr: save_attr, on_save }
-        hr {}
-
-        h2 { "Description" }
-        textarea {
-            class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-            value: "{description}",
-            oninput: move |e| description.set(e.value()),
-        }
-        h2 { "At Higher Levels" }
-        textarea {
-            class: "w-full resize-none h-fit max-h-[50svh] min-h-32",
-            value: "{at_higher_levels().unwrap_or_default()}",
-            oninput: move |e| {
-                let val = e.value();
-                if val.is_empty() {
-                    at_higher_levels.set(None);
-                } else {
-                    at_higher_levels.set(Some(val));
-                }
-            },
-        }
-        hr {}
         div { class: "flex flex-col",
-            hr {}
             Checkbox { name: "Concentration",
                 input {
                     r#type: "checkbox",
@@ -136,6 +142,74 @@ pub fn SpellEdit(id: String) -> Element {
                 }
             }
         }
+        hr {}
+
+        ComponentBlock { components }
+        hr {}
+
+        SaveBlock { attr: save_attr, on_save }
+        hr {}
+        TextAreas { description, at_higher_levels }
+        hr {}
+        div { class: "flex flex-col",
+            h2 { "Base" }
+            h3 { "Damage" }
+            div {
+                MultiDamageInput {
+                    value: damages(),
+                    onchange: move |d| {
+                        damages.set(d);
+                    },
+                }
+            }
+
+            h3 { "Healing" }
+            div {
+                DiceInput {
+                    value: heal().unwrap_or_default(),
+                    onchange: move |d: Dice| {
+                        if d.is_effective_zero() {
+                            heal.set(None);
+                        } else {
+                            heal.set(Some(d));
+                        }
+                    },
+                }
+            }
+        }
+
+        hr {}
+        textarea {
+            class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
+            value: "{serialized()}",
+            readonly: true,
+        }
+        br {}
+        button {
+            class: "px-4 py-2 rounded border w-fit h-fit",
+            onclick: move |_| {
+                let path = if level() == 0 {
+                    cantrip_path.clone()
+                } else {
+                    levelled_path.clone().map(|p| p.join(format!("{}", level())))
+                };
+                let named = path
+                    .map(|p| {
+                        p.join(
+                            format!(
+                                "{}.json",
+                                spell().name.to_lowercase().replace(" ", "_").replace("-", "_"),
+                            ),
+                        )
+                    });
+                if let Some(p) = named {
+                    let dir = p.parent().expect("Failed to get parent directory");
+                    std::fs::create_dir_all(dir).expect("Failed to create directory");
+                    std::fs::write(p, serialized()).expect("Failed to write spell to file");
+                }
+            },
+            "Save"
+        }
     }
 }
 
@@ -155,7 +229,7 @@ fn CoreBlock(
     level: Signal<u8>,
     school: Signal<String>,
     cast_time: Signal<String>,
-    range: Signal<u32>,
+    range: Signal<String>,
     duration: Signal<String>,
 ) -> Element {
     rsx! {
@@ -199,9 +273,17 @@ fn CoreBlock(
             Pair { name: "Range", grid: true,
                 input {
                     value: "{range}",
-                    r#type: "number",
-                    min: 0,
-                    oninput: move |e| range.set(e.value().parse().unwrap_or_default()),
+                    oninput: move |e| {
+                        let val = e.value().trim().to_string();
+                        let without_feet = val.ends_with(" feet");
+                        let r = if without_feet {
+                            let v = val.trim_end_matches(" feet").to_string();
+                            if v.parse::<u32>().is_ok() { v } else { val }
+                        } else {
+                            val
+                        };
+                        range.set(r);
+                    },
                 }
             }
 
@@ -226,8 +308,9 @@ fn ComponentBlock(components: Signal<ComponentsT>) -> Element {
                     checked: components().verbal,
                     onchange: move |e| {
                         let checked = e.checked();
-                        components().verbal = checked;
-                        components.set(components());
+                        let mut comp = components();
+                        comp.verbal = checked;
+                        components.set(comp);
                     },
                 }
             }
@@ -238,8 +321,9 @@ fn ComponentBlock(components: Signal<ComponentsT>) -> Element {
                     checked: components().somatic,
                     onchange: move |e| {
                         let checked = e.checked();
-                        components().somatic = checked;
-                        components.set(components());
+                        let mut comp = components();
+                        comp.somatic = checked;
+                        components.set(comp);
                     },
                 }
             }
@@ -250,8 +334,9 @@ fn ComponentBlock(components: Signal<ComponentsT>) -> Element {
                     name: "New",
                     list: components().material,
                     oninput: move |changed| {
-                        components().material = changed;
-                        components.set(components());
+                        let mut comp = components();
+                        comp.material = changed;
+                        components.set(comp);
                     },
                 }
             }
@@ -294,6 +379,31 @@ fn SaveBlock(attr: Signal<Option<Attribute>>, on_save: Signal<Option<OnSave>>) -
                     }
                 }
             }
+        }
+    }
+}
+
+#[component]
+fn TextAreas(description: Signal<String>, at_higher_levels: Signal<Option<String>>) -> Element {
+    rsx! {
+        h2 { "Description" }
+        textarea {
+            class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
+            value: description(),
+            oninput: move |e| description.set(e.value()),
+        }
+        h2 { "At Higher Levels" }
+        textarea {
+            class: "w-full resize-none h-fit max-h-[50svh] min-h-32",
+            value: "{at_higher_levels().unwrap_or_default()}",
+            oninput: move |e| {
+                let val = e.value();
+                if val.is_empty() {
+                    at_higher_levels.set(None);
+                } else {
+                    at_higher_levels.set(Some(val));
+                }
+            },
         }
     }
 }
