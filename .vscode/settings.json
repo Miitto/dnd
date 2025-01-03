@@ -12,10 +12,14 @@
         "Chronepsis",
         "dioxus",
         "Dragonborn",
+        "fieldset",
         "leptos",
         "nonmagical",
+        "onchange",
         "onclick",
+        "oninput",
         "spellcasting",
-        "Tiamat"
+        "Tiamat",
+        "unfound"
     ]
 }

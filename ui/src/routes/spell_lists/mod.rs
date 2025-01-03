@@ -26,6 +26,7 @@ pub fn SpellLists() -> Element {
                     Link {
                         to: Routes::SpellList {
                             id: item.name.to_string(),
+                            page: 0,
                         },
                         "{item.name}"
                     }

@@ -4,7 +4,6 @@ use dioxus::{logger::tracing, prelude::*};
 
 pub mod components;
 mod layouts;
-mod nav;
 mod routes;
 
 const FAVICON: Asset = asset!("assets/favicon.ico");

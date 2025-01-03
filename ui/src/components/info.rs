@@ -2,10 +2,19 @@ use dioxus::prelude::*;
 use types::common::Table as TableT;
 
 #[component]
-pub fn Pair(name: String, children: Element) -> Element {
+pub fn Pair(name: String, grid: Option<bool>, class: Option<String>, children: Element) -> Element {
+    let grid = grid.unwrap_or(false);
+
+    let display = if grid {
+        "grid grid-cols-subgrid col-span-2"
+    } else {
+        "flex flex-row"
+    };
+
+    let class = class.unwrap_or_default();
     rsx! {
-        p { class: "inline-flex gap-x-2",
-            b { "{name}:" }
+        p { class: "{display} gap-x-2 items-center {class}",
+            b { class: "h-fit max-w-fit", "{name}:" }
             {children}
         }
     }

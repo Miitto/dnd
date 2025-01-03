@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::Path, sync::Arc};
 
 use crate::{
     fs::{parse_dir, SPELL_LIST_PATH},
-    spells::{Spell, SpellList},
+    spells::{Spell, SpellEntry, SpellList},
 };
 
 use anyhow::Result;
@@ -27,7 +27,13 @@ pub fn get_spell_lists<P: AsRef<Path>>(
             let spells = list
                 .spells
                 .into_iter()
-                .filter_map(|spell| spells.get(spell.as_str()).map(Arc::clone))
+                .map(|spell| {
+                    if let Some(spell) = spells.get(spell.as_str()).map(Arc::clone) {
+                        SpellEntry::Spell(spell)
+                    } else {
+                        SpellEntry::Name(spell)
+                    }
+                })
                 .collect();
             SpellList {
                 name: list.name,

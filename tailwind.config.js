@@ -17,6 +17,11 @@ module.exports = {
             },
         },
         extend: {
+            gridTemplateColumns: {
+                "auto-fr": "auto 1fr",
+                "fr-auto": "1fr auto",
+                "auto-2": "auto auto",
+            },
             screens: {
                 header: "800px",
             },

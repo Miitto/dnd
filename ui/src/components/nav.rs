@@ -34,7 +34,7 @@ pub fn Navbar() -> Element {
                 Link { to: Routes::Feats {}, "Feats" }
             }
             li {
-                Link {to: Routes::SpellLists {}, "Spell Lists"}
+                Link { to: Routes::SpellLists {}, "Spell Lists" }
             }
         }
     }
@@ -46,7 +46,10 @@ pub fn Breadcrumbs() -> Element {
 
     let segments = route.segments();
 
+    let nav = navigator();
+
     rsx! {
+        button { class: "py-2 px-4 border-r", onclick: move |_| nav.go_back(), "Back" }
         if let Some(segments) = segments {
             nav { class: "p-4 py-2 flex-grow",
                 ul { class: "flex flex-row gap-2",

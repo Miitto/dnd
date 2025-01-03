@@ -1,8 +1,8 @@
-use crate::common::{Attribute, Condition, Damage};
+use crate::common::{Attribute, Condition, Damage, Dice};
 
 use super::{Components, OnSave};
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Spell {
     pub name: String,
     pub level: u8,
@@ -15,7 +15,7 @@ pub struct Spell {
     pub at_higher_levels: Option<String>,
     pub save: Option<Attribute>,
     pub damage: Option<Damage>,
-    pub heal: Option<u8>,
+    pub heal: Option<Dice>,
     pub condition: Option<Condition>,
     #[serde(default)]
     pub concentration: bool,

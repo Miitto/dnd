@@ -44,6 +44,10 @@
 		@apply my-2
 	}
 
+	input, select, textarea {
+		@apply px-3 py-2 rounded border bg-input text-foreground
+	}
+
     input[type='number']::-webkit-outer-spin-button,
 	input[type='number']::-webkit-inner-spin-button,
 	input[type='number'] {

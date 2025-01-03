@@ -20,7 +20,7 @@ use classes::{Class, Classes, Subclass};
 use feats::{feat::Feat, Feats};
 use races::{race::Race, Races};
 use spell_lists::{spell_list::SpellList, SpellLists};
-use spells::spell::Spell;
+use spells::{Spell, SpellEdit};
 
 #[derive(Routable, Clone, Debug, PartialEq)]
 #[rustfmt::skip]
@@ -67,14 +67,17 @@ pub enum Routes {
     #[nest("/spell_lists")]
         #[route("/")]
         SpellLists {},
-        #[route("/:id")]
-        SpellList { id: String },
+        #[redirect("/:id", |id: String| Routes::SpellList { id, page: 0 })]
+        #[route("/:id/:page")]
+        SpellList { id: String, page: u8 },
     #[end_nest]
     #[nest("/spells")]
         //#[route("/")]
         //Spells {},
         #[route("/:id")]
         Spell { id: String },
+        #[route("/:id/edit")]
+        SpellEdit { id: String },
     #[end_nest]
     #[end_layout]
     #[route("/:..segments")]
@@ -110,8 +113,12 @@ impl Routes {
             Routes::Feats {} => vec![self.as_segment("Feats")],
             Routes::Feat { id } => Routes::Feats {}.add_segment(self.as_segment(id.capitalize())),
             Routes::SpellLists {} => vec![self.as_segment("Spell Lists")],
-            Routes::SpellList { id } => {
+            Routes::SpellList { id, .. } => {
                 Routes::SpellLists {}.add_segment(self.as_segment(id.capitalize()))
+            }
+            Routes::Spell { id } => vec![self.as_segment(id.capitalize())],
+            Routes::SpellEdit { id } => {
+                Routes::Spell { id: id.clone() }.add_segment(self.as_segment("Edit"))
             }
             _ => return None,
         })

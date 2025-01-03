@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::{
-    nav::{Breadcrumbs, Nav},
+    components::nav::{Breadcrumbs, Nav},
     routes::Routes,
 };
 
