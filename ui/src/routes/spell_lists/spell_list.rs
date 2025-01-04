@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use crate::{components::ReplaceLink, Ordinal};
-use dioxus::{logger::tracing, prelude::*};
+use dioxus::prelude::*;
 use types::{spells::Spell, stores::Store};
 
 use crate::routes::Routes;
@@ -23,7 +23,6 @@ pub fn SpellList(id: String, page: u8) -> Element {
     }
 
     let partition = use_memo(move || {
-        tracing::debug!("Partitioning spell list");
         if let Some(list) = list() {
             let (found, unfound): (Vec<_>, Vec<_>) =
                 list.spells.iter().cloned().partition(|spell| match spell {
@@ -54,7 +53,6 @@ pub fn SpellList(id: String, page: u8) -> Element {
     });
 
     let levelled = use_memo(move || {
-        tracing::debug!("Leveling spells");
         if let Some(Found { found: list, .. }) = partition() {
             let mut spells = HashMap::new();
 

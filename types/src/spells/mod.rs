@@ -32,7 +32,22 @@ impl Display for Components {
 
         if !self.material.is_empty() {
             components.push("M".into());
-            let material = self.material.join(", ");
+            let comma_list = if self.material.len() > 1 {
+                self.material[..self.material.len() - 1].join(", ")
+            } else {
+                "".into()
+            };
+
+            let material = if self.material.len() > 1 {
+                format!(
+                    "{} and {}",
+                    comma_list,
+                    &self.material[self.material.len() - 1]
+                )
+            } else {
+                self.material[0].clone()
+            };
+
             let bracket = format!("({})", material);
             components.push(bracket);
         }
