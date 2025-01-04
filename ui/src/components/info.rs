@@ -59,7 +59,7 @@ pub fn Table(table: TableT) -> Element {
 #[derive(Debug, Clone, PartialEq)]
 enum Line {
     Text(String),
-    List(Vec<String>),
+    List(Vec<Line>),
 }
 
 #[component]
@@ -71,48 +71,72 @@ pub fn Description(description: String) -> Element {
             .map(|el| el.to_string())
             .collect::<Vec<String>>();
 
-        let mut result = vec![];
-
-        let mut in_list = false;
-
         let mut list = vec![];
 
-        for line in lines {
-            if in_list {
-                if line.starts_with(".") {
-                    list.push(line[1..].to_string());
+        fn parse_depth<I>(iter: &mut I, list: &mut Vec<Line>, depth: usize) -> Option<String>
+        where
+            I: Iterator<Item = String>,
+        {
+            while let Some(line) = iter.next() {
+                if line.chars().all(char::is_whitespace) {
                     continue;
-                } else {
-                    result.push(Line::List(list));
-                    list = vec![];
-                    in_list = false;
                 }
-            } else if line.ends_with(":") {
-                in_list = true;
+
+                let line = line.trim().to_string();
+
+                let line_depth = line.chars().take_while(|c| c == &'.').count();
+
+                let line = line[line_depth..].trim().to_string();
+
+                if line_depth < depth {
+                    return Some(line);
+                }
+
+                if line_depth > depth {
+                    let mut sublist = vec![];
+                    sublist.push(Line::Text(line));
+                    let text = parse_depth(iter, &mut sublist, line_depth);
+                    list.push(Line::List(sublist));
+                    if let Some(text) = text {
+                        list.push(Line::Text(text));
+                    }
+                } else {
+                    list.push(Line::Text(line));
+                }
             }
-            result.push(Line::Text(line));
+
+            None
         }
 
-        if !list.is_empty() {
-            result.push(Line::List(list));
-        }
+        let mut iter = lines.into_iter();
 
-        result
+        parse_depth(&mut iter, &mut list, 0);
+
+        list
     });
     rsx! {
-        for line in lines().iter() {
-            match line {
-                Line::Text(text) => rsx! {
-                    p { class: "py-2", "{text}" }
-                },
-                Line::List(list) => rsx! {
-                    ul { class: "list-disc pl-6",
-                        for item in list.iter() {
-                            li { "{item}" }
-                        }
-                    }
-                },
-            }
+        for line in lines() {
+            LineView { line, in_list: false }
         }
+    }
+}
+
+#[component]
+fn LineView(line: Line, in_list: bool) -> Element {
+    match line {
+        Line::Text(text) => rsx! {
+            if in_list {
+                li { class: "py-2", "{text}" }
+            } else {
+                p { class: "py-2", "{text}" }
+            }
+        },
+        Line::List(list) => rsx! {
+            ul { class: "list-disc pl-6",
+                for line in list {
+                    LineView { line, in_list: true }
+                }
+            }
+        },
     }
 }

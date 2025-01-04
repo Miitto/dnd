@@ -3,8 +3,8 @@ use std::sync::Arc;
 use dioxus::prelude::*;
 use types::stores::Store;
 
-use crate::routes::Routes;
 use crate::Ordinal;
+use crate::{components::info::Description, routes::Routes};
 
 use crate::components::info::Pair;
 
@@ -111,7 +111,7 @@ fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<Arc<SpellList>>) -> Element {
             }
             br {}
 
-            p { "{spell.description}" }
+            Description { description: "{spell.description}" }
 
             if let Some(higher) = spell.at_higher_levels.as_ref() {
                 br {}
