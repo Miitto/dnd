@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use types::common::Table as TableT;
+use types::stat_block::StatBlock;
 
 #[component]
 pub fn Pair(name: String, grid: Option<bool>, class: Option<String>, children: Element) -> Element {
@@ -139,4 +140,9 @@ fn LineView(line: Line, in_list: bool) -> Element {
             }
         },
     }
+}
+
+#[component]
+pub fn StatBlockView(stat_block: StatBlock) -> Element {
+    rsx! {}
 }

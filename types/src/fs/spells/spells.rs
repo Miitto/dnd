@@ -3,7 +3,10 @@ use std::{fs::DirEntry, path::Path};
 use anyhow::Result;
 
 use crate::{
-    fs::{parse_file, recurse_dirs, SPELL_LIST_PATH, SPELL_PATH},
+    fs::{
+        parsers::{parse_file, recurse_dirs},
+        SPELL_LIST_PATH, SPELL_PATH,
+    },
     spells::Spell,
 };
 
@@ -30,7 +33,7 @@ pub fn get_spells<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Spell>> {
         let _ = recurse_dirs(dir, &mut dirs);
     }
 
-    let spells = dirs
+    let serialized = dirs
         .iter()
         .filter_map(|entry| {
             Some(entry).filter(|entry| {
@@ -50,15 +53,5 @@ pub fn get_spells<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Spell>> {
         })
         .collect();
 
-    Ok(spells)
-}
-
-impl Spell {
-    pub fn serialize(&self) -> Result<String> {
-        serde_json::to_string(self).map_err(Into::into)
-    }
-
-    pub fn serialize_pretty(&self) -> Result<String> {
-        serde_json::to_string_pretty(self).map_err(Into::into)
-    }
+    Ok(serialized)
 }

@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 pub mod background;
 pub mod classes;
@@ -8,7 +8,43 @@ pub mod fs;
 pub mod items;
 pub mod race;
 pub mod spells;
+pub mod stat_block;
 pub mod stores;
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(untagged)]
+pub enum Link<T>
+where
+    T: Named,
+{
+    Found(T),
+    NotFound(String),
+}
+
+impl<T> Link<T>
+where
+    T: Named,
+{
+    pub fn name(&self) -> String {
+        match self {
+            Link::Found(t) => t.name(),
+            Link::NotFound(n) => n.to_owned(),
+        }
+    }
+}
+
+impl<T> Named for Arc<Mutex<T>>
+where
+    T: Named,
+{
+    fn name(&self) -> String {
+        self.force_lock().name()
+    }
+}
+
+pub trait Named {
+    fn name(&self) -> String;
+}
 
 pub trait Category {
     fn category(&self) -> String;
@@ -71,29 +107,4 @@ pub fn proficiency_bonus(level: u8) -> u8 {
 
 pub fn is_asi_level(level: u8) -> bool {
     matches!(level, 4 | 8 | 12 | 16 | 19)
-}
-
-pub fn deserialize_hashmap<'de, D, K, T>(
-    d: D,
-) -> std::result::Result<std::collections::HashMap<K, T>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-    K: std::str::FromStr + Eq + std::hash::Hash,
-    T: serde::Deserialize<'de>,
-{
-    fn deserialize_string_key<'de, D, S>(d: D) -> std::result::Result<S, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-        S: std::str::FromStr,
-    {
-        let s: String = serde::Deserialize::deserialize(d).map_err(serde::de::Error::custom)?;
-        s.parse::<S>()
-            .map_err(|_| serde::de::Error::custom(format!("Invalid key: {}", s)))
-    }
-
-    #[derive(serde::Deserialize, Hash, Eq, PartialEq)]
-    struct Wrapper<S: std::str::FromStr>(#[serde(deserialize_with = "deserialize_string_key")] S);
-
-    let dict: std::collections::HashMap<Wrapper<K>, T> = serde::Deserialize::deserialize(d)?;
-    Ok(dict.into_iter().map(|(Wrapper(k), v)| (k, v)).collect())
 }

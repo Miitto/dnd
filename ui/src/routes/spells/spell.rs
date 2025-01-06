@@ -2,13 +2,15 @@ use std::sync::Arc;
 
 use dioxus::prelude::*;
 use types::stores::Store;
+use types::ForceLock;
 
 use crate::Ordinal;
 use crate::{components::info::Description, routes::Routes};
 
-use crate::components::info::Pair;
+use crate::components::info::{Pair, StatBlockView};
 
-use types::spells::{Spell as SpellT, SpellList};
+use types::spells::Spell as SpellT;
+use types::Named;
 
 #[component]
 pub fn Spell(id: String) -> Element {
@@ -21,27 +23,33 @@ pub fn Spell(id: String) -> Element {
     let cloned_id = arc_id.clone();
     let list_id_clone = arc_id.clone();
 
-    let spell = use_memo(move || all.get(&cloned_id));
+    let spell = all.get_arced(&cloned_id);
 
     let spell_lists = use_memo(move || {
         let lock = lists.store.lock();
         if let Ok(lists) = lock {
             lists
                 .iter()
-                .filter(|list| {
-                    list.spells
+                .filter_map(|(_, list)| {
+                    let lock = list.force_lock();
+                    if lock
+                        .spells
                         .iter()
                         .any(|spell| spell.name() == list_id_clone.as_str())
+                    {
+                        Some(lock.name.to_owned())
+                    } else {
+                        None
+                    }
                 })
-                .cloned()
-                .collect::<Vec<_>>()
+                .collect::<Vec<String>>()
         } else {
             vec![]
         }
     });
 
     rsx! {
-        if let Some(spell) = spell() {
+        if let Some(spell) = spell {
             SpellView { spell, spell_lists: spell_lists() }
         } else {
             h1 { "Spell Not Found" }
@@ -56,7 +64,7 @@ pub fn Spell(id: String) -> Element {
 }
 
 #[component]
-fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<Arc<SpellList>>) -> Element {
+fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<String>) -> Element {
     let range_unit = if spell.range.parse::<i32>().is_ok() {
         " feet"
     } else {
@@ -76,7 +84,7 @@ fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<Arc<SpellList>>) -> Element {
             h1 { "{spell.name}" }
             Link {
                 to: Routes::SpellEdit {
-                    id: spell.name.to_string(),
+                    id: spell.name.to_owned(),
                 },
                 "Edit"
             }
@@ -123,13 +131,21 @@ fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<Arc<SpellList>>) -> Element {
                 for (idx , list) in spell_lists.iter().enumerate() {
                     Link {
                         to: Routes::SpellList {
-                            id: list.name.clone(),
+                            id: list.clone(),
                             page: spell.level,
                         },
-                        "{list.name}"
+                        "{list}"
                     }
                     if idx < spell_lists.len() - 1 {
                         ", "
+                    }
+                }
+            }
+            if !spell.appended_stat_blocks.is_empty() {
+                br {}
+                for stat_block in spell.appended_stat_blocks.iter() {
+                    if let types::Link::Found(stat_block) = stat_block {
+                        StatBlockView { stat_block: stat_block.force_lock().clone() }
                     }
                 }
             }

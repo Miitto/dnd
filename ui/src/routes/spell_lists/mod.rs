@@ -10,8 +10,8 @@ pub fn SpellLists() -> Element {
     let store = use_context::<Store>();
     let store = store.spell_lists;
 
-    let all = use_hook(|| {
-        let mut all = store.all();
+    let all = use_memo(move || {
+        let mut all = store.all_vec();
 
         all.sort_by_key(|r| r.name.to_string());
 
@@ -21,7 +21,7 @@ pub fn SpellLists() -> Element {
     rsx! {
         h1 { class: "underline", "Spell Lists" }
         ul { class: "list-disc pl-6",
-            for item in all {
+            for item in all() {
                 li { key: item.name,
                     Link {
                         to: Routes::SpellList {

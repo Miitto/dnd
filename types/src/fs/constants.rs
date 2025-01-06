@@ -39,3 +39,4 @@ pub const SPELL_PATH: &str = "spells";
 pub const SPELL_CANTRIPS_PATH: &str = combine!(SPELL_PATH, "/cantrips");
 pub const SPELL_LEVELS_PATH: &str = combine!(SPELL_PATH, "/levelled");
 pub const SPELL_LIST_PATH: &str = combine!(SPELL_PATH, "/lists");
+pub const STAT_BLOCK_PATH: &str = "stat_blocks";

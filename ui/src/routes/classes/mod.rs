@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use dioxus::prelude::*;
 use types::{classes::Class as ClassT, stores::Store};
 
@@ -17,7 +15,7 @@ pub fn Classes() -> Element {
     let class_store = store.classes;
 
     let classes = use_memo(move || {
-        let mut class = class_store.all();
+        let mut class = class_store.all_vec();
 
         class.sort_by_key(|r| r.name.to_string());
 
@@ -45,10 +43,9 @@ pub fn Classes() -> Element {
 }
 
 #[component]
-pub fn SubclassList(class: Arc<ClassT>) -> Element {
-    let class_c = Arc::clone(&class);
+pub fn SubclassList(class: ClassT) -> Element {
     let subclasses = use_memo(move || {
-        let mut subclasses = class_c
+        let mut subclasses = class
             .subclasses
             .options
             .values()

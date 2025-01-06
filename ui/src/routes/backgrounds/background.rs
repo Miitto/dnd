@@ -6,10 +6,10 @@ use types::stores::Store;
 pub fn Background(id: String) -> Element {
     let store = use_context::<Store>();
     let background_store = store.backgrounds;
-    let background = use_memo(move || background_store.get(&id));
+    let background = background_store.get_clone(&id);
 
     rsx! {
-        if let Some(background) = background() {
+        if let Some(background) = background {
             h1 { "{background.name}" }
 
             div { class: "flex flex-col",

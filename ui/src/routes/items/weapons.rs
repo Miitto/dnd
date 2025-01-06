@@ -8,7 +8,7 @@ pub fn Weapons() -> Element {
     let store = use_context::<Store>();
     let weapon_store = store.weapons;
 
-    let sorted_melee = use_hook(|| {
+    let sorted_melee = use_memo(move || {
         let mut melee = weapon_store.melee();
 
         melee.sort_by_key(|w| w.name().to_string());
@@ -20,7 +20,7 @@ pub fn Weapons() -> Element {
         h1 { class: "underline", "Weapons" }
         h2 { "Melee" }
         ul { class: "list-disc pl-6",
-            for melee in sorted_melee {
+            for melee in sorted_melee() {
                 li { key: melee.name(),
                     Link {
                         to: Routes::Weapon {

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::deserialize_hashmap;
+use crate::fs::deserializers::deserialize_hashmap;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct TableEntry {

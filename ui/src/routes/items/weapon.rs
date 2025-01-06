@@ -6,10 +6,10 @@ use types::stores::Store;
 pub fn Weapon(id: String) -> Element {
     let store = use_context::<Store>();
     let weapon_store = store.weapons;
-    let weapon = use_memo(move || weapon_store.get(&id));
+    let weapon = weapon_store.get_clone(&id);
 
     rsx! {
-        if let Some(weapon) = weapon() {
+        if let Some(weapon) = weapon {
             h1 { "{weapon.name}" }
 
             div { class: "flex flex-col",

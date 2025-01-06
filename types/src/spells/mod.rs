@@ -3,12 +3,12 @@ mod spell;
 
 use std::fmt::{Display, Formatter};
 
-pub use list::{SpellEntry, SpellList};
+pub use list::SpellList;
 pub use spell::Spell;
 
 use crate::IsFalse;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, PartialEq)]
 pub struct Components {
     #[serde(default, skip_serializing_if = "bool::is_false")]
     pub verbal: bool,
@@ -56,7 +56,7 @@ impl Display for Components {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, Copy)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, Copy, PartialEq)]
 pub enum OnSave {
     Half,
     #[default]

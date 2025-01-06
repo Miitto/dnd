@@ -1,0 +1,41 @@
+{
+    "name": "Construct Spirit",
+    "size": "Medium",
+    "creature_type": "Construct",
+    "armor_class": "13 + the level of the spell (natural armor)",
+    "hit_points": "40 + 15 per spell level above 4th",
+    "speed": 30,
+    "attributes": {
+        "strength": 14,
+        "dexterity": 12,
+        "constitution": 14,
+        "intelligence": 10,
+        "wisdom": 11,
+        "charisma": 10
+    },
+    "damage_resistances": ["poison"],
+    "condition_immunities": [
+        "charmed",
+        "exhaustion",
+        "frightened",
+        "incapacitated",
+        "paralyzed",
+        "petrified",
+        "poisoned"
+    ],
+    "darkvision": 60,
+    "passive_perception": 10,
+    "challenge_rating": 0,
+    "proficiency_bonus": "Your bonus",
+    "other_attributes": {
+        "Heated Body (Metal Only)": "A creature that touches the construct or hits it with a melee attack while within 5 feet of it takes 1d10 fire damage.",
+        "Stony Lethargy (Stone Only)": "When a creature the construct can see starts its turn within 10 feet of the construct, the construct can force it to make a Wisdom saving throw against your spell save DC. On a failed save, the target can't use reactions and its speed is halved until the start of its next turn."
+    },
+    "actions": {
+        "Slam": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
+        "Multiattack": "The construct makes a number of attacks equal to half this spell's level (rounded down)."
+    },
+    "reactions": {
+        "Berserk Lashing (Clay Only)": "When the construct takes damage, it makes a slam attack against a random creature within 5 feet of it. If no creature is within reach, the construct moves up to half its speed toward an enemy it can see, without provoking opportunity attacks."
+    }
+}

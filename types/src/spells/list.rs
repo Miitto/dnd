@@ -1,34 +1,16 @@
-use std::sync::Arc;
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
+
+use crate::Link;
 
 use super::spell::Spell;
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum SpellEntry {
-    Name(String),
-    Spell(Arc<Spell>),
-}
-
-impl SpellEntry {
-    pub fn name(&self) -> &str {
-        match self {
-            SpellEntry::Name(name) => name,
-            SpellEntry::Spell(spell) => &spell.name,
-        }
-    }
-
-    pub fn found(&mut self, spell: Arc<Spell>) {
-        if let SpellEntry::Name(name) = self {
-            if *name == spell.name {
-                *self = SpellEntry::Spell(spell);
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SpellList {
     pub name: String,
-    pub spells: Vec<SpellEntry>,
+    pub spells: Vec<Link<Arc<Mutex<Spell>>>>,
 }
 
 impl PartialEq<str> for SpellList {
@@ -37,10 +19,60 @@ impl PartialEq<str> for SpellList {
     }
 }
 
+impl PartialEq for SpellList {
+    fn eq(&self, other: &SpellList) -> bool {
+        self.name == other.name && self.spells.len() == other.spells.len()
+    }
+}
+
 impl SpellList {
-    pub fn found(&mut self, spell: Arc<Spell>) {
-        for entry in self.spells.iter_mut() {
-            entry.found(spell.clone());
-        }
+    pub fn found(&mut self, spell: Arc<Mutex<Spell>>) {
+        let name = spell.lock().unwrap().name.clone();
+
+        self.spells.iter_mut().for_each(|link| {
+            if let Link::NotFound(n) = link {
+                if n == &name {
+                    *link = Link::Found(Arc::clone(&spell));
+                }
+            }
+        });
+    }
+
+    pub fn link(&mut self, spells: &HashMap<String, Arc<Mutex<Spell>>>) {
+        self.spells.iter_mut().for_each(|spell| {
+            if let Link::NotFound(name) = spell {
+                if let Some(found) = spells.get(name) {
+                    *spell = Link::Found(Arc::clone(found));
+                }
+            }
+        });
+    }
+
+    pub fn partitioned(&self) -> (Vec<Arc<Mutex<Spell>>>, Vec<String>) {
+        let (found, unfound): (Vec<_>, Vec<_>) =
+            self.spells.iter().cloned().partition(|spell| match spell {
+                Link::NotFound(_) => false,
+                Link::Found(_) => true,
+            });
+
+        let found = found.into_iter().map(|spell| match spell {
+            Link::Found(found) => found,
+            _ => unreachable!(),
+        });
+
+        let unfound = unfound.into_iter().map(|spell| match spell {
+            Link::NotFound(name) => name,
+            _ => unreachable!(),
+        });
+
+        (found.collect(), unfound.collect())
+    }
+
+    pub fn partitioned_clone(&self) -> (Vec<Spell>, Vec<String>) {
+        let (found, unfound) = self.partitioned();
+
+        let found = found.into_iter().map(|spell| spell.lock().unwrap().clone());
+
+        (found.collect(), unfound)
     }
 }

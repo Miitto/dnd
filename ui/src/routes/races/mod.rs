@@ -13,8 +13,8 @@ pub fn Races() -> Element {
     let store = use_context::<Store>();
     let race_store = store.races;
 
-    let races_map = use_hook(|| {
-        let mut races = race_store.all();
+    let races_map = use_memo(move || {
+        let mut races = race_store.all_vec();
 
         races.sort_by_key(|r| r.name.to_string());
 
@@ -35,7 +35,7 @@ pub fn Races() -> Element {
 
     rsx! {
         h1 { class: "underline", "Races" }
-        for (category , races) in races_map {
+        for (category , races) in races_map() {
             h2 { class: "text-lg font-semibold", "{category.capitalize()}" }
             ul { class: "list-disc pl-6",
                 for race in races {

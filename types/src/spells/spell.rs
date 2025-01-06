@@ -1,16 +1,16 @@
-use std::{marker::PhantomData, vec};
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 
 use crate::{
     common::{Attribute, Condition, Damage, Dice},
-    IsFalse,
+    stat_block::StatBlock,
+    IsFalse, Link, Named,
 };
 
 use super::{Components, OnSave};
-
-use serde::{
-    de::{MapAccess, SeqAccess, Visitor},
-    Deserialize,
-};
+use anyhow::Result;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Spell {
@@ -26,11 +26,7 @@ pub struct Spell {
     pub at_higher_levels: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub save: Option<Attribute>,
-    #[serde(
-        default,
-        deserialize_with = "deserialize_vec_or_map",
-        skip_serializing_if = "Vec::is_empty"
-    )]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub damage: Vec<Damage>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heal: Option<Dice>,
@@ -42,6 +38,8 @@ pub struct Spell {
     pub ritual: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub on_save: Option<OnSave>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub appended_stat_blocks: Vec<Link<Arc<Mutex<StatBlock>>>>,
 }
 
 impl PartialEq<str> for Spell {
@@ -51,44 +49,33 @@ impl PartialEq<str> for Spell {
 }
 
 impl PartialEq for Spell {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &Spell) -> bool {
         self.name == other.name
     }
 }
 
-fn deserialize_vec_or_map<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-    T: serde::Deserialize<'de>,
-{
-    struct VecOrSingle<T>(PhantomData<T>);
-    impl<'de, T> Visitor<'de> for VecOrSingle<T>
-    where
-        T: serde::Deserialize<'de>,
-    {
-        type Value = Vec<T>;
-
-        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-            formatter.write_str("a sequence or a single element")
-        }
-
-        fn visit_seq<A>(self, seq: A) -> Result<Self::Value, A::Error>
-        where
-            A: SeqAccess<'de>,
-        {
-            Deserialize::deserialize(serde::de::value::SeqAccessDeserializer::new(seq))
-        }
-
-        fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
-        where
-            A: MapAccess<'de>,
-        {
-            Deserialize::deserialize(serde::de::value::MapAccessDeserializer::new(map))
-                .map(|x| vec![x])
-        }
+impl Spell {
+    pub fn link_stat_blocks(&mut self, stat_blocks: &HashMap<String, Arc<Mutex<StatBlock>>>) {
+        self.appended_stat_blocks.iter_mut().for_each(|stat_block| {
+            if let Link::NotFound(name) = stat_block {
+                if let Some(found) = stat_blocks.get(name) {
+                    *stat_block = Link::Found(Arc::clone(found));
+                }
+            }
+        });
     }
 
-    let res: Result<Vec<T>, D::Error> = deserializer.deserialize_any(VecOrSingle(PhantomData));
+    pub fn serialize(&self) -> Result<String> {
+        serde_json::to_string(self).map_err(Into::into)
+    }
 
-    res
+    pub fn serialize_pretty(&self) -> Result<String> {
+        serde_json::to_string_pretty(self).map_err(Into::into)
+    }
+}
+
+impl Named for Spell {
+    fn name(&self) -> String {
+        self.name.to_owned()
+    }
 }

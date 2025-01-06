@@ -51,7 +51,7 @@ pub fn get_classes<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Class>> {
             continue;
         };
 
-        let mut class: Class = crate::fs::parse_file(&class_file)?;
+        let mut class: Class = crate::fs::parsers::parse_file(&class_file)?;
 
         for subclass_file in class_files.iter().filter(|file| {
             file.path()
@@ -60,7 +60,7 @@ pub fn get_classes<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Class>> {
                 .map(|s| s != CLASS_BASE_NAME)
                 .unwrap_or(false)
         }) {
-            let subclass: Subclass = match crate::fs::parse_file(subclass_file.path()) {
+            let subclass: Subclass = match crate::fs::parsers::parse_file(subclass_file.path()) {
                 Ok(subclass) => subclass,
                 Err(e) => {
                     eprintln!("Error parsing subclass file: {:?}", e);

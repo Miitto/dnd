@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use dioxus::prelude::*;
+use types::background::Background;
 use types::stores::Store;
 
 use crate::routes::Routes;
@@ -13,8 +14,8 @@ pub fn Backgrounds() -> Element {
     let store = use_context::<Store>();
     let background_store = store.backgrounds;
 
-    let backgrounds_map = use_hook(|| {
-        let mut backgrounds = background_store.all();
+    let backgrounds_map = use_memo(move || {
+        let mut backgrounds: Vec<Background> = background_store.all_vec();
 
         backgrounds.sort_by_key(|r| r.name.to_string());
 
@@ -35,7 +36,7 @@ pub fn Backgrounds() -> Element {
 
     rsx! {
         h1 { class: "underline", "Backgrounds" }
-        for (category , backgrounds) in backgrounds_map {
+        for (category , backgrounds) in backgrounds_map() {
             h2 { class: "text-lg font-semibold", "{category.capitalize()}" }
             ul { class: "list-disc pl-6",
                 for background in backgrounds {

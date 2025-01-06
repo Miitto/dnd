@@ -17,10 +17,10 @@ use crate::{
 pub fn Class(id: String) -> Element {
     let store = use_context::<Store>();
     let class_store = store.classes;
-    let class = use_memo(move || class_store.get(&id));
+    let class = class_store.get_arced(&id);
 
     rsx! {
-        if let Some(class) = class() {
+        if let Some(class) = class {
             h1 { "{class.name}" }
 
             div { class: "flex flex-col",

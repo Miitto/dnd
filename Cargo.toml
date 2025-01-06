@@ -1,8 +1,8 @@
 [package]
-name = "dnd"
-version = "0.1.0"
 authors = ["Miitto <wpbickerton@gmail.com>"]
 edition = "2021"
+name = "dnd"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,26 +10,26 @@ edition = "2021"
 members = ["server", "types", "ui"]
 
 [workspace.dependencies]
-dioxus = { version = "0.6.1", features = ["router", "fullstack"] }
-types = { path = "types" }
+anyhow = "1.0.95"
+dioxus = { version = "0.6.1", features = ["fullstack", "router"] }
+serde = { version = "1.0.217", features = ["derive", "rc"] }
+serde_json = "1.0.134"
 server = { path = "server" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-anyhow = "1.0.94"
+types = { path = "types" }
 
 [dependencies]
 anyhow.workspace = true
 dioxus.workspace = true
-ui.path = "ui"
 serde.workspace = true
 serde_json.workspace = true
+ui.path = "ui"
 
 [features]
 default = ["desktop"]
-web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 server = ["dioxus/server"]
+web = ["dioxus/web"]
 
 [profile]
 

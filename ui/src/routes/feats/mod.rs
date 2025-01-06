@@ -10,8 +10,8 @@ pub fn Feats() -> Element {
     let store = use_context::<Store>();
     let feat_store = store.feats;
 
-    let feats = use_hook(|| {
-        let mut all = feat_store.all();
+    let feats = use_memo(move || {
+        let mut all = feat_store.all_vec();
 
         all.sort_by_key(|r| r.name.to_string());
 
@@ -21,7 +21,7 @@ pub fn Feats() -> Element {
     rsx! {
         h1 { class: "underline", "Feats" }
         ul { class: "list-disc pl-6",
-            for feat in feats {
+            for feat in feats() {
                 li { key: feat.name,
                     Link {
                         to: Routes::Feat {

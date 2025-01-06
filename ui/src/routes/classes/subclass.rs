@@ -10,11 +10,13 @@ use crate::{
 pub fn Subclass(class_id: String, subclass_id: String) -> Element {
     let store = use_context::<Store>();
     let store = store.classes;
-    let class = use_memo(move || store.get(&class_id));
-    let subclass = use_memo(move || class().and_then(|c| c.subclasses.get(&subclass_id).cloned()));
+    let class = store.get_clone(&class_id);
+    let subclass = class
+        .as_ref()
+        .and_then(|c| c.subclasses.get(&subclass_id).cloned());
 
     rsx! {
-        if let (Some(class), Some(subclass)) = (class(), subclass()) {
+        if let (Some(class), Some(subclass)) = (class.as_ref(), subclass) {
             h1 { "{subclass.name}" }
             div { class: "flex flex-col",
                 for split in subclass.description.lines() {
@@ -67,7 +69,7 @@ pub fn Subclass(class_id: String, subclass_id: String) -> Element {
                 }
             }
         } else {
-            if class().is_some() {
+            if class.is_some() {
                 "Subclass not found"
             } else {
                 "Class not found"

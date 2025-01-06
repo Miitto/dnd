@@ -6,10 +6,10 @@ use types::stores::Store;
 pub fn Race(id: String) -> Element {
     let store = use_context::<Store>();
     let race_store = store.races;
-    let race = use_memo(move || race_store.get(&id));
+    let race = race_store.get_clone(&id);
 
     rsx! {
-        if let Some(race) = race() {
+        if let Some(race) = race {
             h1 { "{race.name}" }
 
             div { class: "flex flex-col",

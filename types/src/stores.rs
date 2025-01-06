@@ -10,10 +10,8 @@ use crate::{
     background::Background,
     classes::Class,
     fs::{
-        classes::class::get_classes,
-        get_backgrounds, get_feats, get_races,
-        spells::{get_spell_lists, get_spells},
-        weapons::weapon::get_weapons,
+        classes::class::get_classes, get_backgrounds, get_feats, get_races, get_spell_lists,
+        get_stat_blocks, spells::get_spells, weapons::weapon::get_weapons,
     },
     items::weapon::Weapon,
     race::Race,
@@ -22,51 +20,17 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct VecStore<T> {
-    pub store: Arc<Mutex<Vec<Arc<T>>>>,
-}
-
-impl<T> Default for VecStore<T> {
-    fn default() -> Self {
-        VecStore {
-            store: Arc::new(Mutex::new(Vec::new())),
-        }
-    }
-}
-
-impl<T> VecStore<T> {
-    pub fn all(&self) -> Vec<Arc<T>> {
-        let store = self.store.force_lock();
-        store.clone()
-    }
-}
-
-impl<T> VecStore<T>
+pub struct HashStore<T>
 where
-    T: PartialEq<str>,
+    T: PartialEq<str> + Clone,
 {
-    pub fn get(&self, name: &str) -> Option<Arc<T>> {
-        let store = self.store.force_lock();
-        store.iter().find(|&w| **w == *name).map(Arc::clone)
-    }
+    pub store: Arc<Mutex<HashMap<String, Arc<Mutex<T>>>>>,
 }
 
-impl VecStore<Weapon> {
-    pub fn melee(&self) -> Vec<Arc<Weapon>> {
-        self.all()
-            .iter()
-            .filter(|w| w.is_melee())
-            .cloned()
-            .collect()
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct HashStore<T> {
-    pub store: Arc<Mutex<HashMap<String, Arc<T>>>>,
-}
-
-impl<T> Default for HashStore<T> {
+impl<T> Default for HashStore<T>
+where
+    T: PartialEq<str> + Clone,
+{
     fn default() -> Self {
         Self {
             store: Arc::new(Mutex::new(HashMap::new())),
@@ -74,38 +38,79 @@ impl<T> Default for HashStore<T> {
     }
 }
 
-impl<T> HashStore<T> {
-    pub fn all(&self) -> HashMap<String, Arc<T>> {
+impl<T> HashStore<T>
+where
+    T: PartialEq<str> + Clone,
+{
+    pub fn all(&self) -> HashMap<String, T> {
         let store = self.store.force_lock();
-        store.clone()
+        store
+            .iter()
+            .map(|(k, v)| (k.clone(), (v.lock().expect("Failed to lock item")).clone()))
+            .collect()
+    }
+
+    pub fn all_vec(&self) -> Vec<T> {
+        let store = self.store.force_lock();
+        store
+            .values()
+            .map(|v| (v.lock().expect("Failed to lock item")).clone())
+            .collect()
     }
 
     pub fn set(&self, name: String, item: T) {
         let mut store = self.store.force_lock();
-        store.insert(name, Arc::new(item));
+        let existing = store.get(&name);
+        if let Some(existing) = existing {
+            *existing.lock().expect("Failed to lock existing item") = item;
+        } else {
+            store.insert(name, Arc::new(Mutex::new(item)));
+        }
+    }
+
+    pub fn get(&self, name: &str) -> Option<Arc<Mutex<T>>> {
+        let store = self.store.force_lock();
+        store.get(name).map(Arc::clone)
+    }
+
+    pub fn get_clone(&self, name: &str) -> Option<T> {
+        self.get(name)
+            .map(|item| item.lock().expect("Failed to lock item").clone())
+    }
+
+    pub fn get_arced(&self, name: &str) -> Option<Arc<T>> {
+        self.get_clone(name).map(Arc::new)
     }
 }
 
-impl<T> HashStore<T>
-where
-    T: PartialEq<str>,
-{
-    pub fn get(&self, name: &str) -> Option<Arc<T>> {
-        let store = self.store.force_lock();
-        store.get(name).map(Arc::clone)
+impl HashStore<Weapon> {
+    pub fn melee(&self) -> Vec<Weapon> {
+        self.store
+            .force_lock()
+            .values()
+            .filter_map(|item| {
+                let item = item.lock().expect("Failed to lock item");
+                if item.is_melee() {
+                    Some(item.clone())
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 }
 
 #[derive(Debug, Clone, Default)]
 pub struct Store {
     path: Option<PathBuf>,
-    pub weapons: Arc<VecStore<Weapon>>,
-    pub races: Arc<VecStore<Race>>,
-    pub backgrounds: Arc<VecStore<Background>>,
-    pub classes: Arc<VecStore<Class>>,
-    pub feats: Arc<VecStore<crate::feat::Feat>>,
+    pub weapons: Arc<HashStore<Weapon>>,
+    pub races: Arc<HashStore<Race>>,
+    pub backgrounds: Arc<HashStore<Background>>,
+    pub classes: Arc<HashStore<Class>>,
+    pub feats: Arc<HashStore<crate::feat::Feat>>,
     pub spells: Arc<HashStore<Spell>>,
-    pub spell_lists: Arc<VecStore<SpellList>>,
+    pub spell_lists: Arc<HashStore<SpellList>>,
+    pub stat_blocks: Arc<HashStore<crate::stat_block::StatBlock>>,
 }
 
 impl Store {
@@ -123,47 +128,55 @@ impl Store {
 
         store.path = Some(path.clone());
 
-        macro_rules! impl_vec_store {
+        macro_rules! impl_store {
             ($type:ty, $get_fn:ident, $sub:ident) => {{
-                impl_vec_store!($type, $get_fn, $sub, Arc::new);
-            }};
-            ($type:ty, $get_fn:ident, $sub:ident, $map:expr) => {{
                 let store = &mut store.$sub.store.lock().expect("Failed to lock $type");
 
                 match $get_fn(&path) {
-                    Ok(items) => store.extend(items.into_iter().map($map)),
+                    Ok(items) => store.extend(
+                        items
+                            .into_iter()
+                            .map(|item| (item.name.clone(), Arc::new(Mutex::new(item)))),
+                    ),
                     Err(e) => eprintln!("Failed to get $type: {:?}", e),
                 }
             }};
         }
 
-        macro_rules! impl_hash_store {
-            ($type:ty, $get_fn:ident, $sub:ident) => {{
-                impl_vec_store!($type, $get_fn, $sub, |item| (
-                    item.name.clone(),
-                    Arc::new(item)
-                ))
-            }};
-        }
-
-        impl_vec_store!(Weapon, get_weapons, weapons);
-        impl_vec_store!(Race, get_races, races);
-        impl_vec_store!(Background, get_backgrounds, backgrounds);
-        impl_vec_store!(Class, get_classes, classes);
-        impl_vec_store!(crate::feat::Feat, get_feats, feats);
-        impl_hash_store!(Spell, get_spells, spells);
+        impl_store!(Weapon, get_weapons, weapons);
+        impl_store!(Race, get_races, races);
+        impl_store!(Background, get_backgrounds, backgrounds);
+        impl_store!(Class, get_classes, classes);
+        impl_store!(crate::feat::Feat, get_feats, feats);
+        impl_store!(Spell, get_spells, spells);
+        impl_store!(SpellList, get_spell_lists, spell_lists);
+        impl_store!(StatBlock, get_stat_blocks, stat_blocks);
 
         {
-            let mut lists = store
-                .spell_lists
-                .store
-                .lock()
-                .expect("Failed to lock spell lists");
-            let spells = store.spells.store.lock().expect("Failed to lock spells");
+            let stats = store.stat_blocks.store.force_lock();
+            dbg!(stats.keys().collect::<Vec<_>>());
+        }
 
-            match get_spell_lists(&path, &spells) {
-                Ok(items) => lists.extend(items.into_iter().map(Arc::new)),
-                Err(e) => eprintln!("Failed to get spell lists: {:?}", e),
+        {
+            let spells = store.spells.store.force_lock();
+            let lock = store.spell_lists.store.force_lock();
+
+            for list in lock.values() {
+                list.lock()
+                    .expect("Failed to lock spell list")
+                    .link(&spells);
+            }
+        }
+
+        {
+            let stats = store.stat_blocks.store.force_lock();
+            let spells = store.spells.store.force_lock();
+
+            for spell in spells.values() {
+                spell
+                    .lock()
+                    .expect("Failed to lock spell")
+                    .link_stat_blocks(&stats);
             }
         }
 

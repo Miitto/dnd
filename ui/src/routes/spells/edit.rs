@@ -1,8 +1,8 @@
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use dioxus::prelude::*;
 
-use types::{common::Dice, spells::OnSave, stores::Store};
+use types::{common::Dice, spells::OnSave, stores::Store, ForceLock};
 
 use crate::components::{
     info::Pair,
@@ -27,39 +27,39 @@ pub fn SpellEdit(id: String) -> Element {
     let all = store.spells;
     let lists = store.spell_lists;
 
-    let all_clone = all.clone();
+    let spell_locked = {
+        let spell_locked = all.get(&id).unwrap_or_default();
 
-    let spell = use_memo(move || {
-        let spell = all.get(&id).unwrap_or_default();
+        let spell = spell_locked.force_lock();
 
         if spell.name != id {
             let mut clone = (*spell).clone();
             clone.name = id.clone();
-            let arc = Arc::new(clone);
+            let arc = Arc::new(Mutex::new(clone));
             all.store
                 .lock()
                 .expect("Failed to lock Spells when inserting new spell")
                 .insert(id.clone(), arc.clone());
 
-            let mut lists = lists
+            let lists = lists
                 .store
                 .lock()
                 .expect("Failed to lock SpellLists on new spell");
 
-            *lists = lists
-                .iter()
-                .map(|list| {
-                    let mut list = (**list).clone(); // Clone the list so we can insert the new spell without borrowing issues
-                    list.found(arc.clone());
-                    Arc::new(list)
-                })
-                .collect();
+            lists.iter().for_each(|(_, list)| {
+                (*list.force_lock()).found(arc.clone());
+            });
 
             arc
         } else {
-            spell
+            drop(spell);
+            spell_locked
         }
-    });
+    };
+
+    let spell_lock_clone = spell_locked.clone();
+
+    let spell = use_memo(move || spell_lock_clone.force_lock().clone());
 
     // region: Signal
     let name = use_signal(move || spell().name.clone());
@@ -85,25 +85,25 @@ pub fn SpellEdit(id: String) -> Element {
     let mut heal = use_signal(move || spell().heal);
 
     let serialized = use_memo(move || {
-        let mut s = (*spell()).clone();
-        s.level = level();
-        s.school = school();
-        s.cast_time = cast_time();
-        s.range = range();
-        s.duration = duration();
-        s.components = components();
-        s.save = save_attr();
-        s.on_save = on_save();
-        s.description = description();
-        s.at_higher_levels = at_higher_levels();
-        s.ritual = ritual();
-        s.concentration = concentration();
-        s.damage = damages();
-        s.heal = heal();
+        let mut spell = spell_locked.force_lock();
 
-        all_clone.set(s.name.clone(), s.clone());
+        spell.name = name();
+        spell.level = level();
+        spell.school = school();
+        spell.cast_time = cast_time();
+        spell.range = range();
+        spell.duration = duration();
+        spell.components = components();
+        spell.save = save_attr();
+        spell.on_save = on_save();
+        spell.description = description();
+        spell.at_higher_levels = at_higher_levels();
+        spell.ritual = ritual();
+        spell.concentration = concentration();
+        spell.damage = damages();
+        spell.heal = heal();
 
-        s.serialize_pretty().unwrap_or_default()
+        spell.serialize_pretty().unwrap_or_default()
     });
     // endregion
 

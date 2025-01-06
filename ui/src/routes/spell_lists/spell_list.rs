@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use crate::{components::ReplaceLink, Ordinal};
 use dioxus::prelude::*;
-use types::{spells::Spell, stores::Store};
+use types::{spells::SpellList as SpellListT, stores::Store};
 
 use crate::routes::Routes;
 
@@ -13,143 +13,118 @@ pub fn SpellList(id: String, page: u8) -> Element {
 
     let list = {
         let id = id.clone();
-        use_signal(move || store.get(&id))
+        use_signal(move || store.get_arced(&id))
     };
 
-    #[derive(Debug, Clone, PartialEq)]
-    struct Found {
-        found: Vec<Arc<Spell>>,
-        unfound: Vec<String>,
-    }
-
-    let partition = use_memo(move || {
-        if let Some(list) = list() {
-            let (found, unfound): (Vec<_>, Vec<_>) =
-                list.spells.iter().cloned().partition(|spell| match spell {
-                    types::spells::SpellEntry::Name(_) => false,
-                    types::spells::SpellEntry::Spell(_) => true,
-                });
-
-            let found: Vec<Arc<Spell>> = found
-                .into_iter()
-                .map(|spell| match spell {
-                    types::spells::SpellEntry::Name(_) => unreachable!(),
-                    types::spells::SpellEntry::Spell(spell) => spell,
-                })
-                .collect();
-
-            let unfound: Vec<String> = unfound
-                .into_iter()
-                .map(|spell| match spell {
-                    types::spells::SpellEntry::Name(name) => name,
-                    types::spells::SpellEntry::Spell(_) => unreachable!(),
-                })
-                .collect();
-
-            Some(Found { found, unfound })
-        } else {
-            None
-        }
-    });
-
-    let levelled = use_memo(move || {
-        if let Some(Found { found: list, .. }) = partition() {
-            let mut spells = HashMap::new();
-
-            for spell in list.iter() {
-                let level = spell.level;
-                let spell = Arc::clone(spell);
-
-                let entry = spells.entry(level).or_insert_with(Vec::new);
-                entry.push(spell);
-            }
-
-            Some(spells)
-        } else {
-            None
-        }
-    });
-
-    let levels = use_memo(move || {
-        if let Some(levelled) = levelled() {
-            let mut levels = levelled.keys().copied().collect::<Vec<_>>();
-            levels.sort_unstable();
-
-            levels
-        } else {
-            vec![]
-        }
-    });
-
-    let name = list().map(|list| list.name.clone()).unwrap_or_default();
+    let level_button = make_dyn_level_button(id.clone(), page);
 
     rsx! {
-        if let (Some(Found { unfound, .. }), Some(levelled)) = (partition(), levelled()) {
-            h1 { class: "underline", "{name} Spell List" }
-            br {}
-            div { class: "flex flex-wrap flex-row gap-1",
-                for level in levels() {
-                    LevelButton { id: id.clone(), page, level }
-                }
-                if let Some(Found { unfound, .. }) = partition() {
-                    if !unfound.is_empty() {
-                        LevelButton { id: id.clone(), page, level: u8::MAX }
-                    }
-                }
-            }
-            div { class: "p-4 pb-6 border rounded-b-md",
-                table { class: "w-full",
-                    tr { class: "*:text-left *:p-2 border-b",
-                        if page == u8::MAX {
-                            th { "Name" }
-                        } else {
-                            th { "Name" }
-                            th { "School" }
-                            th { "Casting Time" }
-                            th { "Range" }
-                            th { "Duration" }
-                            th { "Components" }
-                        }
-                    }
-                    if page == u8::MAX {
-                        for spell in unfound {
-                            tr { class: "*:p-2 border-b",
-                                td {
-                                    Link { to: Routes::Spell { id: spell.clone() }, "{spell}" }
-                                }
-                            }
-                        }
-                    } else {
-                        for spell in levelled.get(&page).unwrap_or(&Vec::new()) {
-                            tr { class: "*:p-2 border-b",
-                                td {
-                                    Link {
-                                        to: Routes::Spell {
-                                            id: spell.name.clone(),
-                                        },
-                                        "{spell.name}"
-                                    }
-                                }
-                                td { class: "italic", "{spell.school}" }
-                                td { "{spell.cast_time}" }
-                                td {
-                                    {
-                                        format!(
-                                            "{}{}",
-                                            spell.range,
-                                            if spell.range.parse::<i32>().is_ok() { " feet" } else { "" },
-                                        )
-                                    }
-                                }
-                                td { "{spell.duration}" }
-                                td { "{spell.components}" }
-                            }
-                        }
-                    }
-                }
-            }
+
+        if let Some(list) = list() {
+            SpellView { list, page, level_button }
         } else {
             "Can't find spell list"
+        }
+    }
+}
+
+pub fn make_dyn_level_button(id: String, page: u8) -> Callback<u8, Element> {
+    Callback::new(move |level| {
+        rsx! {
+            LevelButton { id: id.clone(), page, level }
+        }
+    })
+}
+
+#[component]
+pub fn SpellView(list: Arc<SpellListT>, page: u8, level_button: Callback<u8, Element>) -> Element {
+    let list_clone = Arc::clone(&list);
+
+    let partition = list_clone.partitioned();
+
+    let levelled = {
+        let list = partition.0;
+        let mut spells = HashMap::new();
+
+        for spell in list {
+            let spell = spell.lock().unwrap();
+            let level = spell.level;
+
+            let entry = spells.entry(level).or_insert_with(Vec::new);
+            entry.push(spell.clone());
+        }
+
+        spells
+    };
+
+    let levels = {
+        let mut levels = levelled.keys().copied().collect::<Vec<_>>();
+        levels.sort_unstable();
+
+        levels
+    };
+
+    rsx! {
+        h1 { class: "underline", "{list.name} Spell List" }
+        br {}
+        div { class: "flex flex-wrap flex-row gap-1",
+            for level in levels {
+                {level_button(level)}
+            }
+            if !partition.1.is_empty() {
+                {level_button(u8::MAX)}
+            }
+        }
+        div { class: "p-4 pb-6 border rounded-b-md",
+            table { class: "w-full",
+                tr { class: "*:text-left *:p-2 border-b",
+                    if page == u8::MAX {
+                        th { "Name" }
+                    } else {
+                        th { "Name" }
+                        th { "School" }
+                        th { "Casting Time" }
+                        th { "Range" }
+                        th { "Duration" }
+                        th { "Components" }
+                    }
+                }
+                if page == u8::MAX {
+                    for spell in partition.1 {
+                        tr { class: "*:p-2 border-b",
+                            td {
+                                Link { to: Routes::Spell { id: spell.clone() }, "{spell}" }
+                            }
+                        }
+                    }
+                } else {
+                    for spell in levelled.get(&page).unwrap_or(&Vec::new()) {
+                        tr { class: "*:p-2 border-b",
+                            td {
+                                Link {
+                                    to: Routes::Spell {
+                                        id: spell.name.clone(),
+                                    },
+                                    "{spell.name}"
+                                }
+                            }
+                            td { class: "italic", "{spell.school}" }
+                            td { "{spell.cast_time}" }
+                            td {
+                                {
+                                    format!(
+                                        "{}{}",
+                                        spell.range,
+                                        if spell.range.parse::<i32>().is_ok() { " feet" } else { "" },
+                                    )
+                                }
+                            }
+                            td { "{spell.duration}" }
+                            td { "{spell.components}" }
+                        }
+                    }
+                }
+            }
         }
     }
 }
