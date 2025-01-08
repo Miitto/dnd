@@ -10,7 +10,6 @@ use crate::{components::info::Description, routes::Routes};
 use crate::components::info::{Pair, StatBlockView};
 
 use types::spells::Spell as SpellT;
-use types::Named;
 
 #[component]
 pub fn Spell(id: String) -> Element {
