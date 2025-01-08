@@ -6,7 +6,7 @@ use std::fmt::{Display, Formatter};
 pub use list::SpellList;
 pub use spell::Spell;
 
-use crate::IsFalse;
+use crate::extensions::IsFalse;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, PartialEq)]
 pub struct Components {

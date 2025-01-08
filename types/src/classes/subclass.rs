@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 
+use crate::meta::Description;
+
 use super::ClassFeature;
 use super::ClassProficiencies;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Subclass {
     pub name: String,
-    pub description: String,
+    pub description: Description,
     pub proficiencies: ClassProficiencies,
     pub spells: HashMap<u8, Vec<String>>,
     pub features: HashMap<u8, Vec<ClassFeature>>,

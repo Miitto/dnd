@@ -4,9 +4,11 @@ use std::{
 };
 
 use crate::{
+    extensions::IsFalse,
     mechanics::{Attribute, Condition, Damage, Dice},
+    meta::{Description, Link},
     stat_block::StatBlock,
-    IsFalse, Link, Named,
+    Named,
 };
 
 use super::{Components, OnSave};
@@ -21,7 +23,7 @@ pub struct Spell {
     pub cast_time: String,
     pub range: String,
     pub duration: String,
-    pub description: String,
+    pub description: Description,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub at_higher_levels: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -90,7 +90,7 @@
         "1": [
             {
                 "name": "Magical Tinkering",
-                "description": "At 1st level, you've learned how to invest a spark of magic into mundane objects. To use this ability, you must have thieves' tools or artisan's tools in hand. You then touch a Tiny nonmagical object as an action and give it one of the following magical properties of your choice:\n.The object sheds bright light in a 5-foot radius and dim light for an additional 5 feet.\n.Whenever tapped by a creature, the object emits a recorded message that can be heard up to 10 feet away. You utter the message when you bestow this property on the object, and the recording can be no more than 6 seconds long.\n.The object continuously emits your choice of an odor or a nonverbal sound (wind, waves, chirping, or the like). The chosen phenomenon is perceivable up to 10 feet away.\n.A static visual effect appears on one of the object's surfaces. This effect can be a picture, up to 25 words of text, lines and shapes, or a mixture of these elements, as you like.\nThe chosen property lasts indefinitely. As an action, you can touch the object and end the property early.\nYou can bestow magic on multiple objects, touching one object each time you use this feature, though a single object can only bear one property at a time. The maximum number of objects you can affect with this feature at one time is equal to your Intelligence modifier (minimum of one object). If you try to exceed your maximum, the oldest property immediately ends, and then the new property applies."
+                "description": "At 1st level, you've learned how to invest a spark of magic into mundane objects. To use this ability, you must have thieves' tools or artisan's tools in hand. You then touch a Tiny nonmagical object as an action and give it one of the following magical properties of your choice:\n- The object sheds bright light in a 5-foot radius and dim light for an additional 5 feet.\n- Whenever tapped by a creature, the object emits a recorded message that can be heard up to 10 feet away. You utter the message when you bestow this property on the object, and the recording can be no more than 6 seconds long.\n- The object continuously emits your choice of an odor or a nonverbal sound (wind, waves, chirping, or the like). The chosen phenomenon is perceivable up to 10 feet away.\n- A static visual effect appears on one of the object's surfaces. This effect can be a picture, up to 25 words of text, lines and shapes, or a mixture of these elements, as you like.\nThe chosen property lasts indefinitely. As an action, you can touch the object and end the property early.\nYou can bestow magic on multiple objects, touching one object each time you use this feature, though a single object can only bear one property at a time. The maximum number of objects you can affect with this feature at one time is equal to your Intelligence modifier (minimum of one object). If you try to exceed your maximum, the oldest property immediately ends, and then the new property applies."
             }
         ],
         "2": [
@@ -128,7 +128,7 @@
         "10": [
             {
                 "name": "Magic Item Adept",
-                "description": "When you reach 10th level, you achieve a profound understanding of how to use and make magic items:\n.You can attune to up to four magic items at once.\n.If you craft a magic item with a rarity of common or uncommon, it takes you a quarter of the normal time, and it costs you half as much of the usual gold."
+                "description": "When you reach 10th level, you achieve a profound understanding of how to use and make magic items:\n- You can attune to up to four magic items at once.\n- If you craft a magic item with a rarity of common or uncommon, it takes you a quarter of the normal time, and it costs you half as much of the usual gold."
             }
         ],
         "11": [
@@ -140,7 +140,7 @@
         "14": [
             {
                 "name": "Magic Item Savant",
-                "description": "At 14th level, your skill with magic items deepens more:\n.You can attune to up to five magic items at once.\n.You ignore all class, race, spell and level requirements on attuning to or using a magic item."
+                "description": "At 14th level, your skill with magic items deepens more:\n- You can attune to up to five magic items at once.\n- You ignore all class, race, spell and level requirements on attuning to or using a magic item."
             }
         ],
         "18": [
@@ -152,7 +152,7 @@
         "20": [
             {
                 "name": "Soul of Artifice",
-                "description": "At 20th level, you develop a mystical connection to your magic items, which you can draw on for protection:\n.You gain a +1 bonus to all saving throws per magic item you are currently attuned to.\n.If you're reduced to 0 hit points but not killed out-right, you can use your reaction to end one of your artificer infusions, causing you to drop to 1 hit point instead of 0."
+                "description": "At 20th level, you develop a mystical connection to your magic items, which you can draw on for protection:\n- You gain a +1 bonus to all saving throws per magic item you are currently attuned to.\n- If you're reduced to 0 hit points but not killed out-right, you can use your reaction to end one of your artificer infusions, causing you to drop to 1 hit point instead of 0."
             }
         ]
     }

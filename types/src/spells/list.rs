@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use crate::Link;
+use crate::meta::Link;
 
 use super::spell::Spell;
 

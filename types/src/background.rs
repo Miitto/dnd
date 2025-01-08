@@ -1,9 +1,9 @@
-use crate::mechanics::Skill;
+use crate::{mechanics::Skill, meta::Description};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Background {
     pub name: String,
-    pub description: String,
+    pub description: Description,
     pub skill_proficiencies: Vec<Skill>,
     pub tool_proficiencies: Vec<String>,
     pub languages: String,
@@ -16,7 +16,7 @@ pub struct Background {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BackgroundFeature {
     pub name: String,
-    pub description: String,
+    pub description: Description,
 }
 
 impl Background {

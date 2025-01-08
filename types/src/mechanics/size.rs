@@ -1,5 +1,7 @@
 use std::fmt::{self, Display, Formatter};
 
+use crate::meta::Description;
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum Size {
     Tiny,
@@ -13,7 +15,7 @@ pub enum Size {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DescribedSize {
     pub size: Size,
-    pub description: String,
+    pub description: Description,
 }
 
 impl Display for Size {

@@ -26,21 +26,23 @@ where
     let path = path.as_ref();
     let read = std::fs::read_to_string(path);
 
-    let json = if let Ok(json) = read {
-        json
-    } else {
-        eprintln!("Failed to read file: {:?}\n{}", path, read.unwrap_err());
-        return Err(anyhow::anyhow!("Failed to read file: {:?}", path));
+    let json = match read {
+        Ok(json) => json,
+        Err(e) => {
+            return Err(anyhow::anyhow!("Failed to read file: {:?} | {:?}", path, e));
+        }
     };
 
     let parsed = serde_json::from_str::<T>(&json);
 
-    if let Err(e) = parsed {
-        eprintln!("Failed to parse file: {:?} - {:?}", path, e);
-        return Err(anyhow::anyhow!("Failed to parse file: {:?}", path));
+    match parsed {
+        Ok(parsed) => Ok(parsed),
+        Err(e) => Err(anyhow::anyhow!(
+            "Failed to parse file: {:?} | {:?}",
+            path,
+            e
+        )),
     }
-
-    Ok(parsed?)
 }
 
 pub fn parse_dir<T, P: AsRef<Path>>(path: P) -> Result<Vec<T>>
@@ -64,6 +66,10 @@ where
             }
 
             let parsed = parse_file(&path);
+
+            if let Err(e) = &parsed {
+                eprintln!("{:?}", e);
+            }
 
             parsed.ok()
         })

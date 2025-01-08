@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use dioxus::prelude::*;
 
-use types::{mechanics::Dice, spells::OnSave, stores::Store, ForceLock};
+use types::{extensions::ForceLock, mechanics::Dice, spells::OnSave, stores::Store};
 
 use crate::components::{
     info::Pair,
@@ -74,7 +74,7 @@ pub fn SpellEdit(id: String) -> Element {
     let save_attr = use_signal(move || spell().save);
     let on_save = use_signal(move || spell().on_save);
 
-    let description = use_signal(move || spell().description.clone());
+    let description = use_signal(move || spell().description.to_string());
 
     let at_higher_levels = use_signal(move || spell().at_higher_levels.clone());
 
@@ -96,7 +96,7 @@ pub fn SpellEdit(id: String) -> Element {
         spell.components = components();
         spell.save = save_attr();
         spell.on_save = on_save();
-        spell.description = description();
+        spell.description = description().into();
         spell.at_higher_levels = at_higher_levels();
         spell.ritual = ritual();
         spell.concentration = concentration();

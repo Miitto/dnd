@@ -4,6 +4,9 @@ pub mod info;
 pub mod inputs;
 pub mod nav;
 
+mod description;
+pub use description::Description;
+
 #[component]
 pub fn ReplaceLink(props: LinkProps) -> Element {
     let LinkProps {

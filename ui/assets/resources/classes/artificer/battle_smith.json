@@ -16,7 +16,7 @@
         "3": [
             {
                 "name": "Battle Ready",
-                "description": "When you reach 3rd level, your combat training and your experiments with magic have paid off in two ways:\n.You gain proficiency with martial weapons.\n.When you attack with a magic weapon, you can use your Intelligence modifier, instead of Strength or Dexterity modifier, for the attack and damage rolls."
+                "description": "When you reach 3rd level, your combat training and your experiments with magic have paid off in two ways:\n- You gain proficiency with martial weapons.\n- When you attack with a magic weapon, you can use your Intelligence modifier, instead of Strength or Dexterity modifier, for the attack and damage rolls."
             },
             {
                 "name": "Steel Defender",
@@ -32,13 +32,13 @@
         "9": [
             {
                 "name": "Arcane Jolt",
-                "description": "At 9th level, you've learn new ways to channel arcane energy to harm or heal. When either you hit a target with a magic weapon attack or your steel defender hits a target, you can channel magical energy through the strike to create one of the following effects:\n.The target takes an extra 2d6 force damage.\n.Choose one creature or object you can see within 30 feet of the target. Healing energy flows into the chosen recipient, restoring 2d6 hit points to it.\nYou can use this energy a number of times equal to your Intelligence modifier (minimum of once), but you can do so no more than once on a turn. You regain all expended uses when you finish a long rest."
+                "description": "At 9th level, you've learn new ways to channel arcane energy to harm or heal. When either you hit a target with a magic weapon attack or your steel defender hits a target, you can channel magical energy through the strike to create one of the following effects:\n- The target takes an extra 2d6 force damage.\n- Choose one creature or object you can see within 30 feet of the target. Healing energy flows into the chosen recipient, restoring 2d6 hit points to it.\nYou can use this energy a number of times equal to your Intelligence modifier (minimum of once), but you can do so no more than once on a turn. You regain all expended uses when you finish a long rest."
             }
         ],
         "15": [
             {
                 "name": "Improved Defender",
-                "description": "At 15th level, your Arcane Jolt and steel defender become more powerful:\n.The extra damage and the healing of your Arcane Jolt both increase to 4d6.\n.Your steel defender gains a +2 bonus to Armor Class.\n.Whenever your steel defender uses its Deflect Attack, the attacker takes force damage equal to 1d4 + your Intelligence modifier."
+                "description": "At 15th level, your Arcane Jolt and steel defender become more powerful:\n- The extra damage and the healing of your Arcane Jolt both increase to 4d6.\n- Your steel defender gains a +2 bonus to Armor Class.\n- Whenever your steel defender uses its Deflect Attack, the attacker takes force damage equal to 1d4 + your Intelligence modifier."
             }
         ]
     }

@@ -1,10 +1,10 @@
 [package]
+edition = "2021"
 name = "ui"
 version = "0.1.0"
-edition = "2021"
 
 [dependencies]
+anyhow.workspace = true
 dioxus = { workspace = true }
 server = { workspace = true }
 types.workspace = true
-anyhow.workspace = true

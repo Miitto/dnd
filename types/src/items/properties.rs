@@ -1,11 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use crate::mechanics::{Attribute, Damage};
+use crate::{
+    mechanics::{Attribute, Damage},
+    meta::Description,
+};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Property {
     pub name: String,
-    pub description: Option<String>,
+    pub description: Option<Description>,
     pub effects: Vec<PropertyEffect>,
 }
 

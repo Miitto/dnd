@@ -3,7 +3,9 @@ use std::{fs::DirEntry, path::Path};
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::{fs::constants::ITEM_WEAPON_PROPERTIES_PATH, items::properties::EffectType};
+use crate::{
+    fs::constants::ITEM_WEAPON_PROPERTIES_PATH, items::properties::EffectType, meta::Description,
+};
 
 use super::weapon::{SerializedPropertyEffectType, SerializedWeaponProperty};
 
@@ -12,7 +14,7 @@ use super::weapon::{SerializedPropertyEffectType, SerializedWeaponProperty};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SerializedProperty {
     pub name: String,
-    pub description: Option<String>,
+    pub description: Option<Description>,
     pub effects: Vec<SerializedPropertyEffect>,
 }
 

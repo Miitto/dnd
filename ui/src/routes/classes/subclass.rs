@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 use types::{classes::CastType, stores::Store};
 
 use crate::{
+    components::Description,
     routes::classes::class::{ClassFeature, Proficiencies},
     Ordinal,
 };
@@ -19,9 +20,7 @@ pub fn Subclass(class_id: String, subclass_id: String) -> Element {
         if let (Some(class), Some(subclass)) = (class.as_ref(), subclass) {
             h1 { "{subclass.name}" }
             div { class: "flex flex-col",
-                for split in subclass.description.lines() {
-                    p { "{split}" }
-                }
+                Description { description: subclass.description }
 
                 if !subclass.proficiencies.is_empty() {
                     br {}

@@ -8,7 +8,10 @@ use types::{
 };
 
 use crate::{
-    components::info::{Description, Pair, Table},
+    components::{
+        info::{Pair, Table},
+        Description,
+    },
     routes::Routes,
     DashIfZero, Ordinal,
 };

@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
 use types::stores::Store;
 
+use crate::components::Description;
+
 #[component]
 pub fn Feat(id: String) -> Element {
     let store = use_context::<Store>();
@@ -11,9 +13,7 @@ pub fn Feat(id: String) -> Element {
         if let Some(feat) = feat {
             h1 { "{feat.name}" }
             div { class: "flex flex-col",
-                for split in feat.description.lines() {
-                    p { "{split}" }
-                }
+                Description { description: feat.description }
 
                 if !feat.attributes.is_empty() {
                     br {}

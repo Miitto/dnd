@@ -1,9 +1,9 @@
-use crate::mechanics::Table;
+use crate::meta::{Description, Table};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClassFeature {
     pub name: String,
-    pub description: String,
+    pub description: Description,
     #[serde(default)]
     pub tables: Vec<Table>,
 }

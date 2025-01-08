@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use dioxus::prelude::*;
+use types::extensions::ForceLock;
 use types::stores::Store;
-use types::ForceLock;
 
 use crate::Ordinal;
-use crate::{components::info::Description, routes::Routes};
+use crate::{components::Description, routes::Routes};
 
 use crate::components::info::{Pair, StatBlockView};
 
@@ -22,7 +22,7 @@ pub fn Spell(id: String) -> Element {
     let cloned_id = arc_id.clone();
     let list_id_clone = arc_id.clone();
 
-    let spell = all.get_arced(&cloned_id);
+    let spell = all.get_clone(&cloned_id);
 
     let spell_lists = use_memo(move || {
         let lock = lists.store.lock();
@@ -63,7 +63,7 @@ pub fn Spell(id: String) -> Element {
 }
 
 #[component]
-fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<String>) -> Element {
+fn SpellView(spell: SpellT, spell_lists: Vec<String>) -> Element {
     let range_unit = if spell.range.parse::<i32>().is_ok() {
         " feet"
     } else {
@@ -118,7 +118,7 @@ fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<String>) -> Element {
             }
             br {}
 
-            Description { description: "{spell.description}" }
+            Description { description: spell.description }
 
             if let Some(higher) = spell.at_higher_levels.as_ref() {
                 br {}
@@ -143,7 +143,7 @@ fn SpellView(spell: Arc<SpellT>, spell_lists: Vec<String>) -> Element {
             if !spell.appended_stat_blocks.is_empty() {
                 br {}
                 for stat_block in spell.appended_stat_blocks.iter() {
-                    if let types::Link::Found(stat_block) = stat_block {
+                    if let types::meta::Link::Found(stat_block) = stat_block {
                         StatBlockView { stat_block: stat_block.force_lock().clone() }
                     }
                 }

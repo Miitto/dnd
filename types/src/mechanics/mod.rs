@@ -7,7 +7,6 @@ mod damage;
 mod dice;
 mod size;
 mod skill;
-mod table;
 
 pub use alignment::Alignment;
 pub use asi::ASI;
@@ -18,4 +17,3 @@ pub use damage::{Damage, DamageType};
 pub use dice::Dice;
 pub use size::{DescribedSize, Size};
 pub use skill::Skill;
-pub use table::Table;

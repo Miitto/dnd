@@ -1,6 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::{mechanics::Attribute, StartsWithVowel as _};
+use crate::meta::Description;
+use crate::{extensions::StartsWithVowel, mechanics::Attribute};
 
 use super::cantrip::ClassCantrip;
 use super::skills::ClassSkills;
@@ -185,7 +186,7 @@ impl ClassSubclasses {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Class {
     pub name: String,
-    pub description: String,
+    pub description: Description,
     pub requirements: HashMap<Attribute, u8>,
     pub hit_die: u8,
     pub proficiencies: ClassProficiencies,

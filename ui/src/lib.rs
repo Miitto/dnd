@@ -8,6 +8,7 @@ mod routes;
 
 const FAVICON: Asset = asset!("assets/favicon.ico");
 const TAILWIND_CSS: Asset = asset!("assets/styling/tailwind.css");
+pub const MONA_SANS: Asset = asset!("assets/fonts/Mona-Sans.woff2");
 
 const RESOURCES: Asset = asset!("assets/resources");
 
@@ -27,6 +28,25 @@ pub fn App() -> Element {
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Stylesheet { href: TAILWIND_CSS }
+        document::Link {
+            rel: "preload",
+            href: MONA_SANS,
+            r#as: "font",
+            r#type: "font/woff2",
+            crossorigin: "true",
+        }
+        document::Style {
+            r#"
+                @font-face {{
+                    font-family: 'Mona Sans';
+                    src:
+                        url('{MONA_SANS}') format('woff2 supports variations'),
+                        url('{MONA_SANS}') format('woff2-variations');
+                    font-weight: 200 900;
+                    font-stretch: 75% 125%;
+                }}
+            "#
+        }
 
         Router::<Routes> {
             config: || {
