@@ -6,10 +6,19 @@ use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
 };
 
+use crate::Named;
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Table {
+    pub name: String,
     pub ordered: bool,
     pub rows: Vec<TableRow>,
+}
+
+impl Named for Table {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -51,6 +60,7 @@ impl<'de> Deserialize<'de> for Table {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
         enum Field {
+            Name,
             Rows,
             Ordered,
         }
@@ -70,11 +80,17 @@ impl<'de> Deserialize<'de> for Table {
             {
                 let mut rows = Vec::new();
 
+                let name: String = seq.next_element()?.ok_or(de::Error::invalid_length(
+                    0,
+                    &"Table needs at least one element to be the name",
+                ))?;
+
                 while let Some(row) = seq.next_element()? {
                     rows.push(row);
                 }
 
                 Ok(Table {
+                    name,
                     ordered: false,
                     rows,
                 })
@@ -84,11 +100,18 @@ impl<'de> Deserialize<'de> for Table {
             where
                 V: MapAccess<'de>,
             {
+                let mut name = None;
                 let mut ordered = false;
                 let mut rows = None;
 
                 while let Some(key) = map.next_key()? {
                     match key {
+                        Field::Name => {
+                            if name.is_some() {
+                                return Err(de::Error::duplicate_field("name"));
+                            }
+                            name = Some(map.next_value()?);
+                        }
                         Field::Rows => {
                             if rows.is_some() {
                                 return Err(de::Error::duplicate_field("rows"));
@@ -105,11 +128,16 @@ impl<'de> Deserialize<'de> for Table {
                 }
 
                 let rows = rows.ok_or_else(|| de::Error::missing_field("rows"))?;
-                Ok(Table { ordered, rows })
+                let name = name.ok_or_else(|| de::Error::missing_field("name"))?;
+                Ok(Table {
+                    name,
+                    ordered,
+                    rows,
+                })
             }
         }
 
-        const FIELDS: &[&str] = &["rows", "ordered"];
+        const FIELDS: &[&str] = &["name", "rows", "ordered"];
         deserializer.deserialize_struct("Table", FIELDS, TableVisitor)
     }
 }
