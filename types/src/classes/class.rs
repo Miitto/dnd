@@ -1,6 +1,6 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::{common::Attribute, StartsWithVowel as _};
+use crate::{mechanics::Attribute, StartsWithVowel as _};
 
 use super::cantrip::ClassCantrip;
 use super::skills::ClassSkills;

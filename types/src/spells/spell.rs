@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::{
-    common::{Attribute, Condition, Damage, Dice},
+    mechanics::{Attribute, Condition, Damage, Dice},
     stat_block::StatBlock,
     IsFalse, Link, Named,
 };

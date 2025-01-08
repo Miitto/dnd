@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    common::{DescribedSize, Table, ASI},
+    mechanics::{DescribedSize, Table, ASI},
     CategoryMut,
 };
 

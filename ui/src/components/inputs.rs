@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use types::common::{Damage, Dice};
+use types::mechanics::{Damage, Dice};
 
 use crate::components::info::Pair;
 

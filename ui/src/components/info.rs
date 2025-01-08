@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use types::common::Table as TableT;
+use types::mechanics::Table as TableT;
 use types::stat_block::StatBlock;
 
 #[component]

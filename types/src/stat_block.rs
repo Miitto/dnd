@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    common::{Alignment, Attributes, CreatureType, Size, Skill},
+    mechanics::{Alignment, Attributes, CreatureType, Size, Skill},
     Named,
 };
 

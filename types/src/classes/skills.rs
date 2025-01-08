@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::common::Skill;
+use crate::mechanics::Skill;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default, PartialEq)]
 pub struct ClassSkills {

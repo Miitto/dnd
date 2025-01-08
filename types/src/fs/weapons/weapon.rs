@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use anyhow::{Context, Result};
 
 use crate::{
-    common::Damage,
+    mechanics::Damage,
     items::{
         properties::{AttributeReplacement, EffectType, Property, PropertyEffect},
         weapon::Weapon,

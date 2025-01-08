@@ -2,10 +2,10 @@ use std::sync::{Arc, Mutex};
 
 pub mod background;
 pub mod classes;
-pub mod common;
 pub mod feat;
 pub mod fs;
 pub mod items;
+pub mod mechanics;
 pub mod race;
 pub mod spells;
 pub mod stat_block;

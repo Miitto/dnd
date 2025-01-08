@@ -1,4 +1,4 @@
-use crate::common::Skill;
+use crate::mechanics::Skill;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Background {

@@ -1,4 +1,4 @@
-use crate::common::Table;
+use crate::mechanics::Table;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClassFeature {

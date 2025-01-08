@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use dioxus::prelude::*;
 
-use types::{common::Dice, spells::OnSave, stores::Store, ForceLock};
+use types::{mechanics::Dice, spells::OnSave, stores::Store, ForceLock};
 
 use crate::components::{
     info::Pair,
@@ -11,7 +11,7 @@ use crate::components::{
 
 use types::spells::Components as ComponentsT;
 
-use types::common::Attribute;
+use types::mechanics::Attribute;
 
 #[component]
 pub fn SpellEdit(id: String) -> Element {

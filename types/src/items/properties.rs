@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::common::{Attribute, Damage};
+use crate::mechanics::{Attribute, Damage};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Property {

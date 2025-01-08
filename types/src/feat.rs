@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::common::Attribute;
+use crate::mechanics::Attribute;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Feat {
