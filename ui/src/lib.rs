@@ -22,7 +22,7 @@ pub fn App() -> Element {
     let abs = bundled.absolute_source_path();
     tracing::debug!("Resource Dir: {:?}", abs);
 
-    let store = Store::from_path(abs);
+    let store = Store::new(abs);
     use_context_provider(|| store);
 
     rsx! {

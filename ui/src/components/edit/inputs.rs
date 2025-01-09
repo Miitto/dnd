@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use types::mechanics::{Damage, Dice};
 
-use crate::components::info::Pair;
+use crate::components::view::Pair;
 
 #[component]
 pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>>) -> Element {

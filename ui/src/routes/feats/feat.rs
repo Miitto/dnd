@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use types::stores::Store;
 
-use crate::components::Description;
+use crate::components::view::Description;
 
 #[component]
 pub fn Feat(id: String) -> Element {

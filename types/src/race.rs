@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     mechanics::{DescribedSize, ASI},
     meta::{Description, Table},
-    CategoryMut,
+    Category, CategoryMut, Named,
 };
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -35,8 +35,20 @@ impl PartialEq<str> for Race {
     }
 }
 
+impl Named for Race {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 impl CategoryMut for Race {
     fn category_mut(&mut self) -> &mut String {
         &mut self.category
+    }
+}
+
+impl Category for Race {
+    fn category(&self) -> String {
+        self.category.clone()
     }
 }

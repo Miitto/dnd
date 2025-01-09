@@ -45,6 +45,18 @@ impl PartialEq<str> for Background {
     }
 }
 
+impl crate::Named for Background {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl crate::Category for Background {
+    fn category(&self) -> String {
+        self.category.clone()
+    }
+}
+
 impl crate::CategoryMut for Background {
     fn category_mut(&mut self) -> &mut String {
         &mut self.category

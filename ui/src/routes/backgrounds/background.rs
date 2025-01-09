@@ -1,4 +1,4 @@
-use crate::components::{info::PairLi, Description};
+use crate::components::view::{Description, PairLi};
 use dioxus::prelude::*;
 use types::stores::Store;
 

@@ -1,11 +1,8 @@
 use dioxus::prelude::*;
 
-pub mod info;
-pub mod inputs;
+pub mod edit;
 pub mod nav;
-
-mod description;
-pub use description::Description;
+pub mod view;
 
 #[component]
 pub fn ReplaceLink(props: LinkProps) -> Element {

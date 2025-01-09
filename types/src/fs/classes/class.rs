@@ -60,13 +60,16 @@ pub fn get_classes<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Class>> {
                 .map(|s| s != CLASS_BASE_NAME)
                 .unwrap_or(false)
         }) {
-            let subclass: Subclass = match crate::fs::parsers::parse_file(subclass_file.path()) {
+            let mut subclass: Subclass = match crate::fs::parsers::parse_file(subclass_file.path())
+            {
                 Ok(subclass) => subclass,
                 Err(e) => {
                     eprintln!("Error parsing subclass file: {:?}", e);
                     continue;
                 }
             };
+
+            subclass.class = class.name.clone();
 
             class
                 .subclasses

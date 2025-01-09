@@ -21,3 +21,9 @@ impl PartialEq<Feat> for Feat {
         self.name == other.name
     }
 }
+
+impl crate::Named for Feat {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}

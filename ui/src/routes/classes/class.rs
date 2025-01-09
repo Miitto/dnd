@@ -8,10 +8,7 @@ use types::{
 };
 
 use crate::{
-    components::{
-        info::{Pair, Table},
-        Description,
-    },
+    components::view::{Description, Pair, Table},
     routes::Routes,
     DashIfZero, Ordinal,
 };

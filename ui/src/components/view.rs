@@ -2,6 +2,12 @@ use dioxus::prelude::*;
 use types::meta::Table as TableT;
 use types::stat_block::StatBlock;
 
+mod description;
+pub use description::*;
+
+pub mod spell;
+pub mod spell_list;
+
 #[component]
 pub fn Pair(name: String, grid: Option<bool>, class: Option<String>, children: Element) -> Element {
     let grid = grid.unwrap_or(false);

@@ -1,3 +1,5 @@
+#![feature(specialization)]
+
 use std::sync::{Arc, Mutex};
 
 pub mod background;
@@ -14,6 +16,8 @@ pub mod stores;
 
 pub mod extensions;
 
+pub mod aliased;
+
 use extensions::ForceLock;
 
 impl<T> Named for Arc<Mutex<T>>
@@ -29,11 +33,11 @@ pub trait Named {
     fn name(&self) -> String;
 }
 
-pub trait Category {
+pub trait Category: Named {
     fn category(&self) -> String;
 }
 
-pub trait CategoryMut {
+pub trait CategoryMut: Category {
     fn category_mut(&mut self) -> &mut String;
 }
 

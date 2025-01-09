@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use types::{classes::CastType, stores::Store};
 
 use crate::{
-    components::Description,
+    components::view::Description,
     routes::classes::class::{ClassFeature, Proficiencies},
     Ordinal,
 };

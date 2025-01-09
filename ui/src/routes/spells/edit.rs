@@ -5,24 +5,19 @@ use dioxus::prelude::*;
 use types::{extensions::ForceLock, mechanics::Dice, spells::OnSave, stores::Store};
 
 use crate::components::{
-    info::Pair,
-    inputs::{AttrDropdown, DiceInput, MultiDamageInput, StringList},
+    edit::{AttrDropdown, DiceInput, MultiDamageInput, StringList},
+    view::Pair,
 };
 
 use types::spells::Components as ComponentsT;
 
 use types::mechanics::Attribute;
 
+use types::stores::Saveable;
+
 #[component]
 pub fn SpellEdit(id: String) -> Element {
     let store = use_context::<Store>();
-
-    let cantrip_path = store
-        .get_path()
-        .map(|p| p.join(types::fs::constants::SPELL_CANTRIPS_PATH));
-    let levelled_path = store
-        .get_path()
-        .map(|p| p.join(types::fs::constants::SPELL_LEVELS_PATH));
 
     let all = store.spells;
     let lists = store.spell_lists;
@@ -187,37 +182,7 @@ pub fn SpellEdit(id: String) -> Element {
         br {}
         button {
             class: "px-4 py-2 rounded border w-fit h-fit",
-            onclick: move |_| {
-                let path = if level() == 0 {
-                    cantrip_path.clone()
-                } else {
-                    levelled_path.clone().map(|p| p.join(format!("{}", level())))
-                };
-                let named = path
-                    .map(|p| {
-                        p.join(
-                            format!(
-                                "{}.json",
-                                spell()
-                                    .name
-                                    .to_lowercase()
-                                    .replace(" ", "_")
-                                    .replace("-", "_")
-                                    .replace("/", "_")
-                                    .replace("'", "_"),
-                            ),
-                        )
-                    });
-                if let Some(p) = named {
-                    let dir = p.parent().expect("Failed to get parent directory");
-                    std::fs::create_dir_all(dir).expect("Failed to create directory");
-                    if let Err(err) = std::fs::write(p, serialized()) {
-                        dioxus::logger::tracing::error!(
-                            "Failed to write spell to file: {:?}", err
-                        );
-                    }
-                }
-            },
+            onclick: move |_| { all.save(name().as_str()) },
             "Save"
         }
     }

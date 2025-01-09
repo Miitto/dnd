@@ -7,7 +7,9 @@ use crate::meta::Link;
 
 use super::spell::Spell;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+use anyhow::Result;
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct SpellList {
     pub name: String,
     pub spells: Vec<Link<Arc<Mutex<Spell>>>>,
@@ -74,5 +76,19 @@ impl SpellList {
         let found = found.into_iter().map(|spell| spell.lock().unwrap().clone());
 
         (found.collect(), unfound)
+    }
+
+    pub fn serialize(&self) -> Result<String> {
+        serde_json::to_string(self).map_err(Into::into)
+    }
+
+    pub fn serialize_pretty(&self) -> Result<String> {
+        serde_json::to_string_pretty(self).map_err(Into::into)
+    }
+}
+
+impl crate::Named for SpellList {
+    fn name(&self) -> String {
+        self.name.clone()
     }
 }

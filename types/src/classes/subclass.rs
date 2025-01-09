@@ -12,6 +12,8 @@ pub struct Subclass {
     pub proficiencies: ClassProficiencies,
     pub spells: HashMap<u8, Vec<String>>,
     pub features: HashMap<u8, Vec<ClassFeature>>,
+    #[serde(skip)]
+    pub class: String,
 }
 
 impl PartialEq<str> for Subclass {

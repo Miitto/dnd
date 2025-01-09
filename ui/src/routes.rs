@@ -19,7 +19,7 @@ use backgrounds::{background::Background, Backgrounds};
 use classes::{Class, Classes, Subclass};
 use feats::{feat::Feat, Feats};
 use races::{race::Race, Races};
-use spell_lists::{spell_list::SpellList, SpellLists};
+use spell_lists::{edit::SpellListEdit, spell_list::SpellList, SpellLists};
 use spells::{Spell, SpellEdit};
 
 #[derive(Routable, Clone, Debug, PartialEq)]
@@ -70,6 +70,8 @@ pub enum Routes {
         #[redirect("/:id", |id: String| Routes::SpellList { id, page: 0 })]
         #[route("/:id/:page")]
         SpellList { id: String, page: u8 },
+        #[route("/:id/edit")]
+        SpellListEdit { id: String },
     #[end_nest]
     #[nest("/spells")]
         //#[route("/")]
@@ -116,6 +118,11 @@ impl Routes {
             Routes::SpellList { id, .. } => {
                 Routes::SpellLists {}.add_segment(self.as_segment(id.capitalize()))
             }
+            Routes::SpellListEdit { id } => Routes::SpellList {
+                id: id.clone(),
+                page: 0,
+            }
+            .add_segment(self.as_segment("Edit")),
             Routes::Spell { id } => vec![self.as_segment(id.capitalize())],
             Routes::SpellEdit { id } => {
                 Routes::Spell { id: id.clone() }.add_segment(self.as_segment("Edit"))
