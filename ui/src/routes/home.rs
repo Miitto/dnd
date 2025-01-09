@@ -1,7 +1,6 @@
 use dioxus::prelude::*;
-use types::{extensions::ForceLock, fs::classes::class, stores::Store};
+use types::{extensions::ForceLock, stores::Store};
 
-use crate::routes::Routes;
 use types::stores::Saveable;
 
 #[component]

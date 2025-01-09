@@ -45,14 +45,27 @@ pub fn Spell(id: String) -> Element {
 
     rsx! {
         if let Some(spell) = spell {
+            span { class: "w-full inline-flex justify-between items-center",
+                h1 { "{spell.name}" }
+                if cfg!(debug_assertions) {
+                    Link {
+                        to: Routes::SpellEdit {
+                            id: spell.name.to_owned(),
+                        },
+                        "Edit"
+                    }
+                }
+            }
             SpellView { spell, spell_lists: spell_lists() }
         } else {
             h1 { "Spell Not Found" }
-            Link {
-                to: Routes::SpellEdit {
-                    id: (*arc_id).clone(),
-                },
-                "Edit Spell"
+            if cfg!(debug_assertions) {
+                Link {
+                    to: Routes::SpellEdit {
+                        id: (*arc_id).clone(),
+                    },
+                    "Edit Spell"
+                }
             }
         }
     }

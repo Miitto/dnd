@@ -21,7 +21,9 @@ pub fn SpellList(id: String, page: u8) -> Element {
         if let Some(list) = list() {
             span { class: "w-full inline-flex justify-between items-center",
                 h1 { "{list.name} Spell List" }
-                Link { to: Routes::SpellListEdit { id }, "Edit" }
+                if cfg!(debug_assertions) {
+                    Link { to: Routes::SpellListEdit { id }, "Edit" }
+                }
             }
             br {}
             SpellListView { list, page, level_button }

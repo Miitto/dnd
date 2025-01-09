@@ -37,17 +37,20 @@ pub fn SpellLists() -> Element {
             }
         }
 
-        div { class: "mt-4 flex items-center gap-2",
-            input {
-                r#type: "text",
-                value: new_list_name(),
-                oninput: move |e| new_list_name.set(e.value().trim().to_string()),
-            }
-            Link {
-                to: Routes::SpellListEdit {
-                    id: new_list_name(),
-                },
-                "New Spell List"
+        if cfg!(debug_assertions) {
+            hr {}
+            div { class: "mt-4 flex items-center gap-2",
+                input {
+                    r#type: "text",
+                    value: new_list_name(),
+                    oninput: move |e| new_list_name.set(e.value().trim().to_string()),
+                }
+                Link {
+                    to: Routes::SpellListEdit {
+                        id: new_list_name(),
+                    },
+                    "New Spell List"
+                }
             }
         }
     }

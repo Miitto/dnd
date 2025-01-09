@@ -27,16 +27,6 @@ pub fn SpellView(spell: SpellT, spell_lists: Vec<String>) -> Element {
     let ritual_str = if spell.ritual { " (Ritual)" } else { "" };
 
     rsx! {
-        span { class: "w-full inline-flex justify-between items-center",
-            h1 { "{spell.name}" }
-            Link {
-                to: Routes::SpellEdit {
-                    id: spell.name.to_owned(),
-                },
-                "Edit"
-            }
-        }
-
         div { class: "flex flex-col",
 
             p { class: "italic",

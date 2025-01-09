@@ -93,8 +93,22 @@ pub fn SpellListView(
                                         "{spell.name}"
                                     }
                                 }
-                                td { class: "italic", "{spell.school}" }
-                                td { "{spell.cast_time}" }
+                                td { class: "italic",
+                                    "{spell.school}"
+                                    if spell.ritual {
+                                        " (R)"
+                                    } else {
+                                        ""
+                                    }
+                                }
+                                td {
+                                    {
+                                        let mut split = spell.cast_time.split(", ");
+                                        let first = split.next().unwrap();
+                                        let rest = split.next().map(|s| "...".to_string()).unwrap_or_default();
+                                        format!("{}{}", first, rest)
+                                    }
+                                }
                                 td {
                                     {
                                         format!(
