@@ -8,6 +8,7 @@ use crate::routes::Routes;
 use crate::Capitalize;
 
 pub mod background;
+pub mod edit;
 
 #[component]
 pub fn Backgrounds() -> Element {
@@ -34,6 +35,8 @@ pub fn Backgrounds() -> Element {
         map
     });
 
+    let mut new_list_name = use_signal(String::new);
+
     rsx! {
         h1 { class: "underline", "Backgrounds" }
         for (category , backgrounds) in backgrounds_map() {
@@ -48,6 +51,22 @@ pub fn Backgrounds() -> Element {
                             "{background.name}"
                         }
                     }
+                }
+            }
+        }
+        if cfg!(debug_assertions) {
+            hr {}
+            div { class: "mt-4 flex items-center gap-2",
+                input {
+                    r#type: "text",
+                    value: new_list_name(),
+                    oninput: move |e| new_list_name.set(e.value().trim().to_string()),
+                }
+                Link {
+                    to: Routes::BackgroundEdit {
+                        id: new_list_name(),
+                    },
+                    "New Background List"
                 }
             }
         }

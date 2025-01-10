@@ -10,7 +10,7 @@ use types::{
 };
 
 use crate::components::{
-    edit::{AttrDropdown, DiceInput, MultiDamageInput, StringList},
+    edit::{AttrDropdown, Checkbox, DiceInput, MultiDamageInput, StringList},
     view::Pair,
 };
 
@@ -97,27 +97,21 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
         }
         hr {}
         div { class: "flex flex-col",
-            Checkbox { name: "Concentration",
-                input {
-                    r#type: "checkbox",
-                    checked: concentration,
-                    onchange: move |e| {
-                        let checked = e.checked();
-                        concentration.set(checked);
-                    },
-                }
+            Checkbox {
+                name: "Concentration",
+                checked: concentration(),
+                onchange: move |checked| {
+                    concentration.set(checked);
+                },
             }
 
             if level() > 0 {
-                Checkbox { name: "Ritual",
-                    input {
-                        r#type: "checkbox",
-                        checked: ritual,
-                        onchange: move |e| {
-                            let checked = e.checked();
-                            ritual.set(checked);
-                        },
-                    }
+                Checkbox {
+                    name: "Ritual",
+                    checked: ritual(),
+                    onchange: move |checked| {
+                        ritual.set(checked);
+                    },
                 }
             }
         }
@@ -173,16 +167,6 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
 }
 
 #[component]
-fn Checkbox(name: String, children: Element) -> Element {
-    rsx! {
-        fieldset { class: "inline-flex gap-2 items-center",
-            {children}
-            label { "{name}" }
-        }
-    }
-}
-
-#[component]
 fn CoreBlock(
     name: Signal<String>,
     level: Signal<u8>,
@@ -193,11 +177,11 @@ fn CoreBlock(
 ) -> Element {
     rsx! {
         div { class: "grid grid-cols-auto-fr space-y-4",
-            Pair { name: "Name", grid: true,
+            Pair { name: "Name", grid: true, align: true,
                 input { value: "{name}", oninput: move |e| name.set(e.value()) }
             }
 
-            Pair { name: "Level", grid: true,
+            Pair { name: "Level", grid: true, align: true,
                 input {
                     r#type: "number",
                     min: 0,
@@ -207,7 +191,7 @@ fn CoreBlock(
                 }
             }
 
-            Pair { name: "School", grid: true,
+            Pair { name: "School", grid: true, align: true,
                 select {
                     value: "{school}",
                     onchange: move |e| school.set(e.value()),
@@ -222,14 +206,14 @@ fn CoreBlock(
                 }
             }
 
-            Pair { name: "Cast Time", grid: true,
+            Pair { name: "Cast Time", grid: true, align: true,
                 input {
                     value: "{cast_time}",
                     oninput: move |e| cast_time.set(e.value()),
                 }
             }
 
-            Pair { name: "Range", grid: true,
+            Pair { name: "Range", grid: true, align: true,
                 input {
                     value: "{range}",
                     oninput: move |e| {
@@ -246,7 +230,7 @@ fn CoreBlock(
                 }
             }
 
-            Pair { name: "Duration", grid: true,
+            Pair { name: "Duration", grid: true, align: true,
                 input {
                     value: "{duration}",
                     oninput: move |e| duration.set(e.value()),
@@ -261,30 +245,24 @@ fn ComponentBlock(components: Signal<ComponentsT>) -> Element {
     rsx! {
         h2 { "Components" }
         div { class: "flex flex-col",
-            Checkbox { name: "Verbal",
-                input {
-                    r#type: "checkbox",
-                    checked: components().verbal,
-                    onchange: move |e| {
-                        let checked = e.checked();
-                        let mut comp = components();
-                        comp.verbal = checked;
-                        components.set(comp);
-                    },
-                }
+            Checkbox {
+                name: "Verbal",
+                checked: components().verbal,
+                onchange: move |checked| {
+                    let mut comp = components();
+                    comp.verbal = checked;
+                    components.set(comp);
+                },
             }
 
-            Checkbox { name: "Somatic",
-                input {
-                    r#type: "checkbox",
-                    checked: components().somatic,
-                    onchange: move |e| {
-                        let checked = e.checked();
-                        let mut comp = components();
-                        comp.somatic = checked;
-                        components.set(comp);
-                    },
-                }
+            Checkbox {
+                name: "Somatic",
+                checked: components().somatic,
+                onchange: move |checked| {
+                    let mut comp = components();
+                    comp.somatic = checked;
+                    components.set(comp);
+                },
             }
 
             h3 { class: "mt-2", "Materials" }
@@ -310,7 +288,7 @@ fn SaveBlock(attr: Signal<Option<Attribute>>, on_save: Signal<Option<OnSave>>) -
     rsx! {
         h2 { "Save" }
         div { class: "grid grid-cols-auto-2 space-y-4",
-            Pair { name: "Attribute", grid: true,
+            Pair { name: "Attribute", grid: true, align: true,
                 AttrDropdown {
                     value: "{attr_string}",
                     allow_none: true,
@@ -329,7 +307,7 @@ fn SaveBlock(attr: Signal<Option<Attribute>>, on_save: Signal<Option<OnSave>>) -
                 }
             }
             if let Some(_) = attr() {
-                Pair { name: "On Save", grid: true,
+                Pair { name: "On Save", grid: true, align: true,
                     select {
                         value: "{on_save().unwrap_or_default()}",
                         onchange: move |e| on_save.set(Some(e.value().into())),

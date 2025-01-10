@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    mechanics::{Alignment, Attributes, CreatureType, Size, Skill},
+    mechanics::{Alignment, Attribute, Attributes, CreatureType, Size, Skill},
     Named,
 };
 
@@ -15,7 +15,8 @@ pub struct StatBlock {
     pub hit_points: String,
     pub speed: u32,
     pub attributes: Attributes,
-    pub saving_throws: Option<Attributes>,
+    #[serde(default)]
+    pub saving_throws: Vec<Attribute>,
     #[serde(default)]
     pub damage_resistances: Vec<String>,
     #[serde(default)]
@@ -34,11 +35,16 @@ pub struct StatBlock {
     #[serde(default)]
     pub proficiencies: Vec<Skill>,
     pub proficiency_bonus: Option<String>,
-    pub other_attributes: Option<HashMap<String, String>>,
-    pub actions: Option<HashMap<String, String>>,
-    pub reactions: Option<HashMap<String, String>>,
-    pub legendary_actions: Option<HashMap<String, String>>,
-    pub special_abilities: Option<HashMap<String, String>>,
+    #[serde(default)]
+    pub traits: HashMap<String, String>,
+    #[serde(default)]
+    pub actions: HashMap<String, String>,
+    #[serde(default)]
+    pub reactions: HashMap<String, String>,
+    #[serde(default)]
+    pub legendary_actions: HashMap<String, String>,
+    #[serde(default)]
+    pub special_abilities: HashMap<String, String>,
 }
 
 impl PartialEq<str> for StatBlock {

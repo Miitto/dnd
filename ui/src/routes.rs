@@ -15,7 +15,7 @@ use crate::PageNotFound;
 use home::Home;
 use items::*;
 
-use backgrounds::{background::Background, Backgrounds};
+use backgrounds::{background::Background, edit::BackgroundEdit, Backgrounds};
 use classes::{Class, Classes, Subclass};
 use feats::{feat::Feat, Feats};
 use races::{race::Race, Races};
@@ -49,6 +49,8 @@ pub enum Routes {
         Backgrounds {},
         #[route("/:id")]
         Background { id: String },
+        #[route("/:id/edit")]
+        BackgroundEdit { id: String },
     #[end_nest]
     #[nest("/classes")]
         #[route("/")]
@@ -100,6 +102,9 @@ impl Routes {
             Routes::Backgrounds {} => vec![self.as_segment("Backgrounds")],
             Routes::Background { id } => {
                 Routes::Backgrounds {}.add_segment(self.as_segment(id.capitalize()))
+            }
+            Routes::BackgroundEdit { id } => {
+                Routes::Background { id: id.clone() }.add_segment(self.as_segment("Edit"))
             }
             Routes::Classes {} => vec![self.as_segment("Classes")],
             Routes::Class { id } => {

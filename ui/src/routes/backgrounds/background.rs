@@ -1,4 +1,7 @@
-use crate::components::view::{Description, PairLi};
+use crate::{
+    components::view::{Description, PairLi},
+    routes::Routes,
+};
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -14,19 +17,39 @@ pub fn Background(id: String) -> Element {
         let equip = background.equip_string();
 
         rsx! {
-            h1 { "{background.name}" }
+            span { class: "w-full inline-flex justify-between items-center",
+                h1 { "{background.name}" }
+                if cfg!(debug_assertions) {
+                    Link {
+                        to: Routes::BackgroundEdit {
+                            id: background.name.to_owned(),
+                        },
+                        "Edit"
+                    }
+                }
+            }
 
             div { class: "flex flex-col",
                 Description { description: background.description }
 
-                ul { class: "list-disc pl-6",
-                    PairLi { name: "Skill Proficiencies", {skills} }
+                br {}
 
-                    PairLi { name: "Tool Proficiencies", {tools} }
+                ul { class: "flex flex-col list-disc pl-6 gap-y-2",
+                    if !skills.is_empty() {
+                        PairLi { name: "Skill Proficiencies", {skills} }
+                    }
 
-                    PairLi { name: "Languages", "{background.languages}" }
+                    if !tools.is_empty() {
+                        PairLi { name: "Tool Proficiencies", {tools} }
+                    }
 
-                    PairLi { name: "Equipment", {equip} }
+                    if !background.languages.is_empty() {
+                        PairLi { name: "Languages", "{background.languages}" }
+                    }
+
+                    if !equip.is_empty() {
+                        PairLi { name: "Equipment", {equip} }
+                    }
                 }
             }
         }

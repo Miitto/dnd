@@ -16,3 +16,9 @@ pub enum CreatureType {
     Undead,
     Vermin,
 }
+
+impl std::fmt::Display for CreatureType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}

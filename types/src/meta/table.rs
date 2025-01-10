@@ -11,6 +11,7 @@ use crate::Named;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Table {
     pub name: String,
+    pub show_name: bool,
     pub ordered: bool,
     pub rows: Vec<TableRow>,
 }
@@ -63,6 +64,7 @@ impl<'de> Deserialize<'de> for Table {
             Name,
             Rows,
             Ordered,
+            ShowName,
         }
 
         struct TableVisitor;
@@ -92,6 +94,7 @@ impl<'de> Deserialize<'de> for Table {
                 Ok(Table {
                     name,
                     ordered: false,
+                    show_name: false,
                     rows,
                 })
             }
@@ -103,6 +106,7 @@ impl<'de> Deserialize<'de> for Table {
                 let mut name = None;
                 let mut ordered = false;
                 let mut rows = None;
+                let mut show_name = false;
 
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -124,6 +128,12 @@ impl<'de> Deserialize<'de> for Table {
                             }
                             ordered = map.next_value()?;
                         }
+                        Field::ShowName => {
+                            if ordered {
+                                return Err(de::Error::duplicate_field("show_name"));
+                            }
+                            show_name = map.next_value()?;
+                        }
                     }
                 }
 
@@ -133,11 +143,12 @@ impl<'de> Deserialize<'de> for Table {
                     name,
                     ordered,
                     rows,
+                    show_name,
                 })
             }
         }
 
-        const FIELDS: &[&str] = &["name", "rows", "ordered"];
+        const FIELDS: &[&str] = &["name", "rows", "ordered", "show_name"];
         deserializer.deserialize_struct("Table", FIELDS, TableVisitor)
     }
 }

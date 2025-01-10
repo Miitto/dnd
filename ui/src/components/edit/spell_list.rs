@@ -61,7 +61,7 @@ pub fn SpellListEdit(props: SpellListEditProps) -> Element {
 
     rsx! {
         div {
-            Pair { name: "Name",
+            Pair { name: "Name", align: true,
                 input { value: "{name}", oninput: move |e| name.set(e.value()) }
             }
             br {}

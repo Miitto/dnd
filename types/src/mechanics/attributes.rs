@@ -95,7 +95,7 @@ impl Attributes {
     }
 
     pub fn str_str(&self) -> String {
-        format!("{} ({})", self.strength, self.str_mod())
+        format!("{} ({:+})", self.strength, self.str_mod())
     }
 
     pub fn dex_mod(&self) -> i8 {
@@ -103,7 +103,7 @@ impl Attributes {
     }
 
     pub fn dex_str(&self) -> String {
-        format!("{} ({})", self.dexterity, self.dex_mod())
+        format!("{} ({:+})", self.dexterity, self.dex_mod())
     }
 
     pub fn con_mod(&self) -> i8 {
@@ -111,7 +111,7 @@ impl Attributes {
     }
 
     pub fn con_str(&self) -> String {
-        format!("{} ({})", self.constitution, self.con_mod())
+        format!("{} ({:+})", self.constitution, self.con_mod())
     }
 
     pub fn int_mod(&self) -> i8 {
@@ -119,7 +119,7 @@ impl Attributes {
     }
 
     pub fn int_str(&self) -> String {
-        format!("{} ({})", self.intelligence, self.int_mod())
+        format!("{} ({:+})", self.intelligence, self.int_mod())
     }
 
     pub fn wis_mod(&self) -> i8 {
@@ -127,7 +127,7 @@ impl Attributes {
     }
 
     pub fn wis_str(&self) -> String {
-        format!("{} ({})", self.wisdom, self.wis_mod())
+        format!("{} ({:+})", self.wisdom, self.wis_mod())
     }
 
     pub fn cha_mod(&self) -> i8 {
@@ -135,7 +135,7 @@ impl Attributes {
     }
 
     pub fn cha_str(&self) -> String {
-        format!("{} ({})", self.charisma, self.cha_mod())
+        format!("{} ({:+})", self.charisma, self.cha_mod())
     }
 }
 

@@ -27,7 +27,7 @@
     "passive_perception": 10,
     "challenge_rating": 0,
     "proficiency_bonus": "Your bonus",
-    "other_attributes": {
+    "traits": {
         "Heated Body (Metal Only)": "A creature that touches the construct or hits it with a melee attack while within 5 feet of it takes 1d10 fire damage.",
         "Stony Lethargy (Stone Only)": "When a creature the construct can see starts its turn within 10 feet of the construct, the construct can force it to make a Wisdom saving throw against your spell save DC. On a failed save, the target can't use reactions and its speed is halved until the start of its next turn."
     },

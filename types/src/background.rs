@@ -1,6 +1,6 @@
 use crate::{mechanics::Skill, meta::Description};
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Background {
     pub name: String,
     pub description: Description,

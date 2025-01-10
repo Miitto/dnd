@@ -1,4 +1,4 @@
-use crate::components::view::PairLi;
+use crate::components::view::{Description, PairLi, Table};
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -13,9 +13,9 @@ pub fn Race(id: String) -> Element {
             h1 { "{race.name}" }
 
             div { class: "flex flex-col",
-                p { "{race.description}" }
+                Description { description: race.description }
 
-                ul { class: "list-disc pl-6 pt-4 gap-y-2",
+                ul { class: "flex flex-col list-disc pl-6 pt-4 gap-y-2",
                     li {
                         p { class: "inline-flex gap-x-2",
                             b { "Ability Score Increase:" }
@@ -45,27 +45,10 @@ pub fn Race(id: String) -> Element {
                         PairLi { name: "{key}", "{val}" }
                     }
 
-                    for table in race.tables.iter() {
+                    for table in race.tables {
                         hr {}
 
-                        table { class: "border w-full",
-                            thead { class: "border-b",
-                                tr { class: "*:px-2 *:py-1 *:text-left",
-                                    for header in table.rows[0].columns.iter() {
-                                        th { "{header}" }
-                                    }
-                                }
-                            }
-                            tbody {
-                                for row in table.rows[1..].iter() {
-                                    tr { class: "*:px-2 *:py-1 even:bg-muted",
-                                        for cell in row.columns.iter() {
-                                            td { "{cell}" }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        Table { table }
                     }
                 }
             }

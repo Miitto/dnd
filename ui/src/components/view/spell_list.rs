@@ -105,7 +105,7 @@ pub fn SpellListView(
                                     {
                                         let mut split = spell.cast_time.split(", ");
                                         let first = split.next().unwrap();
-                                        let rest = split.next().map(|s| "...".to_string()).unwrap_or_default();
+                                        let rest = split.next().map(|_| "...".to_string()).unwrap_or_default();
                                         format!("{}{}", first, rest)
                                     }
                                 }

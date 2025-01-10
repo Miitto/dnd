@@ -4,6 +4,23 @@ use types::mechanics::{Damage, Dice};
 use crate::components::view::Pair;
 
 #[component]
+pub fn Checkbox(name: String, checked: bool, onchange: Callback<bool>) -> Element {
+    rsx! {
+        fieldset { class: "inline-flex gap-2 items-center",
+            input {
+                r#type: "checkbox",
+                checked,
+                onchange: move |e| {
+                    let checked = e.checked();
+                    onchange.call(checked);
+                },
+            }
+            label { "{name}" }
+        }
+    }
+}
+
+#[component]
 pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>>) -> Element {
     let mut list = use_signal(move || list.clone());
 
@@ -26,7 +43,7 @@ pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>
                             }
                             l.push(e.value());
                             list.set(l);
-                            oninput(list());
+                            oninput.call(list());
                             value.set("".to_string());
                         },
                     }

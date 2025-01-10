@@ -19,12 +19,6 @@ pub fn Navbar() -> Element {
                 Link { to: Routes::Home {}, "Home" }
             }
             li {
-                Link { to: Routes::Items {}, "Items" }
-            }
-            li {
-                Link { to: Routes::Races {}, "Races" }
-            }
-            li {
                 Link { to: Routes::Backgrounds {}, "Backgrounds" }
             }
             li {
@@ -32,6 +26,12 @@ pub fn Navbar() -> Element {
             }
             li {
                 Link { to: Routes::Feats {}, "Feats" }
+            }
+            li {
+                Link { to: Routes::Items {}, "Items" }
+            }
+            li {
+                Link { to: Routes::Races {}, "Races" }
             }
             li {
                 Link { to: Routes::SpellLists {}, "Spell Lists" }
