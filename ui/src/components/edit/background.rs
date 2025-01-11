@@ -6,7 +6,7 @@ use types::background::Background;
 use types::extensions::ForceLock;
 use types::stores::Store;
 
-use crate::components::edit::{SkillMultiSelect, StringListSignal};
+use crate::components::edit::{DescriptionInputSignal, SkillMultiSelect, StringListSignal};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -35,7 +35,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| background.name.clone());
-    let mut description = use_signal(|| background.description.to_string());
+    let description = use_signal(|| background.description.clone());
     let equipment = use_signal(|| background.equipment.clone());
     let mut languages = use_signal(|| background.languages.clone());
     let skill_list = use_signal(|| background.skill_proficiencies.clone());
@@ -46,7 +46,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         let mut background = background_locked.force_lock();
 
         background.name = name();
-        background.description = description().into();
+        background.description = description();
         background.equipment = equipment();
         background.languages = languages();
         background.skill_proficiencies = skill_list();
@@ -61,11 +61,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
             br {}
 
             h2 { "Description" }
-            textarea {
-                class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-                value: "{description}",
-                oninput: move |e| description.set(e.value()),
-            }
+            DescriptionInputSignal { description }
 
             Pair { name: "Languages", align: true,
                 input {

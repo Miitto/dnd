@@ -6,7 +6,9 @@ use types::extensions::ForceLock;
 use types::race::Race;
 use types::stores::Store;
 
-use crate::components::edit::{AttributesInputSignal, MultiTableEdit, SizeSelectorSignal};
+use crate::components::edit::{
+    AttributesInputSignal, DescriptionInputSignal, MultiTableEdit, SizeSelectorSignal,
+};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -35,7 +37,7 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| race.name.clone());
-    let mut description = use_signal(|| race.description.to_string());
+    let description = use_signal(|| race.description.clone());
     let default_asi = use_signal(|| race.default_asi.clone());
     let mut age = use_signal(|| race.age.clone());
     let mut alignment = use_signal(|| race.alignment.clone());
@@ -55,7 +57,17 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
         let mut race = race_locked.force_lock();
 
         race.name = name();
-        race.description = description().into();
+        race.description = description();
+        race.default_asi = default_asi();
+        race.age = age();
+        race.alignment = alignment();
+        race.size.size = size();
+        race.size.description = size_description();
+        race.speed = speed();
+        race.languages = languages();
+        race.tables = tables();
+        race.category = category();
+        race.unique = unique();
     });
     // endregion
 
@@ -67,11 +79,7 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
             br {}
 
             h2 { "Description" }
-            textarea {
-                class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-                value: "{description}",
-                oninput: move |e| description.set(e.value()),
-            }
+            DescriptionInputSignal { description }
 
             h2 { "Attributes" }
             AttributesInputSignal { attributes: default_asi }

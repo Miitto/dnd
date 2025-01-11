@@ -6,7 +6,7 @@ use types::extensions::ForceLock;
 use types::feat::Feat;
 use types::stores::Store;
 
-use crate::components::edit::{AttributesInputSignal, StringListSignal};
+use crate::components::edit::{AttributesInputSignal, DescriptionInputSignal, StringListSignal};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -35,7 +35,7 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| feat.name.clone());
-    let mut description = use_signal(|| feat.description.to_string());
+    let description = use_signal(|| feat.description.clone());
     let attributes = use_signal(|| feat.attributes.clone());
     let benefits = use_signal(|| feat.benefits.clone());
 
@@ -45,7 +45,7 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
         let mut feat = feat_locked.force_lock();
 
         feat.name = name();
-        feat.description = description().into();
+        feat.description = description();
         feat.attributes = attributes();
         feat.benefits = benefits();
     });
@@ -59,11 +59,7 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
             br {}
 
             h2 { "Description" }
-            textarea {
-                class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-                value: "{description}",
-                oninput: move |e| description.set(e.value()),
-            }
+            DescriptionInputSignal { description }
 
             h2 { "Attributes" }
             AttributesInputSignal { attributes }

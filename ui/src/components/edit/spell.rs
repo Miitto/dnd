@@ -5,12 +5,16 @@ use dioxus::{logger::tracing, prelude::*};
 use types::{
     extensions::ForceLock,
     mechanics::Dice,
+    meta::Description,
     spells::{OnSave, Spell},
     stores::Store,
 };
 
 use crate::components::{
-    edit::{AttrDropdown, Checkbox, DiceInput, MultiDamageInput, StringList},
+    edit::{
+        AttrDropdown, Checkbox, DescriptionInputSignal, DiceInput, MultiDamageInput, StringList,
+        TextAreaSignal,
+    },
     view::Pair,
 };
 
@@ -52,9 +56,9 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
     let save_attr = use_signal(|| spell.save);
     let on_save = use_signal(|| spell.on_save);
 
-    let description = use_signal(|| spell.description.to_string());
+    let description = use_signal(|| spell.description.clone());
 
-    let at_higher_levels = use_signal(|| spell.at_higher_levels.clone());
+    let at_higher_levels = use_signal(|| spell.at_higher_levels.clone().unwrap_or_default());
 
     let mut ritual = use_signal(|| spell.ritual);
     let mut concentration = use_signal(|| spell.concentration);
@@ -75,8 +79,12 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
         spell.components = components();
         spell.save = save_attr();
         spell.on_save = on_save();
-        spell.description = description().into();
-        spell.at_higher_levels = at_higher_levels();
+        spell.description = description();
+        spell.at_higher_levels = if at_higher_levels().is_empty() {
+            None
+        } else {
+            Some(at_higher_levels())
+        };
         spell.ritual = ritual();
         spell.concentration = concentration();
         spell.damage = damages();
@@ -324,26 +332,11 @@ fn SaveBlock(attr: Signal<Option<Attribute>>, on_save: Signal<Option<OnSave>>) -
 }
 
 #[component]
-fn TextAreas(description: Signal<String>, at_higher_levels: Signal<Option<String>>) -> Element {
+fn TextAreas(description: Signal<Description>, at_higher_levels: Signal<String>) -> Element {
     rsx! {
         h2 { "Description" }
-        textarea {
-            class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-            value: description(),
-            oninput: move |e| description.set(e.value()),
-        }
+        DescriptionInputSignal { description }
         h2 { "At Higher Levels" }
-        textarea {
-            class: "w-full resize-none h-fit max-h-[50svh] min-h-32",
-            value: "{at_higher_levels().unwrap_or_default()}",
-            oninput: move |e| {
-                let val = e.value();
-                if val.is_empty() {
-                    at_higher_levels.set(None);
-                } else {
-                    at_higher_levels.set(Some(val));
-                }
-            },
-        }
+        TextAreaSignal { value: at_higher_levels }
     }
 }
