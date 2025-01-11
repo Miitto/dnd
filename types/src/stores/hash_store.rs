@@ -12,6 +12,8 @@ use crate::{
     Category, Named,
 };
 
+use anyhow::Result;
+
 #[derive(Debug, Clone)]
 pub struct HashStore<T>
 where
@@ -91,24 +93,24 @@ impl HashStore<Weapon> {
 }
 
 pub trait Saveable {
-    fn save(&self, item: &str);
+    fn save(&self, item: &str) -> Result<()>;
 }
 
 impl<T> Saveable for HashStore<T>
 where
     T: serde::Serialize + Category + PartialEq<str> + Clone,
 {
-    fn save(&self, item: &str) {
+    fn save(&self, item: &str) -> Result<()> {
         let item = if let Some(item) = self.get(item) {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to get category item to save"));
         };
 
         let item = if let Ok(item) = item.lock() {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to lock category item to save"));
         };
 
         let path = self
@@ -119,14 +121,14 @@ where
         let serialized = if let Ok(serialized) = serde_json::to_string_pretty(&*item) {
             serialized
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to serialize category item to save"));
         };
 
         println!("Saving Category to {:?}", path);
 
         match std::fs::write(path, serialized) {
-            Ok(_) => println!("Saved {}", item.name()),
-            Err(e) => eprintln!("Failed to save {}: {:?}", item.name(), e),
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Failed to save {}: {:?}", item.name(), e)),
         }
     }
 }
@@ -135,17 +137,17 @@ impl<T> Saveable for HashStore<T>
 where
     T: serde::Serialize + Named + PartialEq<str> + Clone,
 {
-    default fn save(&self, item: &str) {
+    default fn save(&self, item: &str) -> Result<()> {
         let item = if let Some(item) = self.get(item) {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to get named item to save"));
         };
 
         let item = if let Ok(item) = item.lock() {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to lock named item to save"));
         };
 
         let path = self
@@ -155,30 +157,30 @@ where
         let serialized = if let Ok(serialized) = serde_json::to_string_pretty(&*item) {
             serialized
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to serialize named item to save"));
         };
 
         println!("Saving Named to {:?}", path);
 
         match std::fs::write(path, serialized) {
-            Ok(_) => println!("Saved {}", item.name()),
-            Err(e) => eprintln!("Failed to save {}: {:?}", item.name(), e),
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Failed to save {}: {:?}", item.name(), e)),
         }
     }
 }
 
 impl Saveable for HashStore<Spell> {
-    fn save(&self, item: &str) {
+    fn save(&self, item: &str) -> Result<()> {
         let item = if let Some(item) = self.get(item) {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to get spell item to save"));
         };
 
         let item = if let Ok(item) = item.lock() {
             item
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to lock spell item to save"));
         };
 
         let path = if item.level == 0 {
@@ -192,25 +194,25 @@ impl Saveable for HashStore<Spell> {
         let serialized = if let Ok(serialized) = serde_json::to_string_pretty(&*item) {
             serialized
         } else {
-            return;
+            return Err(anyhow::anyhow!("Failed to serialize spell item to save"));
         };
 
         println!("Saving Spell to {:?}", path);
 
         match std::fs::write(path, serialized) {
-            Ok(_) => println!("Saved {}", item.name()),
-            Err(e) => eprintln!("Failed to save {}: {:?}", item.name(), e),
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Failed to save {}: {:?}", item.name(), e)),
         }
     }
 }
 
 impl Saveable for HashStore<Class> {
-    fn save(&self, item: &str) {
+    fn save(&self, item: &str) -> Result<()> {
         let (name, path, serialized) = if let Some(item) = self.get(item) {
             let item = if let Ok(item) = item.lock() {
                 item
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to lock class item to save"));
             };
 
             let path = self.path.join(item.name.to_snake_case()).join("class.json");
@@ -218,7 +220,7 @@ impl Saveable for HashStore<Class> {
             let serialized = if let Ok(serialized) = serde_json::to_string_pretty(&*item) {
                 serialized
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to serialize class item to save"));
             };
 
             println!("Saving Class to {:?}", path);
@@ -229,13 +231,13 @@ impl Saveable for HashStore<Class> {
             let class = if let Some(class) = self.get(class) {
                 class
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to get class item to save"));
             };
 
             let class = if let Ok(class) = class.lock() {
                 class
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to lock class item to save"));
             };
 
             let path = self.path.join(class.name.to_snake_case());
@@ -243,7 +245,7 @@ impl Saveable for HashStore<Class> {
             let subclass = if let Some(subclass) = class.subclasses.options.get(subclass) {
                 subclass
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to get subclass item to save"));
             };
 
             let path = path.join(format!("{}.json", subclass.name.to_snake_case()));
@@ -251,7 +253,7 @@ impl Saveable for HashStore<Class> {
             let serialized = if let Ok(serialized) = serde_json::to_string_pretty(subclass) {
                 serialized
             } else {
-                return;
+                return Err(anyhow::anyhow!("Failed to serialize subclass item to save"));
             };
 
             println!("Saving Subclass to {:?}", path);
@@ -259,8 +261,8 @@ impl Saveable for HashStore<Class> {
         };
 
         match std::fs::write(path, serialized) {
-            Ok(_) => println!("Saved {}", name),
-            Err(e) => eprintln!("Failed to save {}: {:?}", name, e),
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Failed to save {}: {:?}", name, e)),
         }
     }
 }

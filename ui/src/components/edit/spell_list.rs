@@ -1,12 +1,13 @@
 use std::sync::{Arc, Mutex};
 
+use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use types::extensions::ForceLock;
 use types::meta::Link;
 use types::spells::SpellList;
 use types::stores::Store;
 
-use crate::components::edit::StringList;
+use crate::components::edit::StringListSignal;
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -36,7 +37,7 @@ pub fn SpellListEdit(props: SpellListEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| list.name.clone());
-    let mut spells: Signal<Vec<String>> =
+    let spells: Signal<Vec<String>> =
         use_signal(|| list.spells.iter().map(|spell| spell.name()).collect());
 
     drop(list);
@@ -65,16 +66,14 @@ pub fn SpellListEdit(props: SpellListEditProps) -> Element {
                 input { value: "{name}", oninput: move |e| name.set(e.value()) }
             }
             br {}
-            StringList {
-                name: name(),
-                list: spells(),
-                oninput: move |list| { spells.set(list) },
-            }
+            StringListSignal { name: name(), list: spells }
 
             br {}
             button {
                 class: "px-4 py-2 rounded border w-fit h-fit",
-                onclick: move |_| { all.save(name().as_str()) },
+                onclick: move |_| {
+                    all.save(name().as_str()).unwrap_or_else(|e| tracing::error!("{}", e));
+                },
                 "Save"
             }
         }

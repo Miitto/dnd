@@ -1,11 +1,12 @@
 use std::sync::{Arc, Mutex};
 
+use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use types::background::Background;
 use types::extensions::ForceLock;
 use types::stores::Store;
 
-use crate::components::edit::{SkillMultiSelect, StringList};
+use crate::components::edit::{SkillMultiSelect, StringListSignal};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -27,7 +28,7 @@ impl PartialEq for BackgroundEditProps {
 #[component]
 pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
     let store = use_context::<Store>();
-    let all = store.spell_lists;
+    let all = store.backgrounds;
     let background_locked = props.background;
 
     let background = background_locked.force_lock();
@@ -35,7 +36,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
     // region: Signal
     let mut name = use_signal(|| background.name.clone());
     let mut description = use_signal(|| background.description.to_string());
-    let mut equipment = use_signal(|| background.equipment.clone());
+    let equipment = use_signal(|| background.equipment.clone());
     let mut languages = use_signal(|| background.languages.clone());
     let skill_list = use_signal(|| background.skill_proficiencies.clone());
 
@@ -46,11 +47,14 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
 
         background.name = name();
         background.description = description().into();
+        background.equipment = equipment();
+        background.languages = languages();
+        background.skill_proficiencies = skill_list();
     });
     // endregion
 
     rsx! {
-        div {
+        div { class: "flex flex-col gap-y-2",
             Pair { name: "Name", align: true,
                 input { value: "{name}", oninput: move |e| name.set(e.value()) }
             }
@@ -58,7 +62,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
 
             h2 { "Description" }
             textarea {
-                class: "w-full",
+                class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
                 value: "{description}",
                 oninput: move |e| description.set(e.value()),
             }
@@ -71,11 +75,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
             }
 
 
-            StringList {
-                name: "Equipment",
-                list: equipment(),
-                oninput: move |list| equipment.set(list),
-            }
+            StringListSignal { name: "Equipment", list: equipment }
 
             div {
                 h2 { "Skill Proficiencies" }
@@ -85,7 +85,9 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
             br {}
             button {
                 class: "px-4 py-2 rounded border w-fit h-fit",
-                onclick: move |_| { all.save(name().as_str()) },
+                onclick: move |_| {
+                    all.save(name().as_str()).unwrap_or_else(|e| tracing::error!("{}", e));
+                },
                 "Save"
             }
         }

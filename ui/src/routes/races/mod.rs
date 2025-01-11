@@ -6,6 +6,7 @@ use types::stores::Store;
 use crate::routes::Routes;
 use crate::Capitalize;
 
+pub mod edit;
 pub mod race;
 
 #[component]
@@ -33,6 +34,8 @@ pub fn Races() -> Element {
         map
     });
 
+    let mut new_race_name = use_signal(String::new);
+
     rsx! {
         h1 { class: "underline", "Races" }
         for (category , races) in races_map() {
@@ -46,6 +49,22 @@ pub fn Races() -> Element {
                             },
                             "{race.name}"
                         }
+                    }
+                }
+            }
+            if cfg!(debug_assertions) {
+                hr {}
+                div { class: "mt-4 flex items-center gap-2",
+                    input {
+                        r#type: "text",
+                        value: new_race_name(),
+                        oninput: move |e| new_race_name.set(e.value().trim().to_string()),
+                    }
+                    Link {
+                        to: Routes::RaceEdit {
+                            id: new_race_name(),
+                        },
+                        "New Race"
                     }
                 }
             }

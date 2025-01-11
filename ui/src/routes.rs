@@ -17,8 +17,8 @@ use items::*;
 
 use backgrounds::{background::Background, edit::BackgroundEdit, Backgrounds};
 use classes::{Class, Classes, Subclass};
-use feats::{feat::Feat, Feats};
-use races::{race::Race, Races};
+use feats::{edit::FeatEdit, feat::Feat, Feats};
+use races::{edit::RaceEdit, race::Race, Races};
 use spell_lists::{edit::SpellListEdit, spell_list::SpellList, SpellLists};
 use spells::{Spell, SpellEdit};
 
@@ -43,6 +43,8 @@ pub enum Routes {
         Races {},
         #[route("/:id")]
         Race { id: String },
+        #[route("/:id/edit")]
+        RaceEdit { id: String },
     #[end_nest]
     #[nest("/backgrounds")]
         #[route("/")]
@@ -65,6 +67,8 @@ pub enum Routes {
         Feats {},
         #[route("/:id")]
         Feat { id: String },
+        #[route("/:id/edit")]
+        FeatEdit { id: String },
     #[end_nest]
     #[nest("/spell_lists")]
         #[route("/")]
@@ -99,6 +103,9 @@ impl Routes {
             }
             Routes::Races {} => vec![self.as_segment("Races")],
             Routes::Race { id } => Routes::Races {}.add_segment(self.as_segment(id.capitalize())),
+            Routes::RaceEdit { id } => {
+                Routes::Race { id: id.clone() }.add_segment(self.as_segment("Edit"))
+            }
             Routes::Backgrounds {} => vec![self.as_segment("Backgrounds")],
             Routes::Background { id } => {
                 Routes::Backgrounds {}.add_segment(self.as_segment(id.capitalize()))
@@ -119,6 +126,9 @@ impl Routes {
             .add_segment(self.as_segment(subclass_id.capitalize())),
             Routes::Feats {} => vec![self.as_segment("Feats")],
             Routes::Feat { id } => Routes::Feats {}.add_segment(self.as_segment(id.capitalize())),
+            Routes::FeatEdit { id } => {
+                Routes::Feat { id: id.clone() }.add_segment(self.as_segment("Edit"))
+            }
             Routes::SpellLists {} => vec![self.as_segment("Spell Lists")],
             Routes::SpellList { id, .. } => {
                 Routes::SpellLists {}.add_segment(self.as_segment(id.capitalize()))

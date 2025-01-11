@@ -1,4 +1,7 @@
-use crate::components::view::{Description, PairLi, Table};
+use crate::{
+    components::view::{Description, PairLi, Table},
+    routes::Routes,
+};
 use dioxus::prelude::*;
 use types::stores::Store;
 
@@ -10,7 +13,17 @@ pub fn Race(id: String) -> Element {
 
     rsx! {
         if let Some(race) = race {
-            h1 { "{race.name}" }
+            span { class: "w-full inline-flex justify-between items-center",
+                h1 { "{race.name}" }
+                if cfg!(debug_assertions) {
+                    Link {
+                        to: Routes::RaceEdit {
+                            id: race.name.to_owned(),
+                        },
+                        "Edit"
+                    }
+                }
+            }
 
             div { class: "flex flex-col",
                 Description { description: race.description }
@@ -19,8 +32,8 @@ pub fn Race(id: String) -> Element {
                     li {
                         p { class: "inline-flex gap-x-2",
                             b { "Ability Score Increase:" }
-                            for asi in race.default_asi.iter() {
-                                span { key: asi.attribute, "{asi.attribute}: {asi.change}" }
+                            for (attribute , change) in race.default_asi.iter().filter(|(_, change)| *change != 0) {
+                                span { key: asi.attribute, "{attribute}: {change}" }
                             }
                         }
                     }

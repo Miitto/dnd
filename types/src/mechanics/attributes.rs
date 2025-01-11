@@ -2,6 +2,8 @@ use std::borrow::Borrow;
 
 use serde::{Deserialize, Serialize};
 
+use crate::extensions::IsZero;
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Attribute {
     #[serde(rename = "strength")]
@@ -79,17 +81,44 @@ impl Attribute {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct Attributes {
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub strength: u8,
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub dexterity: u8,
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub constitution: u8,
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub intelligence: u8,
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub wisdom: u8,
+    #[serde(default, skip_serializing_if = "u8::is_zero")]
     pub charisma: u8,
 }
 
 impl Attributes {
+    pub fn is_empty(&self) -> bool {
+        self.strength == 0
+            && self.dexterity == 0
+            && self.constitution == 0
+            && self.intelligence == 0
+            && self.wisdom == 0
+            && self.charisma == 0
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (Attribute, u8)> {
+        vec![
+            (Attribute::Strength, self.strength),
+            (Attribute::Dexterity, self.dexterity),
+            (Attribute::Constitution, self.constitution),
+            (Attribute::Intelligence, self.intelligence),
+            (Attribute::Wisdom, self.wisdom),
+            (Attribute::Charisma, self.charisma),
+        ]
+        .into_iter()
+    }
+
     pub fn str_mod(&self) -> i8 {
         (self.strength as i8 - 10) / 2
     }

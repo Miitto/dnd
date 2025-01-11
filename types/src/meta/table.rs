@@ -8,7 +8,7 @@ use serde::{
 
 use crate::Named;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Table {
     pub name: String,
     pub show_name: bool,
@@ -32,7 +32,8 @@ impl Serialize for Table {
     where
         S: Serializer,
     {
-        let mut seq = serializer.serialize_seq(Some(self.rows.len()))?;
+        let mut seq = serializer.serialize_seq(Some(self.rows.len() + 1))?;
+        seq.serialize_element(&self.name)?;
         for row in &self.rows {
             seq.serialize_element(row)?;
         }
@@ -160,5 +161,51 @@ impl<'a> Deserialize<'a> for TableRow {
     {
         let columns = Vec::<String>::deserialize(deserializer)?;
         Ok(TableRow { columns })
+    }
+}
+
+impl Table {
+    pub fn set(&mut self, row: usize, col: usize, value: String) {
+        if self.rows.len() <= row {
+            self.rows.resize(row + 1, TableRow { columns: vec![] });
+            self.set_cols(self.col_count());
+        }
+        if self.rows[row].columns.len() <= col {
+            self.rows[row].columns.resize(col + 1, "".to_string());
+        }
+        self.rows[row].columns[col] = value;
+    }
+
+    pub fn get(&self, row: usize, col: usize) -> Option<&str> {
+        self.rows
+            .get(row)
+            .and_then(|r| r.columns.get(col).map(|s| s.as_str()))
+    }
+
+    pub fn get_mut(&mut self, row: usize, col: usize) -> Option<&mut String> {
+        self.rows.get_mut(row).and_then(|r| r.columns.get_mut(col))
+    }
+
+    pub fn set_cols(&mut self, col_count: usize) {
+        for row in &mut self.rows {
+            if row.columns.len() != col_count {
+                row.columns.resize(col_count, "".to_string());
+            }
+        }
+    }
+
+    pub fn col_count(&self) -> usize {
+        self.rows.iter().map(|r| r.columns.len()).max().unwrap_or(0)
+    }
+
+    pub fn add_row(&mut self) {
+        let col_count = self.col_count();
+        self.rows.push(TableRow {
+            columns: vec!["".to_string(); col_count],
+        });
+    }
+
+    pub fn remove_row(&mut self, row: usize) {
+        self.rows.remove(row);
     }
 }

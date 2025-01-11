@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use dioxus::prelude::*;
+use dioxus::{logger::tracing, prelude::*};
 
 use types::{
     extensions::ForceLock,
@@ -160,7 +160,9 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
         br {}
         button {
             class: "px-4 py-2 rounded border w-fit h-fit",
-            onclick: move |_| { all.save(name().as_str()) },
+            onclick: move |_| {
+                all.save(name().as_str()).unwrap_or_else(|e| tracing::error!("{}", e));
+            },
             "Save"
         }
     }

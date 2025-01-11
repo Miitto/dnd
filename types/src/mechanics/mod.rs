@@ -1,5 +1,4 @@
 mod alignment;
-mod asi;
 mod attributes;
 mod condition;
 mod creature_type;
@@ -9,7 +8,6 @@ mod size;
 mod skill;
 
 pub use alignment::Alignment;
-pub use asi::ASI;
 pub use attributes::{Attribute, Attributes};
 pub use condition::Condition;
 pub use creature_type::CreatureType;

@@ -35,7 +35,7 @@ pub fn Backgrounds() -> Element {
         map
     });
 
-    let mut new_list_name = use_signal(String::new);
+    let mut new_background_name = use_signal(String::new);
 
     rsx! {
         h1 { class: "underline", "Backgrounds" }
@@ -59,14 +59,14 @@ pub fn Backgrounds() -> Element {
             div { class: "mt-4 flex items-center gap-2",
                 input {
                     r#type: "text",
-                    value: new_list_name(),
-                    oninput: move |e| new_list_name.set(e.value().trim().to_string()),
+                    value: new_background_name(),
+                    oninput: move |e| new_background_name.set(e.value().trim().to_string()),
                 }
                 Link {
                     to: Routes::BackgroundEdit {
-                        id: new_list_name(),
+                        id: new_background_name(),
                     },
-                    "New Background List"
+                    "New Background"
                 }
             }
         }

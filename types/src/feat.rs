@@ -1,12 +1,10 @@
-use std::collections::HashMap;
+use crate::{mechanics::Attributes, meta::Description};
 
-use crate::{mechanics::Attribute, meta::Description};
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Feat {
     pub name: String,
     pub description: Description,
-    pub attributes: HashMap<Attribute, u8>,
+    pub attributes: Attributes,
     pub benefits: Vec<String>,
 }
 

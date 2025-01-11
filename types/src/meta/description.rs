@@ -120,7 +120,8 @@ impl Serialize for Description {
         S: serde::Serializer,
     {
         let string = self.to_string();
+        let string = string.trim();
 
-        serializer.serialize_str(&string)
+        serializer.serialize_str(string)
     }
 }

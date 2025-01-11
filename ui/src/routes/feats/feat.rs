@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use types::stores::Store;
 
-use crate::components::view::Description;
+use crate::{components::view::Description, routes::Routes};
 
 #[component]
 pub fn Feat(id: String) -> Element {
@@ -11,7 +11,17 @@ pub fn Feat(id: String) -> Element {
 
     rsx! {
         if let Some(feat) = feat {
-            h1 { "{feat.name}" }
+            span { class: "w-full inline-flex justify-between items-center",
+                h1 { "{feat.name}" }
+                if cfg!(debug_assertions) {
+                    Link {
+                        to: Routes::FeatEdit {
+                            id: feat.name.to_owned(),
+                        },
+                        "Edit"
+                    }
+                }
+            }
             div { class: "flex flex-col",
                 Description { description: feat.description }
 

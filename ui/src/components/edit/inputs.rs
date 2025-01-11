@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use types::mechanics::{Damage, Dice};
+use types::mechanics::{Attributes, Damage, Dice, Size};
 
 use crate::components::view::Pair;
 
@@ -29,7 +29,7 @@ pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>
     rsx! {
         div { class: "flex flex-col gap-2",
             div { class: "flex gap-2 flex-row",
-                Pair { name: "{name}", class: "flex-grow",
+                Pair { name: "{name}", class: "flex flex-grow", align: true,
                     input {
                         class: "flex-grow",
                         value,
@@ -85,6 +85,13 @@ pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>
 }
 
 #[component]
+pub fn StringListSignal(list: Signal<Vec<String>>, name: String) -> Element {
+    rsx! {
+        StringList { list: list(), name, oninput: move |l| list.set(l) }
+    }
+}
+
+#[component]
 pub fn AttrDropdown(
     value: String,
     allow_none: Option<bool>,
@@ -110,6 +117,51 @@ pub fn AttrDropdown(
             option { value: "wis", "Wisdom" }
             option { value: "cha", "Charisma" }
         }
+    }
+}
+
+#[component]
+pub fn AttributesInput(value: Attributes, onchange: Callback<Attributes>) -> Element {
+    let mut attributes = use_signal(move || value.clone());
+
+    macro_rules! pair {
+        ($text:literal, $name:ident) => {
+            rsx! {
+                Pair {
+                    name: $text,
+                    grid: true,
+                    align: true,
+                    input {
+                        r#type: "number",
+                        value: attributes().$name,
+                        onchange: move |e| {
+                            let mut a = attributes();
+                            a.$name = e.value().parse().unwrap_or_default();
+                            attributes.set(a);
+                            onchange.call(attributes());
+                        },
+                    }
+                }
+            }
+        };
+    }
+
+    rsx! {
+        div { class: "grid grid-cols-auto-fr gap-y-2",
+            {pair!("Strength", strength)}
+            {pair!("Dexterity", dexterity)}
+            {pair!("Constitution", constitution)}
+            {pair!("Intelligence", intelligence)}
+            {pair!("Wisdom", wisdom)}
+            {pair!("Charisma", charisma)}
+        }
+    }
+}
+
+#[component]
+pub fn AttributesInputSignal(attributes: Signal<Attributes>) -> Element {
+    rsx! {
+        AttributesInput { value: attributes(), onchange: move |a| attributes.set(a) }
     }
 }
 
@@ -249,5 +301,33 @@ pub fn MultiDamageInput(value: Vec<Damage>, onchange: Callback<Vec<Damage>>) -> 
                 "+"
             }
         }
+    }
+}
+
+#[component]
+pub fn SizeSelector(value: Size, onchange: Callback<Size>) -> Element {
+    let mut size = use_signal(move || value);
+
+    rsx! {
+        select {
+            value: "{size()}",
+            onchange: move |e| {
+                size.set(e.value().into());
+                onchange.call(size());
+            },
+            option { value: "Tiny", "Tiny" }
+            option { value: "Small", "Small" }
+            option { value: "Medium", "Medium" }
+            option { value: "Large", "Large" }
+            option { value: "Huge", "Huge" }
+            option { value: "Gargantuan", "Gargantuan" }
+        }
+    }
+}
+
+#[component]
+pub fn SizeSelectorSignal(size: Signal<Size>) -> Element {
+    rsx! {
+        SizeSelector { value: size(), onchange: move |s| size.set(s) }
     }
 }

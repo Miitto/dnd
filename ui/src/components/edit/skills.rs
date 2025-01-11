@@ -48,7 +48,7 @@ pub fn SkillMultiSelect(list: Signal<Vec<Skill>>) -> Element {
     }
 
     rsx! {
-        div {
+        div { class: "flex flex-row gap-2 flex-wrap",
             {checkbox!(acrobatics, Acrobatics)}
             {checkbox!(animal_handling, AnimalHandling)}
             {checkbox!(arcana, Arcana)}

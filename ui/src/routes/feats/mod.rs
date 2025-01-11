@@ -3,6 +3,7 @@ use types::stores::Store;
 
 use crate::routes::Routes;
 
+pub mod edit;
 pub mod feat;
 
 #[component]
@@ -18,6 +19,8 @@ pub fn Feats() -> Element {
         all
     });
 
+    let mut new_feat_name = use_signal(String::new);
+
     rsx! {
         h1 { class: "underline", "Feats" }
         ul { class: "list-disc pl-6",
@@ -29,6 +32,22 @@ pub fn Feats() -> Element {
                         },
                         "{feat.name}"
                     }
+                }
+            }
+        }
+        if cfg!(debug_assertions) {
+            hr {}
+            div { class: "mt-4 flex items-center gap-2",
+                input {
+                    r#type: "text",
+                    value: new_feat_name(),
+                    oninput: move |e| new_feat_name.set(e.value().trim().to_string()),
+                }
+                Link {
+                    to: Routes::FeatEdit {
+                        id: new_feat_name(),
+                    },
+                    "New Feat"
                 }
             }
         }

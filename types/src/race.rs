@@ -1,25 +1,26 @@
 use std::collections::HashMap;
 
 use crate::{
-    mechanics::{DescribedSize, ASI},
+    mechanics::{Attributes, DescribedSize},
     meta::{Description, Table},
     Category, CategoryMut, Named,
 };
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 pub struct Race {
     pub name: String,
     pub description: Description,
-    pub default_asi: Vec<ASI>,
+    pub default_asi: Attributes,
     pub age: String,
     pub alignment: String,
     pub size: DescribedSize,
     pub speed: u32,
     pub languages: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tables: Vec<Table>,
-    #[serde(default)]
+    #[serde(default, skip_serializing)]
     pub category: String,
-    #[serde(flatten)]
+    #[serde(flatten, default, skip_serializing_if = "HashMap::is_empty")]
     pub unique: HashMap<String, String>,
 }
 
