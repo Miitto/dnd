@@ -1,12 +1,16 @@
+use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use types::background::Background;
 use types::extensions::ForceLock;
+use types::meta::Description;
 use types::stores::Store;
 
-use crate::components::edit::{DescriptionInputSignal, SkillMultiSelect, StringListSignal};
+use crate::components::edit::{
+    DescriptionInputSignal, NameDescriptionListSignal, SkillMultiSelect, StringListSignal,
+};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -35,10 +39,19 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| background.name.clone());
+    let mut category = use_signal(|| background.category.clone());
     let description = use_signal(|| background.description.clone());
     let equipment = use_signal(|| background.equipment.clone());
+    let tool_proficiencies = use_signal(|| background.tool_proficiencies.clone());
     let mut languages = use_signal(|| background.languages.clone());
     let skill_list = use_signal(|| background.skill_proficiencies.clone());
+    let features = use_signal(|| {
+        background
+            .features
+            .iter()
+            .map(|f| (f.name.clone(), f.description.clone()))
+            .collect::<HashMap<String, Description>>()
+    });
 
     drop(background);
 
@@ -46,10 +59,19 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         let mut background = background_locked.force_lock();
 
         background.name = name();
+        background.category = category();
         background.description = description();
         background.equipment = equipment();
         background.languages = languages();
         background.skill_proficiencies = skill_list();
+        background.tool_proficiencies = tool_proficiencies();
+        background.features = features()
+            .iter()
+            .map(|(k, v)| types::background::BackgroundFeature {
+                name: k.clone(),
+                description: v.clone(),
+            })
+            .collect();
     });
     // endregion
 
@@ -57,6 +79,12 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         div { class: "flex flex-col gap-y-2",
             Pair { name: "Name", align: true,
                 input { value: "{name}", oninput: move |e| name.set(e.value()) }
+            }
+            Pair { name: "Name", align: true,
+                input {
+                    value: "{category}",
+                    oninput: move |e| category.set(e.value()),
+                }
             }
             br {}
 
@@ -70,13 +98,17 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
                 }
             }
 
-
             StringListSignal { name: "Equipment", list: equipment }
+            br {}
+            StringListSignal { name: "Tool Proficiencies", list: tool_proficiencies }
 
             div {
                 h2 { "Skill Proficiencies" }
                 SkillMultiSelect { list: skill_list }
             }
+
+            h2 { "Features" }
+            NameDescriptionListSignal { list: features }
 
             br {}
             button {

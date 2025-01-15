@@ -1,88 +1,13 @@
 use dioxus::prelude::*;
-use types::{
-    mechanics::{Attributes, Damage, Dice, Size},
-    meta::Description,
-};
+use types::mechanics::{Attributes, Damage, Dice, Size};
 
 use crate::components::view::Pair;
 
-#[component]
-pub fn TextArea(
-    value: String,
-    oninput: Option<Callback<String>>,
-    onchange: Option<Callback<String>>,
-) -> Element {
-    rsx! {
-        textarea {
-            class: "w-full resize-none h-fit max-h-[50svh] min-h-40",
-            value,
-            oninput: move |e| {
-                if let Some(cb) = oninput.as_ref() {
-                    cb.call(e.value())
-                }
-            },
-            onchange: move |e| {
-                if let Some(cb) = onchange.as_ref() {
-                    cb.call(e.value())
-                }
-            },
-        }
-    }
-}
+mod text;
+pub use text::*;
 
 #[component]
-pub fn TextAreaSignal(value: Signal<String>) -> Element {
-    rsx! {
-        TextArea { value: value(), oninput: move |v| value.set(v), onchange: None }
-    }
-}
-
-#[component]
-pub fn DescriptionInput(
-    description: Description,
-    oninput: Option<Callback<Description>>,
-    onchange: Option<Callback<Description>>,
-) -> Element {
-    let oninput = oninput.map(|cb| {
-        {
-            move |d: String| {
-                let d = Description::from(d);
-                cb.call(d);
-            }
-        }
-        .super_into()
-    });
-
-    let onchange = onchange.map(|cb| {
-        {
-            move |d: String| {
-                let d = Description::from(d);
-                cb.call(d);
-            }
-        }
-        .super_into()
-    });
-
-    let description_string = use_memo(move || description.to_string());
-
-    rsx! {
-        TextArea { value: description_string(), oninput, onchange }
-    }
-}
-
-#[component]
-pub fn DescriptionInputSignal(description: Signal<Description>) -> Element {
-    rsx! {
-        DescriptionInput {
-            description: description(),
-            oninput: move |d| description.set(d),
-            onchange: None,
-        }
-    }
-}
-
-#[component]
-pub fn Checkbox(name: String, checked: bool, onchange: Callback<bool>) -> Element {
+pub fn Checkbox(name: String, checked: ReadOnlySignal<bool>, onchange: Callback<bool>) -> Element {
     rsx! {
         fieldset { class: "inline-flex gap-2 items-center",
             input {
@@ -99,15 +24,47 @@ pub fn Checkbox(name: String, checked: bool, onchange: Callback<bool>) -> Elemen
 }
 
 #[component]
-pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>>) -> Element {
-    let mut list = use_signal(move || list.clone());
-
+pub fn StringList(
+    name: String,
+    list: ReadOnlySignal<Vec<String>>,
+    oninput: Callback<Vec<String>>,
+) -> Element {
     let mut value = use_signal(move || "".to_string());
 
     rsx! {
         div { class: "flex flex-col gap-2",
+            h2 { "{name}" }
+            div { class: "flex flex-col gap-2",
+                for (idx , item) in list.iter().enumerate() {
+                    div { class: "grid grid-cols-fr-auto gap-2",
+                        input {
+                            value: "{item}",
+                            oninput: move |e| {
+                                let mut l = list();
+                                l[idx] = e.value();
+                                oninput(l);
+                            },
+                            onchange: move |e| {
+                                if e.value().is_empty() {
+                                    let mut l = list();
+                                    l.remove(idx);
+                                    oninput(l);
+                                }
+                            },
+                        }
+                        button {
+                            onclick: move |_| {
+                                let mut l = list();
+                                l.remove(idx);
+                                oninput(l);
+                            },
+                            "Remove"
+                        }
+                    }
+                }
+            }
             div { class: "flex gap-2 flex-row",
-                Pair { name: "{name}", class: "flex flex-grow", align: true,
+                Pair { name: "New", class: "flex flex-grow", align: true,
                     input {
                         class: "flex-grow",
                         value,
@@ -120,41 +77,9 @@ pub fn StringList(name: String, list: Vec<String>, oninput: Callback<Vec<String>
                                 return;
                             }
                             l.push(e.value());
-                            list.set(l);
-                            oninput.call(list());
+                            oninput.call(l);
                             value.set("".to_string());
                         },
-                    }
-                }
-            }
-            div { class: "flex flex-col gap-2",
-                for (idx , item) in list.iter().enumerate() {
-                    div { class: "grid grid-cols-fr-auto gap-2",
-                        input {
-                            value: "{item}",
-                            oninput: move |e| {
-                                let mut l = list();
-                                l[idx] = e.value();
-                                list.set(l);
-                                oninput(list());
-                            },
-                            onchange: move |e| {
-                                if e.value().is_empty() {
-                                    let mut l = list();
-                                    l.remove(idx);
-                                    list.set(l);
-                                }
-                            },
-                        }
-                        button {
-                            onclick: move |_| {
-                                let mut l = list();
-                                l.remove(idx);
-                                list.set(l);
-                                oninput(list());
-                            },
-                            "Remove"
-                        }
                     }
                 }
             }
@@ -171,18 +96,16 @@ pub fn StringListSignal(list: Signal<Vec<String>>, name: String) -> Element {
 
 #[component]
 pub fn AttrDropdown(
-    value: String,
+    value: ReadOnlySignal<String>,
     allow_none: Option<bool>,
     onchange: Callback<String>,
 ) -> Element {
-    let mut value = use_signal(move || value.clone());
     let allow_none = allow_none.unwrap_or_default();
 
     rsx! {
         select {
             value,
             onchange: move |e| {
-                value.set(e.value());
                 onchange.call(e.value());
             },
             if allow_none {
@@ -199,9 +122,10 @@ pub fn AttrDropdown(
 }
 
 #[component]
-pub fn AttributesInput(value: Attributes, onchange: Callback<Attributes>) -> Element {
-    let mut attributes = use_signal(move || value.clone());
-
+pub fn AttributesInput(
+    value: ReadOnlySignal<Attributes>,
+    onchange: Callback<Attributes>,
+) -> Element {
     macro_rules! pair {
         ($text:literal, $name:ident) => {
             rsx! {
@@ -211,12 +135,11 @@ pub fn AttributesInput(value: Attributes, onchange: Callback<Attributes>) -> Ele
                     align: true,
                     input {
                         r#type: "number",
-                        value: attributes().$name,
+                        value: value().$name,
                         onchange: move |e| {
-                            let mut a = attributes();
+                        let mut a = value();
                             a.$name = e.value().parse().unwrap_or_default();
-                            attributes.set(a);
-                            onchange.call(attributes());
+                            onchange.call(a);
                         },
                     }
                 }
@@ -244,9 +167,11 @@ pub fn AttributesInputSignal(attributes: Signal<Attributes>) -> Element {
 }
 
 #[component]
-pub fn DiceInput(value: Dice, grid: Option<bool>, onchange: Callback<Dice>) -> Element {
-    let mut dice = use_signal(move || value);
-
+pub fn DiceInput(
+    value: ReadOnlySignal<Dice>,
+    grid: Option<bool>,
+    onchange: Callback<Dice>,
+) -> Element {
     let display = if grid.unwrap_or_default() {
         "grid grid-cols-subgrid col-span-4"
     } else {
@@ -258,21 +183,19 @@ pub fn DiceInput(value: Dice, grid: Option<bool>, onchange: Callback<Dice>) -> E
             input {
                 r#type: "number",
                 min: 1,
-                value: "{dice().count}",
+                value: "{value().count}",
                 onchange: move |e| {
-                    let mut d = dice();
+                    let mut d = value();
                     d.count = e.value().parse().unwrap_or(0);
-                    dice.set(d);
-                    onchange.call(dice());
+                    onchange.call(d);
                 },
             }
             select {
-                value: "{dice().sides}",
+                value: "{value().sides}",
                 onchange: move |e| {
-                    let mut d = dice();
+                    let mut d = value();
                     d.sides = e.value().parse().unwrap_or(4);
-                    dice.set(d);
-                    onchange.call(dice());
+                    onchange.call(d);
                 },
                 option { value: "4", "d4" }
                 option { value: "6", "d6" }
@@ -285,12 +208,11 @@ pub fn DiceInput(value: Dice, grid: Option<bool>, onchange: Callback<Dice>) -> E
             span { class: "h-fit", " + " }
             input {
                 r#type: "number",
-                value: "{dice().modifier.unwrap_or_default()}",
+                value: "{value().modifier.unwrap_or_default()}",
                 onchange: move |e| {
-                    let mut d = dice();
+                    let mut d = value();
                     d.modifier = e.value().parse().ok().filter(|&x| x != 0);
-                    dice.set(d);
-                    onchange.call(dice());
+                    onchange.call(d);
                 },
             }
         }
@@ -298,9 +220,11 @@ pub fn DiceInput(value: Dice, grid: Option<bool>, onchange: Callback<Dice>) -> E
 }
 
 #[component]
-pub fn DamageInput(value: Damage, grid: Option<bool>, onchange: Callback<Damage>) -> Element {
-    let mut damage = use_signal(move || value.clone());
-
+pub fn DamageInput(
+    value: ReadOnlySignal<Damage>,
+    grid: Option<bool>,
+    onchange: Callback<Damage>,
+) -> Element {
     let display = if grid.unwrap_or_default() {
         "grid grid-cols-subgrid col-span-5"
     } else {
@@ -310,22 +234,20 @@ pub fn DamageInput(value: Damage, grid: Option<bool>, onchange: Callback<Damage>
     rsx! {
         span { class: "{display} gap-x-2",
             DiceInput {
-                value: damage().dice,
+                value: value().dice,
                 grid,
                 onchange: move |d| {
-                    let mut dmg = damage();
+                    let mut dmg = value();
                     dmg.dice = d;
-                    damage.set(dmg);
-                    onchange.call(damage());
+                    onchange.call(value());
                 },
             }
             input {
-                value: "{damage().damage_type}",
+                value: "{value().damage_type}",
                 onchange: move |e| {
-                    let mut dmg = damage();
+                    let mut dmg = value();
                     dmg.damage_type.set(e.value());
-                    damage.set(dmg);
-                    onchange.call(damage());
+                    onchange.call(value());
                 },
             }
         }
@@ -333,30 +255,29 @@ pub fn DamageInput(value: Damage, grid: Option<bool>, onchange: Callback<Damage>
 }
 
 #[component]
-pub fn MultiDamageInput(value: Vec<Damage>, onchange: Callback<Vec<Damage>>) -> Element {
-    let mut damages = use_signal(move || value.clone());
-
+pub fn MultiDamageInput(
+    value: ReadOnlySignal<Vec<Damage>>,
+    onchange: Callback<Vec<Damage>>,
+) -> Element {
     rsx! {
         div { class: "flex flex-col gap-2 items-end",
             div { class: "grid grid-cols-[1fr_1fr_auto_1fr_1fr_auto] gap-2 w-full",
-                for (idx , dmg) in damages.iter().enumerate() {
+                for (idx , dmg) in value().iter().enumerate() {
                     DamageInput {
                         grid: true,
                         value: dmg.clone(),
                         onchange: move |d| {
-                            let mut dmg = damages();
+                            let mut dmg = value();
                             dmg[idx] = d;
-                            damages.set(dmg);
-                            onchange.call(damages());
+                            onchange.call(value());
                         },
                     }
                     button {
                         class: "px-4 py-2 text-xl",
                         onclick: move |_| {
-                            let mut dmg = damages();
+                            let mut dmg = value();
                             dmg.remove(idx);
-                            damages.set(dmg);
-                            onchange.call(damages());
+                            onchange.call(value());
                         },
                         "-"
                     }
@@ -365,16 +286,16 @@ pub fn MultiDamageInput(value: Vec<Damage>, onchange: Callback<Vec<Damage>>) -> 
             button {
                 class: "w-fit px-4 py-2 text-xl",
                 onclick: move |_| {
-                    damages
-                        .push(Damage {
-                            dice: Dice {
-                                count: 1,
-                                sides: 4,
-                                modifier: None,
-                            },
-                            damage_type: "".into(),
-                        });
-                    onchange.call(damages());
+                    let mut d = value();
+                    d.push(Damage {
+                        dice: Dice {
+                            count: 1,
+                            sides: 4,
+                            modifier: None,
+                        },
+                        damage_type: "".into(),
+                    });
+                    onchange.call(d);
                 },
                 "+"
             }
@@ -383,15 +304,13 @@ pub fn MultiDamageInput(value: Vec<Damage>, onchange: Callback<Vec<Damage>>) -> 
 }
 
 #[component]
-pub fn SizeSelector(value: Size, onchange: Callback<Size>) -> Element {
-    let mut size = use_signal(move || value);
-
+pub fn SizeSelector(value: ReadOnlySignal<Size>, onchange: Callback<Size>) -> Element {
     rsx! {
         select {
-            value: "{size()}",
+            value: "{value()}",
             onchange: move |e| {
-                size.set(e.value().into());
-                onchange.call(size());
+                let size = e.value().into();
+                onchange.call(size);
             },
             option { value: "Tiny", "Tiny" }
             option { value: "Small", "Small" }

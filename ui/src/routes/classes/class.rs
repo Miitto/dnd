@@ -121,12 +121,12 @@ pub fn ClassTable(class: Arc<ClassT>) -> Element {
             thead {
                 tr { class: "*:px-2 *:py-1 *:text-left border-b",
                     th { "Level" }
-                    th { "Proficiency Bonus" }
+                    th { "Prof. Bonus" }
                     th { "Features" }
                     for (name , _) in class.table_entries.iter() {
                         th { "{name}" }
                     }
-                    th { "Cantrips Known" }
+                    th { "Cantrips" }
                     for level in (1..=class.cast_level.max_level()) {
                         th { "{level.ordinal()}" }
                     }
