@@ -58,6 +58,7 @@ pub fn Background(id: String) -> Element {
                 for feature in background.features {
                     h3 { "{feature.name}" }
                     Description { description: feature.description }
+                    br {}
                 }
             }
         }
