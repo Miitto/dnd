@@ -67,6 +67,7 @@ impl AstToString for Node {
                 string.push(')');
                 string
             }
+            Node::Break(_) => String::from("\n"),
             _ => String::new(),
         }
     }

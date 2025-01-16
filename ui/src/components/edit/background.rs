@@ -50,7 +50,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
             .features
             .iter()
             .map(|f| (f.name.clone(), f.description.clone()))
-            .collect::<HashMap<String, Description>>()
+            .collect::<Vec<(String, Description)>>()
     });
 
     drop(background);
@@ -67,23 +67,36 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         background.tool_proficiencies = tool_proficiencies();
         background.features = features()
             .iter()
-            .map(|(k, v)| types::background::BackgroundFeature {
-                name: k.clone(),
-                description: v.clone(),
+            .filter_map(|(k, v)| {
+                if k.is_empty() {
+                    None
+                } else {
+                    Some(types::background::BackgroundFeature {
+                        name: k.clone(),
+                        description: v.clone(),
+                    })
+                }
             })
             .collect();
+
+        background.sync();
     });
     // endregion
 
     rsx! {
         div { class: "flex flex-col gap-y-2",
-            Pair { name: "Name", align: true,
-                input { value: "{name}", oninput: move |e| name.set(e.value()) }
-            }
-            Pair { name: "Name", align: true,
-                input {
-                    value: "{category}",
-                    oninput: move |e| category.set(e.value()),
+            div { class: "grid grid-cols-auto-fr gap-y-2",
+                Pair { name: "Name", align: true, grid: true,
+                    input {
+                        value: "{name}",
+                        oninput: move |e| name.set(e.value()),
+                    }
+                }
+                Pair { name: "Category", align: true, grid: true,
+                    input {
+                        value: "{category}",
+                        oninput: move |e| category.set(e.value()),
+                    }
                 }
             }
             br {}
@@ -91,8 +104,9 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
             h2 { "Description" }
             DescriptionInputSignal { description }
 
-            Pair { name: "Languages", align: true,
+            Pair { name: "Languages", align: true, class: "flex",
                 input {
+                    class: "flex-grow",
                     value: "{languages}",
                     oninput: move |e| languages.set(e.value()),
                 }

@@ -1,0 +1,44 @@
+{
+    "name": "Archaeologist",
+    "description": "An archaeologist learns about the long-lost and fallen cultures of the past by studying their remains - their bones, their ruins, their surviving masterworks, and their tombs. Those who practice archaeology travel to the far corners of the world to root through crumbled cities and lost dungeons, digging in search of artifacts that might tell the stories of monarchs and high priests, wars and cataclysms.",
+    "skill_proficiencies": ["History", "Survival"],
+    "tool_proficiencies": ["Cartographer's tools or navigator's tools"],
+    "languages": "One of your choice",
+    "equipment": [
+        "A wooden case containing a map to a ruin or dungeon",
+        "a bullseye lantern",
+        "a miner's pick",
+        "a set of traveler's clothes",
+        "a shovel",
+        "a two-person tent",
+        "a trinket recovered from a dig site",
+        "a pouch containing 25gp"
+    ],
+    "features": [
+        {
+            "name": "Dust Digger",
+            "description": "Prior to becoming an adventurer, you spent most of your young life crawling around in the dust, pilfering relics of questionable value from crypts and ruins. Though you managed to sell a few of your discoveries and earn enough coin to buy proper adventuring gear, you have held onto an item that has great emotional value to you. Roll on the Signature Item table to see what you have, or choose an item from the table.\n{table:Signature Items}"
+        },
+        {
+            "name": "Historical Knowledge",
+            "description": "When you enter a ruin or dungeon, you can correctly ascertain its original purpose and determine its builders, whether those were dwarves, elves, humans, yuan-ti, or some other known race. In addition, you can determine the monetary value of art objects more than a century old."
+        }
+    ],
+    "embedded_tables": [
+        {
+            "name": "Signature Items",
+            "rows": [
+                ["d8", "Signature Item"],
+                ["10-foot pole"],
+                ["Medallion"],
+                ["Crowbar"],
+                ["Shovel"],
+                ["Hat"],
+                ["Sledgehammer"],
+                ["Hooded lantern"],
+                ["Whip"]
+            ],
+            "ordered": true
+        }
+    ]
+}

@@ -1,6 +1,6 @@
-use std::{cell::RefCell, collections::HashMap};
+use std::{cell::RefCell, collections::HashMap, sync::Arc};
 
-use dioxus::prelude::*;
+use dioxus::{logger::tracing, prelude::*};
 use types::meta::Description;
 
 use crate::components::view::Pair;
@@ -78,57 +78,72 @@ pub fn DescriptionInputSignal(description: Signal<Description>) -> Element {
 
 #[component]
 fn NameDescription(
-    name: String,
-    description: Description,
-    list: Signal<HashMap<String, Description>>,
+    name: ReadOnlySignal<String>,
+    description: ReadOnlySignal<Description>,
+    on_change_name: Callback<String>,
+    on_change_description: Callback<Description>,
+    on_remove: Callback,
 ) -> Element {
-    let mut name = use_signal(|| name);
-    let desc = use_signal(|| description);
-
-    let l = RefCell::new(list());
-    let l_set = l.clone();
-
-    use_effect(move || {
-        *(l_set.borrow_mut()) = list();
-    });
-
-    use_effect(move || {
-        l.borrow_mut().insert(name(), desc());
-        list.set(l.borrow().clone());
-    });
-
     rsx! {
         div { class: "flex flex-col gap-y-2",
             Pair { name: "Name", align: true,
                 input {
                     value: name,
-                    oninput: move |e| name.set(e.value()),
-                    onchange: move |_| {
-                        let mut l = list();
-                        if let Some(desc) = l.remove(&name()) {
-                            l.insert(name(), desc);
-                            list.set(l);
-                        }
+                    onchange: move |e| {
+                        on_change_name.call(e.value());
                     },
                 }
             }
             label {
                 b { "Description" }
             }
-            DescriptionInputSignal { description: desc }
+            DescriptionInput { description }
+            button {
+                class: "px-4 py-2 w-fit border rounded",
+                onclick: move |_| {
+                    on_remove.call(());
+                },
+                "Remove"
+            }
         }
     }
 }
 
 #[component]
-pub fn NameDescriptionListSignal(list: Signal<HashMap<String, Description>>) -> Element {
+pub fn NameDescriptionListSignal(list: Signal<Vec<(String, Description)>>) -> Element {
     let mut new_name = use_signal(|| "".to_string());
+
     rsx! {
         div { class: "flex flex-col gap-y-4",
-            for (idx , (name , description)) in list().into_iter().enumerate() {
-                NameDescription { name, description, list }
-                if (idx + 1) < list().len() {
+            for (name , description) in list() {
+                if list.first().is_some() && list.first().unwrap().0 != name {
                     br {}
+                }
+                {
+                    let change_name = name.clone();
+                    let change_description = name.clone();
+                    let remove = name.clone();
+                    rsx! {
+                        NameDescription {
+                            name,
+                            description,
+                            on_change_name: move |n| {
+                                let idx = list.read().iter().position(|(k, _)| *k == change_name);
+                                if let Some(idx) = idx {
+                                    list.write()[idx].0 = n;
+                                }
+                            },
+                            on_change_description: move |d| {
+                                let idx = list.read().iter().position(|(k, _)| *k == change_description);
+                                if let Some(idx) = idx {
+                                    list.write()[idx].1 = d;
+                                }
+                            },
+                            on_remove: move || {
+                                list.write().retain(|(k, _)| *k != remove);
+                            },
+                        }
+                    }
                 }
             }
             Pair { name: "Add", align: true,
@@ -138,9 +153,7 @@ pub fn NameDescriptionListSignal(list: Signal<HashMap<String, Description>>) -> 
                         if e.value().is_empty() {
                             return;
                         }
-                        let mut l = list();
-                        l.insert(e.value(), Description::default());
-                        list.set(l);
+                        list.push((e.value(), Description::default()));
                         new_name.set("".to_string());
                     },
                 }

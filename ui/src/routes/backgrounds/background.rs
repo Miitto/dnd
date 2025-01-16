@@ -52,6 +52,14 @@ pub fn Background(id: String) -> Element {
                     }
                 }
             }
+            h2 { "Features" }
+            br {}
+            div { class: "flex flex-col gap-y-2",
+                for feature in background.features {
+                    h3 { "{feature.name}" }
+                    Description { description: feature.description }
+                }
+            }
         }
     } else {
         rsx! { "background not found" }

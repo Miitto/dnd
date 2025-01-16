@@ -1,7 +1,9 @@
 use dioxus::prelude::*;
 use types::meta::{
-    description::Node, Description as DescriptionT, DescriptionEmbed, DescriptionLine,
+    description::Node, Description as DescriptionT, DescriptionEmbed, DescriptionLine, Link,
 };
+
+use crate::components::view::{StatBlockView, Table};
 
 #[component]
 #[allow(clippy::manual_strip)]
@@ -22,12 +24,38 @@ fn LineView(line: DescriptionLine, in_list: bool) -> Element {
             }
         }
         DescriptionLine::Embed(embed) => match *embed {
-            DescriptionEmbed::StatBlock(_) => {
-                todo!("StatBlock")
-            }
-            DescriptionEmbed::Table(_) => {
-                todo!("Table")
-            }
+            DescriptionEmbed::StatBlock(link) => match *link {
+                Link::Found(stat_block) => {
+                    rsx! {
+                        StatBlockView { stat_block }
+                    }
+                }
+                Link::NotFound(name) => {
+                    rsx! {
+                        p {
+                            "Stat Block "
+                            code { "{name}" }
+                            " not found"
+                        }
+                    }
+                }
+            },
+            DescriptionEmbed::Table(link) => match link {
+                Link::Found(table) => {
+                    rsx! {
+                        Table { table }
+                    }
+                }
+                Link::NotFound(name) => {
+                    rsx! {
+                        p {
+                            "Table "
+                            code { "{name}" }
+                            " not found"
+                        }
+                    }
+                }
+            },
         },
     }
 }

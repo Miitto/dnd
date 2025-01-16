@@ -1,16 +1,25 @@
-use crate::{mechanics::Skill, meta::Description};
+use crate::{
+    mechanics::Skill,
+    meta::{Description, Table},
+};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Background {
     pub name: String,
     pub description: Description,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub skill_proficiencies: Vec<Skill>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tool_proficiencies: Vec<String>,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub languages: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub equipment: Vec<String>,
     pub features: Vec<BackgroundFeature>,
-    #[serde(default)]
+    #[serde(default, skip_serializing)]
     pub category: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub embedded_tables: Vec<Table>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -30,6 +39,14 @@ impl Background {
 
     pub fn equip_string(&self) -> String {
         self.equipment.join(", ")
+    }
+
+    pub fn sync(&mut self) {
+        let tables = &self.embedded_tables;
+        for feature in &mut self.features {
+            feature.description.link_tables(tables);
+        }
+        self.description.link_tables(tables);
     }
 }
 

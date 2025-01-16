@@ -28,6 +28,36 @@ pub struct Description {
     pub lines: Vec<DescriptionLine>,
 }
 
+impl Description {
+    pub fn link_tables(&mut self, tables: &[Table]) {
+        for line in &mut self.lines {
+            if let DescriptionLine::Embed(embed) = line {
+                if let DescriptionEmbed::Table(link) = &mut **embed {
+                    if let Link::NotFound(name) = link {
+                        if let Some(table) = tables.iter().find(|t| t.name == *name) {
+                            *link = Link::Found(table.clone());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn link_stat_blocks(&mut self, stat_blocks: &[StatBlock]) {
+        for line in self.lines.iter_mut() {
+            if let DescriptionLine::Embed(ref mut embed) = *line {
+                if let DescriptionEmbed::StatBlock(ref mut boxed) = **embed {
+                    if let Link::NotFound(ref name) = **boxed {
+                        if let Some(stat_block) = stat_blocks.iter().find(|s| s.name == *name) {
+                            *boxed = Box::new(Link::Found(stat_block.clone()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 impl std::fmt::Display for Description {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> fmt::Result {
         for line in &self.lines {

@@ -43,7 +43,13 @@ pub fn get_races<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Race>> {
 }
 
 pub fn get_backgrounds<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Background>> {
-    cat(resource_path, BACKGROUND_PATH)
+    cat(resource_path, BACKGROUND_PATH).map(|mut backgrounds: Vec<Background>| {
+        for background in &mut backgrounds {
+            background.sync();
+        }
+
+        backgrounds
+    })
 }
 
 pub fn get_feats<P: AsRef<Path>>(resource_path: P) -> Result<Vec<crate::feat::Feat>> {
