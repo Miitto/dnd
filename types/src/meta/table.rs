@@ -6,11 +6,13 @@ use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
 };
 
+use crate::extensions::IsFalse;
 use crate::Named;
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default, serde::Serialize)]
 pub struct Table {
     pub name: String,
+    #[serde(skip_serializing_if = "bool::is_false")]
     pub show_name: bool,
     pub ordered: bool,
     pub rows: Vec<TableRow>,
@@ -25,20 +27,6 @@ impl Named for Table {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TableRow {
     pub columns: Vec<String>,
-}
-
-impl Serialize for Table {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut seq = serializer.serialize_seq(Some(self.rows.len() + 1))?;
-        seq.serialize_element(&self.name)?;
-        for row in &self.rows {
-            seq.serialize_element(row)?;
-        }
-        seq.end()
-    }
 }
 
 impl Serialize for TableRow {
@@ -61,11 +49,12 @@ impl<'de> Deserialize<'de> for Table {
     {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
+        #[allow(non_camel_case_types)]
         enum Field {
             Name,
             Rows,
             Ordered,
-            ShowName,
+            Show_Name,
         }
 
         struct TableVisitor;
@@ -129,7 +118,7 @@ impl<'de> Deserialize<'de> for Table {
                             }
                             ordered = map.next_value()?;
                         }
-                        Field::ShowName => {
+                        Field::Show_Name => {
                             if ordered {
                                 return Err(de::Error::duplicate_field("show_name"));
                             }
