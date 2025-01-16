@@ -1,5 +1,8 @@
 {
     "name": "Enhance Ability",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 2,
     "school": "Transmutation",
     "components": {

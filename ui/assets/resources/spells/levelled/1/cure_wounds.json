@@ -1,5 +1,8 @@
 {
     "name": "Cure Wounds",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 1,
     "school": "Evocation",
     "cast_time": "1 action",

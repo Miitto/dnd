@@ -1,5 +1,6 @@
 {
     "name": "Archaeologist",
+    "source": { "Official": "Tomb of Annihilation" },
     "description": "An archaeologist learns about the long-lost and fallen cultures of the past by studying their remains - their bones, their ruins, their surviving masterworks, and their tombs. Those who practice archaeology travel to the far corners of the world to root through crumbled cities and lost dungeons, digging in search of artifacts that might tell the stories of monarchs and high priests, wars and cataclysms.",
     "skill_proficiencies": ["History", "Survival"],
     "tool_proficiencies": ["Cartographer's tools or navigator's tools"],

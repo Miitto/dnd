@@ -1,5 +1,8 @@
 {
   "name": "Intellect Fortress",
+  "source": {
+    "Official": "Tasha's Cauldron of Everything"
+  },
   "level": 3,
   "school": "Abjuration",
   "components": {

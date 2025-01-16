@@ -1,5 +1,8 @@
 {
     "name": "Poison Spray",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Conjuration",
     "components": {

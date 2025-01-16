@@ -1,5 +1,8 @@
 {
   "name": "Sword Burst",
+  "source": {
+    "Official": "Tasha's Cauldron of Everything"
+  },
   "level": 0,
   "school": "Conjuration",
   "components": {

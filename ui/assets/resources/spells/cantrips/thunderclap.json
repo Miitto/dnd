@@ -1,5 +1,8 @@
 {
   "name": "Thunderclap",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 0,
   "school": "Evocation",
   "components": {

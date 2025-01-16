@@ -1,5 +1,8 @@
 {
   "name": "Lightning Lure",
+  "source": {
+    "Official": "Tasha's Cauldron of Everything"
+  },
   "level": 0,
   "school": "Evocation",
   "components": {

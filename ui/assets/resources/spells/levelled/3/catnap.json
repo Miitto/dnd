@@ -1,5 +1,8 @@
 {
   "name": "Catnap",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 3,
   "school": "Enchantment",
   "components": {

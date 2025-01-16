@@ -1,5 +1,8 @@
 {
     "name": "Prestidigitation",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Transmutation",
     "components": {

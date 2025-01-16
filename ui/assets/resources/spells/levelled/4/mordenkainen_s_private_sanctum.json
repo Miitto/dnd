@@ -1,5 +1,8 @@
 {
     "name": "Mordenkainen's Private Sanctum",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 4,
     "school": "Abjuration",
     "components": {

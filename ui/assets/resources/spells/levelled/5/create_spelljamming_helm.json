@@ -1,5 +1,8 @@
 {
   "name": "Create Spelljamming Helm",
+  "source": {
+    "Official": "Spelljammer: Adventures in Space - Astral Adventurer's Guide"
+  },
   "level": 5,
   "school": "Transmutation",
   "components": {

@@ -1,5 +1,8 @@
 {
   "name": "Skywrite",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 2,
   "school": "Transmutation",
   "components": {

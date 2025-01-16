@@ -1,5 +1,8 @@
 {
     "name": "Actor",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "description": "Skilled at mimicry and dramatics.",
     "attributes": {
         "charisma": 1

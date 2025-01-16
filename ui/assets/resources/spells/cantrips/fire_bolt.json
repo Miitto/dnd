@@ -1,5 +1,8 @@
 {
     "name": "Fire Bolt",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Evocation",
     "components": {

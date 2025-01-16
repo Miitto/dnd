@@ -1,5 +1,8 @@
 {
     "name": "Dancing Lights",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Evocation",
     "components": {

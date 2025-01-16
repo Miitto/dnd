@@ -1,5 +1,8 @@
 {
   "name": "Flame Arrows",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 3,
   "school": "Transmutation",
   "components": {

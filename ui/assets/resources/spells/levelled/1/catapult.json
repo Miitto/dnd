@@ -1,5 +1,8 @@
 {
   "name": "Catapult",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 1,
   "school": "Transmutation",
   "components": {

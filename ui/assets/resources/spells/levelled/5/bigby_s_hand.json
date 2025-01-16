@@ -1,5 +1,8 @@
 {
     "name": "Bigby's Hand",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 5,
     "school": "Evocation",
     "components": {},

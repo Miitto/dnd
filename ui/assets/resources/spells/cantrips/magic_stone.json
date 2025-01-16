@@ -1,5 +1,8 @@
 {
     "name": "Magic Stone",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Transmutation",
     "components": {

@@ -1,5 +1,8 @@
 {
   "name": "Air Bubble",
+  "source": {
+    "Official": "Spelljammer: Adventures in Space - Astral Adventurer's Guide"
+  },
   "level": 2,
   "school": "Conjuration",
   "components": {

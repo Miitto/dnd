@@ -1,5 +1,8 @@
 {
   "name": "Elemental Bane",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 4,
   "school": "Transmutation",
   "components": {

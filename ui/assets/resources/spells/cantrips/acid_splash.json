@@ -1,5 +1,8 @@
 {
     "name": "Acid Splash",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Conjuration",
     "cast_time": "1 action",

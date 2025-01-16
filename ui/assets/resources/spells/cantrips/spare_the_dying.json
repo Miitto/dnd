@@ -1,13 +1,16 @@
 {
-  "name": "Spare the Dying",
-  "level": 0,
-  "school": "Necromancy",
-  "components": {
-    "verbal": true,
-    "somatic": true
-  },
-  "cast_time": "1 action",
-  "range": "Touch",
-  "duration": " Instantaneous",
-  "description": "You touch a living creature that has 0 hit points. The creature becomes stable. This spell has no effect on undead or constructs."
+    "name": "Spare the Dying",
+    "source": {
+        "Official": "Player's Handbook"
+    },
+    "level": 0,
+    "school": "Necromancy",
+    "components": {
+        "verbal": true,
+        "somatic": true
+    },
+    "cast_time": "1 action",
+    "range": "Touch",
+    "duration": " Instantaneous",
+    "description": "You touch a living creature that has 0 hit points. The creature becomes stable. This spell has no effect on undead or constructs."
 }

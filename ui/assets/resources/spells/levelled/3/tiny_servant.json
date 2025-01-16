@@ -1,5 +1,8 @@
 {
   "name": "Tiny Servant",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 3,
   "school": "Transmutation",
   "components": {

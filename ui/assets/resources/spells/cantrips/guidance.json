@@ -1,5 +1,8 @@
 {
     "name": "Guidance",
+    "source": {
+        "Official": "Player's Handbook"
+    },
     "level": 0,
     "school": "Divination",
     "components": {

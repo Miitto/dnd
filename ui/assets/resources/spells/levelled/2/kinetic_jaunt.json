@@ -1,13 +1,16 @@
 {
-    "name": "Kinetic Jaunt",
-    "level": 2,
-    "school": "Transmutation",
-    "components": {
-        "somatic": true
-    },
-    "cast_time": "1 bonus action",
-    "range": "Self",
-    "duration": "up to 1 minute",
-    "description": "You magically empower your movement with dancelike steps, giving yourself the following benefits for the duration:\n- Your walking speed increases by 10 feet.\n- You don't provoke opportunity attacks.\n- You can move through the space of another creature, and it doesn't count as difficult terrain. If you end your turn in another creature's space, you are shunted to the last unoccupied space you occupied, and you take 1d8 force damage.",
-    "concentration": true
+  "name": "Kinetic Jaunt",
+  "source": {
+    "Official": "Strixhaven: A Curriculum of Chaos"
+  },
+  "level": 2,
+  "school": "Transmutation",
+  "components": {
+    "somatic": true
+  },
+  "cast_time": "1 bonus action",
+  "range": "Self",
+  "duration": "up to 1 minute",
+  "description": "You magically empower your movement with dancelike steps, giving yourself the following benefits for the duration:",
+  "concentration": true
 }

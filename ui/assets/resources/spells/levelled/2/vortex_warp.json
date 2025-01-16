@@ -1,5 +1,8 @@
 {
   "name": "Vortex Warp",
+  "source": {
+    "Official": "Strixhaven: A Curriculum of Chaos"
+  },
   "level": 2,
   "school": "Conjuration",
   "components": {

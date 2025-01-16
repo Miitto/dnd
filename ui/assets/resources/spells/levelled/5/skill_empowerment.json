@@ -1,5 +1,8 @@
 {
   "name": "Skill Empowerment",
+  "source": {
+    "Official": "Xanathar's Guide to Everything"
+  },
   "level": 5,
   "school": "Transmutation",
   "components": {
