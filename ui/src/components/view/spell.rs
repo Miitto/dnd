@@ -28,7 +28,8 @@ pub fn SpellView(spell: SpellT, spell_lists: Vec<String>) -> Element {
 
     rsx! {
         div { class: "flex flex-col",
-
+            p { class: "italic", "{spell.source}" }
+            br {}
             p { class: "italic",
                 if spell.level == 0 {
                     "{spell.school} cantrip"

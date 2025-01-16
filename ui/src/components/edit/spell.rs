@@ -191,9 +191,14 @@ fn CoreBlock(
 ) -> Element {
     rsx! {
         div { class: "grid grid-cols-auto-fr space-y-4",
-            div { class: "grid grid-cols-auto-fr gap-y-2",
-                Pair { name: "Name", grid: true, align: true,
+            div { class: "grid grid-cols-subgrid col-span-2 gap-y-2 w-full",
+                Pair {
+                    name: "Name",
+                    grid: true,
+                    align: true,
+                    class: "inline-flex items-center gap-2",
                     input {
+                        class: "flex-grow",
                         value: "{name}",
                         oninput: move |e| name.set(e.value()),
                     }

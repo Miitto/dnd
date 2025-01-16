@@ -6,7 +6,7 @@ use types::meta::Source;
 
 use crate::components::view::Pair;
 
-use super::CheckboxSignal;
+use super::Checkbox;
 
 #[component]
 pub fn TextArea(
@@ -46,27 +46,33 @@ pub fn SourceInput(
     fire_on_input: Option<bool>,
 ) -> Element {
     let fire_on_input = fire_on_input.unwrap_or(false);
-    let official = use_signal(|| value().is_official());
-
-    use_effect(move || {
-        let source = if official() {
-            Source::Official(value.read().to_string())
-        } else {
-            Source::Homebrew(value.read().to_string())
-        };
-
-        callback.call(source);
-    });
+    let mut official = use_signal(|| value().is_official());
 
     rsx! {
         span { class: "inline-flex items-center gap-2",
-            CheckboxSignal { name: "Official", checked: official }
-            Pair { name: "From", align: true,
+            Checkbox {
+                name: "Official",
+                checked: value().is_official(),
+                onchange: move |v| {
+                    let source = if v {
+                        Source::Official(value.read().to_string())
+                    } else {
+                        Source::Homebrew(value.read().to_string())
+                    };
+                    official.set(v);
+                    callback.call(source);
+                },
+            }
+            Pair {
+                name: "From",
+                align: true,
+                class: "inline-flex items-center gap-2 flex-grow",
                 input {
+                    class: "flex-grow",
                     value: value().to_string(),
                     oninput: move |e| {
                         if fire_on_input {
-                            let source = if *official.read() {
+                            let source = if official() {
                                 Source::Official(e.value())
                             } else {
                                 Source::Homebrew(e.value())
@@ -76,7 +82,7 @@ pub fn SourceInput(
                     },
                     onchange: move |e| {
                         if !fire_on_input {
-                            let source = if *official.read() {
+                            let source = if official() {
                                 Source::Official(e.value())
                             } else {
                                 Source::Homebrew(e.value())
