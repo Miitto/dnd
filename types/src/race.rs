@@ -2,13 +2,14 @@ use std::collections::HashMap;
 
 use crate::{
     mechanics::{Attributes, DescribedSize},
-    meta::{Description, Table},
+    meta::{Description, Source, Table},
     Category, CategoryMut, Named,
 };
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 pub struct Race {
     pub name: String,
+    pub source: Source,
     pub description: Description,
     pub default_asi: Attributes,
     pub age: String,

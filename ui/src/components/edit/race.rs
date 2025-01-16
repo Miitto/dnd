@@ -8,6 +8,7 @@ use types::stores::Store;
 
 use crate::components::edit::{
     AttributesInputSignal, DescriptionInputSignal, MultiTableEdit, SizeSelectorSignal,
+    SourceInputSignal,
 };
 use crate::components::view::Pair;
 
@@ -37,6 +38,7 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| race.name.clone());
+    let source = use_signal(|| race.source.clone());
     let description = use_signal(|| race.description.clone());
     let default_asi = use_signal(|| race.default_asi.clone());
     let mut age = use_signal(|| race.age.clone());
@@ -57,6 +59,8 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
         let mut race = race_locked.force_lock();
 
         race.name = name();
+        race.category = category();
+        race.source = source();
         race.description = description();
         race.default_asi = default_asi();
         race.age = age();
@@ -66,15 +70,28 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
         race.speed = speed();
         race.languages = languages();
         race.tables = tables();
-        race.category = category();
         race.unique = unique();
     });
     // endregion
 
     rsx! {
         div { class: "flex flex-col w-full gap-y-2",
-            Pair { name: "Name", align: true,
-                input { value: "{name}", oninput: move |e| name.set(e.value()) }
+            div { class: "grid grid-cols-auto-fr gap-y-2",
+                Pair { name: "Name", align: true, grid: true,
+                    input {
+                        value: "{name}",
+                        oninput: move |e| name.set(e.value()),
+                    }
+                }
+                Pair { name: "Category", align: true, grid: true,
+                    input {
+                        value: "{category}",
+                        oninput: move |e| category.set(e.value()),
+                    }
+                }
+                Pair { name: "Source", align: true, grid: true,
+                    SourceInputSignal { source }
+                }
             }
             br {}
 
@@ -131,12 +148,6 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
             h2 { "Tables" }
 
             MultiTableEdit { tables: tables(), onchange: move |t| { tables.set(t) } }
-            Pair { name: "Category", align: true,
-                input {
-                    value: "{category}",
-                    oninput: move |e| category.set(e.value()),
-                }
-            }
 
             Pair { name: "Unique", align: true,
                 span { "TODO: Implement unique" }

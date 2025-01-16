@@ -6,7 +6,7 @@ use std::{
 use crate::{
     extensions::IsFalse,
     mechanics::{Attribute, Condition, Damage, Dice},
-    meta::{Description, Link},
+    meta::{Description, Link, Source},
     stat_block::StatBlock,
     Named,
 };
@@ -17,6 +17,7 @@ use anyhow::Result;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Spell {
     pub name: String,
+    pub source: Source,
     pub level: u8,
     pub school: String,
     pub components: Components,

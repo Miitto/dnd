@@ -24,6 +24,13 @@ pub fn Checkbox(name: String, checked: ReadOnlySignal<bool>, onchange: Callback<
 }
 
 #[component]
+pub fn CheckboxSignal(name: String, checked: Signal<bool>) -> Element {
+    rsx! {
+        Checkbox { name, checked: checked(), onchange: move |c| checked.set(c) }
+    }
+}
+
+#[component]
 pub fn StringList(
     name: String,
     list: ReadOnlySignal<Vec<String>>,

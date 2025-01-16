@@ -5,15 +5,15 @@ use dioxus::{logger::tracing, prelude::*};
 use types::{
     extensions::ForceLock,
     mechanics::Dice,
-    meta::Description,
+    meta::{Description, Source},
     spells::{OnSave, Spell},
     stores::Store,
 };
 
 use crate::components::{
     edit::{
-        AttrDropdown, Checkbox, DescriptionInputSignal, DiceInput, MultiDamageInput, StringList,
-        TextAreaSignal,
+        AttrDropdown, Checkbox, DescriptionInputSignal, DiceInput, MultiDamageInput,
+        SourceInputSignal, StringList, TextAreaSignal,
     },
     view::Pair,
 };
@@ -45,6 +45,7 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
 
     // region: Signal
     let name = use_signal(|| spell.name.clone());
+    let source = use_signal(|| spell.source.clone());
     let level = use_signal(|| spell.level);
     let school = use_signal(|| spell.school.clone());
     let cast_time = use_signal(|| spell.cast_time.clone());
@@ -71,6 +72,7 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
     let serialized = use_memo(move || {
         let mut spell = spell_locked.force_lock();
         spell.name = name();
+        spell.source = source();
         spell.level = level();
         spell.school = school();
         spell.cast_time = cast_time();
@@ -97,6 +99,7 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
     rsx! {
         CoreBlock {
             name,
+            source,
             level,
             school,
             cast_time,
@@ -179,6 +182,7 @@ pub fn SpellEdit(props: SpellEditProps) -> Element {
 #[component]
 fn CoreBlock(
     name: Signal<String>,
+    source: Signal<Source>,
     level: Signal<u8>,
     school: Signal<String>,
     cast_time: Signal<String>,
@@ -187,8 +191,16 @@ fn CoreBlock(
 ) -> Element {
     rsx! {
         div { class: "grid grid-cols-auto-fr space-y-4",
-            Pair { name: "Name", grid: true, align: true,
-                input { value: "{name}", oninput: move |e| name.set(e.value()) }
+            div { class: "grid grid-cols-auto-fr gap-y-2",
+                Pair { name: "Name", grid: true, align: true,
+                    input {
+                        value: "{name}",
+                        oninput: move |e| name.set(e.value()),
+                    }
+                }
+                Pair { name: "Source", align: true, grid: true,
+                    SourceInputSignal { source }
+                }
             }
 
             Pair { name: "Level", grid: true, align: true,

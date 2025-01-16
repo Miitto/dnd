@@ -1,9 +1,12 @@
-use std::{cell::RefCell, collections::HashMap, sync::Arc};
+use dioxus::prelude::*;
 
-use dioxus::{logger::tracing, prelude::*};
-use types::meta::Description;
+mod description;
+pub use description::*;
+use types::meta::Source;
 
 use crate::components::view::Pair;
+
+use super::CheckboxSignal;
 
 #[component]
 pub fn TextArea(
@@ -37,127 +40,63 @@ pub fn TextAreaSignal(value: Signal<String>) -> Element {
 }
 
 #[component]
-pub fn DescriptionInput(
-    description: ReadOnlySignal<Description>,
-    oninput: Option<Callback<Description>>,
-    onchange: Option<Callback<Description>>,
+pub fn SourceInput(
+    value: ReadOnlySignal<Source>,
+    callback: Callback<Source>,
+    fire_on_input: Option<bool>,
 ) -> Element {
-    let oninput = oninput.map(|cb| {
-        {
-            move |d: String| {
-                let d = Description::from(d);
-                cb.call(d);
-            }
-        }
-        .super_into()
+    let fire_on_input = fire_on_input.unwrap_or(false);
+    let official = use_signal(|| value().is_official());
+
+    use_effect(move || {
+        let source = if official() {
+            Source::Official(value.read().to_string())
+        } else {
+            Source::Homebrew(value.read().to_string())
+        };
+
+        callback.call(source);
     });
 
-    let onchange = onchange.map(|cb| {
-        {
-            move |d: String| {
-                let d = Description::from(d);
-                cb.call(d);
-            }
-        }
-        .super_into()
-    });
-
-    let description_string = use_memo(move || description().to_string().trim().to_string());
-
     rsx! {
-        TextArea { value: description_string, oninput, onchange }
-    }
-}
-
-#[component]
-pub fn DescriptionInputSignal(description: Signal<Description>) -> Element {
-    rsx! {
-        DescriptionInput { description: description(), onchange: move |d| description.set(d) }
-    }
-}
-
-#[component]
-fn NameDescription(
-    name: ReadOnlySignal<String>,
-    description: ReadOnlySignal<Description>,
-    on_change_name: Callback<String>,
-    on_change_description: Callback<Description>,
-    on_remove: Callback,
-) -> Element {
-    rsx! {
-        div { class: "flex flex-col gap-y-2",
-            Pair { name: "Name", align: true,
+        span { class: "inline-flex items-center gap-2",
+            CheckboxSignal { name: "Official", checked: official }
+            Pair { name: "From", align: true,
                 input {
-                    value: name,
+                    value: value().to_string(),
+                    oninput: move |e| {
+                        if fire_on_input {
+                            let source = if *official.read() {
+                                Source::Official(e.value())
+                            } else {
+                                Source::Homebrew(e.value())
+                            };
+                            callback.call(source)
+                        }
+                    },
                     onchange: move |e| {
-                        on_change_name.call(e.value());
+                        if !fire_on_input {
+                            let source = if *official.read() {
+                                Source::Official(e.value())
+                            } else {
+                                Source::Homebrew(e.value())
+                            };
+                            callback.call(source)
+                        }
                     },
                 }
             }
-            label {
-                b { "Description" }
-            }
-            DescriptionInput { description }
-            button {
-                class: "px-4 py-2 w-fit border rounded",
-                onclick: move |_| {
-                    on_remove.call(());
-                },
-                "Remove"
-            }
         }
     }
 }
 
 #[component]
-pub fn NameDescriptionListSignal(list: Signal<Vec<(String, Description)>>) -> Element {
-    let mut new_name = use_signal(|| "".to_string());
-
+pub fn SourceInputSignal(source: Signal<Source>, fire_on_input: Option<bool>) -> Element {
     rsx! {
-        div { class: "flex flex-col gap-y-4",
-            for (name , description) in list() {
-                if list.first().is_some() && list.first().unwrap().0 != name {
-                    br {}
-                }
-                {
-                    let change_name = name.clone();
-                    let change_description = name.clone();
-                    let remove = name.clone();
-                    rsx! {
-                        NameDescription {
-                            name,
-                            description,
-                            on_change_name: move |n| {
-                                let idx = list.read().iter().position(|(k, _)| *k == change_name);
-                                if let Some(idx) = idx {
-                                    list.write()[idx].0 = n;
-                                }
-                            },
-                            on_change_description: move |d| {
-                                let idx = list.read().iter().position(|(k, _)| *k == change_description);
-                                if let Some(idx) = idx {
-                                    list.write()[idx].1 = d;
-                                }
-                            },
-                            on_remove: move || {
-                                list.write().retain(|(k, _)| *k != remove);
-                            },
-                        }
-                    }
-                }
-            }
-            Pair { name: "Add", align: true,
-                input {
-                    value: "{new_name}",
-                    onchange: move |e| {
-                        if e.value().is_empty() {
-                            return;
-                        }
-                        list.push((e.value(), Description::default()));
-                        new_name.set("".to_string());
-                    },
-                }
-            }
+        SourceInput {
+            value: source,
+            callback: move |s| source.set(s),
+            fire_on_input: fire_on_input.unwrap_or(false),
         }
     }
 }

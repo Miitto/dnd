@@ -6,7 +6,9 @@ use types::extensions::ForceLock;
 use types::feat::Feat;
 use types::stores::Store;
 
-use crate::components::edit::{AttributesInputSignal, DescriptionInputSignal, StringListSignal};
+use crate::components::edit::{
+    AttributesInputSignal, DescriptionInputSignal, SourceInputSignal, StringListSignal,
+};
 use crate::components::view::Pair;
 
 use types::stores::Saveable;
@@ -35,6 +37,7 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
 
     // region: Signal
     let mut name = use_signal(|| feat.name.clone());
+    let source = use_signal(|| feat.source.clone());
     let description = use_signal(|| feat.description.clone());
     let attributes = use_signal(|| feat.attributes.clone());
     let benefits = use_signal(|| feat.benefits.clone());
@@ -45,6 +48,7 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
         let mut feat = feat_locked.force_lock();
 
         feat.name = name();
+        feat.source = source();
         feat.description = description();
         feat.attributes = attributes();
         feat.benefits = benefits();
@@ -53,8 +57,17 @@ pub fn FeatEdit(props: FeatEditProps) -> Element {
 
     rsx! {
         div { class: "flex flex-col gap-y-2",
-            Pair { name: "Name", align: true,
-                input { value: "{name}", oninput: move |e| name.set(e.value()) }
+            div { class: "grid grid-cols-auto-fr gap-y-2",
+                Pair { name: "Name", align: true, grid: true,
+                    input {
+                        value: "{name}",
+                        oninput: move |e| name.set(e.value()),
+                    }
+                }
+
+                Pair { name: "Source", align: true, grid: true,
+                    SourceInputSignal { source }
+                }
             }
             br {}
 

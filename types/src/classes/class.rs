@@ -1,6 +1,6 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::meta::Description;
+use crate::meta::{Description, Source};
 use crate::{extensions::StartsWithVowel, mechanics::Attribute};
 
 use super::cantrip::ClassCantrip;
@@ -15,11 +15,12 @@ pub enum CastType {
     Known,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Default)]
 pub enum CastLevel {
     Full,
     Half,
     Third,
+    #[default]
     None,
 }
 
@@ -186,6 +187,7 @@ impl ClassSubclasses {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Class {
     pub name: String,
+    pub source: Source,
     pub description: Description,
     pub requirements: HashMap<Attribute, u8>,
     pub hit_die: u8,
@@ -197,16 +199,12 @@ pub struct Class {
     pub ritual_casting: bool,
     pub spell_lists: Option<Vec<String>>,
     pub cast_type: Option<CastType>,
-    #[serde(default = "default_cast_level")]
+    #[serde(default)]
     pub cast_level: CastLevel,
     pub cantrips: Option<ClassCantrip>,
     #[serde(flatten)]
     pub subclasses: ClassSubclasses,
     pub table_entries: HashMap<String, TableEntry>,
-}
-
-fn default_cast_level() -> CastLevel {
-    CastLevel::None
 }
 
 impl Class {

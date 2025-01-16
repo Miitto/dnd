@@ -1,11 +1,12 @@
 use crate::{
     mechanics::Skill,
-    meta::{Description, Table},
+    meta::{Description, Source, Table},
 };
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Background {
     pub name: String,
+    pub source: Source,
     pub description: Description,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub skill_proficiencies: Vec<Skill>,

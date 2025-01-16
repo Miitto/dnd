@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use dioxus::logger::tracing;
@@ -9,7 +8,8 @@ use types::meta::Description;
 use types::stores::Store;
 
 use crate::components::edit::{
-    DescriptionInputSignal, NameDescriptionListSignal, SkillMultiSelect, StringListSignal,
+    DescriptionInputSignal, NameDescriptionListSignal, SkillMultiSelect, SourceInputSignal,
+    StringListSignal,
 };
 use crate::components::view::Pair;
 
@@ -40,6 +40,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
     // region: Signal
     let mut name = use_signal(|| background.name.clone());
     let mut category = use_signal(|| background.category.clone());
+    let source = use_signal(|| background.source.clone());
     let description = use_signal(|| background.description.clone());
     let equipment = use_signal(|| background.equipment.clone());
     let tool_proficiencies = use_signal(|| background.tool_proficiencies.clone());
@@ -59,6 +60,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         let mut background = background_locked.force_lock();
 
         background.name = name();
+        background.source = source();
         background.category = category();
         background.description = description();
         background.equipment = equipment();
@@ -97,6 +99,9 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
                         value: "{category}",
                         oninput: move |e| category.set(e.value()),
                     }
+                }
+                Pair { name: "Source", align: true, grid: true,
+                    SourceInputSignal { source }
                 }
             }
             br {}

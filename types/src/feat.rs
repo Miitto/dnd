@@ -1,8 +1,12 @@
-use crate::{mechanics::Attributes, meta::Description};
+use crate::{
+    mechanics::Attributes,
+    meta::{Description, Source},
+};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
 pub struct Feat {
     pub name: String,
+    pub source: Source,
     pub description: Description,
     pub attributes: Attributes,
     pub benefits: Vec<String>,
