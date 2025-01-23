@@ -3,117 +3,130 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family:
+      "Mona Sans",
+      "MonaSansFallback",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Helvetica,
+      Arial,
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji";
+    font-weight: 450;
+  }
 
+  html,
+  body,
+  #main {
+    min-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 100%;
+    /* height: 100%; */
+    min-height: 100%;
+  }
 
-	* {
-		font-family: "Mona Sans", "MonaSansFallback", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-		font-weight: 450;
-	}
+  html {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 
-	html, body, #main {
-		min-height: fit-content;
-		display: flex;
-		flex-direction: column;
-		flex: 1 0 100%;
-		height: 100%;
-    }
+  h1 {
+    font-size: 2rem;
+  }
 
-	html {
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
+  h2 {
+    font-size: 1.8rem;
+  }
 
-	h1 {
-		font-size: 2rem;
-	}
+  h3 {
+    font-size: 1.6rem;
+  }
 
-	h2 {
-		font-size: 1.8rem;
-	}
+  h4 {
+    font-size: 1.4rem;
+  }
 
-	h3 {
-		font-size: 1.6rem;
-	}
+  h5 {
+    font-size: 1.2rem;
+  }
 
-	h4 {
-		font-size: 1.4rem;
-	}
+  hr {
+    @apply my-2;
+  }
 
-	h5 {
-		font-size: 1.2rem;
-	}
-
-	hr {
-		@apply my-2
-	}
-
-	input, select, textarea {
-		@apply px-3 py-2 rounded border bg-input text-foreground
-	}
+  input,
+  select,
+  textarea {
+    @apply px-3 py-2 rounded border bg-input text-foreground;
+  }
 }
 
 @layer base {
-	:root {
-		--background: 0 0% 100%;
-		--foreground: 196 38.5% 7.6%;
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 196 38.5% 7.6%;
 
-		--muted: 0 0% 96.1%;
-		--muted-foreground: 0 0% 45.1%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
 
-		--popover: 0 0% 100%;
-		--popover-foreground: 196 38.5% 7.6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 196 38.5% 7.6%;
 
-		--card: 0 0% 100%;
-		--card-foreground: 196 38.5% 7.6%;
+    --card: 0 0% 100%;
+    --card-foreground: 196 38.5% 7.6%;
 
-		--border: 0 0% 89.8%;
-		--input: 0 0% 89.8%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
 
-		--primary: 196 38.5% 7.6%;
-		--primary-foreground: 0 0% 98%;
+    --primary: 196 38.5% 7.6%;
+    --primary-foreground: 0 0% 98%;
 
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
 
-		--accent: 0 0% 96.1%;
-		--accent-foreground: 0 0% 9%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
 
-		--destructive: 0 72.2% 50.6%;
-		--destructive-foreground: 0 0% 98%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
 
-		--ring: 196 38.5% 7.6%;
+    --ring: 196 38.5% 7.6%;
 
-		--radius: 0.5rem;
-	}
+    --radius: 0.5rem;
+  }
 
-	.dark {
-		--background: 196 38.5% 7.6%;
-		--foreground: 0 0% 98%;
+  .dark {
+    --background: 196 38.5% 7.6%;
+    --foreground: 0 0% 98%;
 
-		--muted: 196 38.5% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
+    --muted: 196 38.5% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
 
-		--popover: 196 38.5% 7.6%;
-		--popover-foreground: 0 0% 98%;
+    --popover: 196 38.5% 7.6%;
+    --popover-foreground: 0 0% 98%;
 
-		--card: 196 38.5% 7.6%;
-		--card-foreground: 0 0% 98%;
+    --card: 196 38.5% 7.6%;
+    --card-foreground: 0 0% 98%;
 
-		--border: 196 38.5% 14.9%;
-		--input: 196 38.5% 14.9%;
+    --border: 196 38.5% 14.9%;
+    --input: 196 38.5% 14.9%;
 
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
 
-		--secondary: 196 38.5% 14.9%;
-		--secondary-foreground: 0 0% 98%;
+    --secondary: 196 38.5% 14.9%;
+    --secondary-foreground: 0 0% 98%;
 
-		--accent: 196 38.5% 14.9%;
-		--accent-foreground: 0 0% 98%;
+    --accent: 196 38.5% 14.9%;
+    --accent-foreground: 0 0% 98%;
 
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-		--ring: 0 0% 83.1%;
-	}
+    --ring: 0 0% 83.1%;
+  }
 }
