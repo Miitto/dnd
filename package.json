@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "tailwindcss -i ./input.css -o ./ui/assets/styling/tailwind.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher"
+    ]
+  }
+}
