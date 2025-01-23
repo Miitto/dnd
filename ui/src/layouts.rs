@@ -27,7 +27,7 @@ pub fn NavLayout() -> Element {
     let pin_txt = if pin_breadcrumbs() { "Unpin" } else { "Pin" };
 
     rsx! {
-        div { class: "{text} flex-grow bg-background text-foreground flex flex-col md:flex-row flex-auto flex-shrink-0 h-full",
+        div { class: "{text} flex-grow bg-background text-foreground flex flex-col md:flex-row flex-auto flex-shrink-0 h-full min-h-fit",
             Nav {}
             div { class: "flex flex-col flex-grow",
                 div { class: "flex flex-row bg-background border-b {sticky}",
