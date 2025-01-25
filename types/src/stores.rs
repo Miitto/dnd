@@ -15,6 +15,8 @@ use crate::{
     items::weapon::Weapon,
     race::Race,
     spells::{Spell, SpellList},
+    stat_block::StatBlock,
+    traits::Linkable,
     ForceLock,
 };
 
@@ -108,14 +110,20 @@ impl Store {
         }
 
         {
-            let stats = store.stat_blocks.store.force_lock();
+            let stats: Vec<Arc<Mutex<StatBlock>>> = store
+                .stat_blocks
+                .store
+                .force_lock()
+                .values()
+                .cloned()
+                .collect();
             let spells = store.spells.store.force_lock();
 
             for spell in spells.values() {
                 spell
                     .lock()
                     .expect("Failed to lock spell")
-                    .link_stat_blocks(&stats);
+                    .link_external_stat_blocks(&stats);
             }
         }
 

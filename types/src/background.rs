@@ -1,6 +1,7 @@
 use crate::{
     mechanics::Skill,
     meta::{Description, Source, Table},
+    traits::Linkable,
 };
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
@@ -42,12 +43,18 @@ impl Background {
         self.equipment.join(", ")
     }
 
-    pub fn sync(&mut self) {
+    pub fn sync(&mut self) {}
+}
+
+impl Linkable for Background {
+    fn link_tables(&mut self) -> &mut Self {
         let tables = &self.embedded_tables;
         for feature in &mut self.features {
-            feature.description.link_tables(tables);
+            feature.description.clone_external_tables(tables);
         }
-        self.description.link_tables(tables);
+        self.description.clone_external_tables(tables);
+
+        self
     }
 }
 

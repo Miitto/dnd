@@ -1,13 +1,11 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use crate::{
-    extensions::IsFalse,
+    extensions::{ForceLock, IsFalse},
     mechanics::{Attribute, Condition, Damage, Dice},
     meta::{Description, Link, Source},
     stat_block::StatBlock,
+    traits::Linkable,
     Named,
 };
 
@@ -57,17 +55,23 @@ impl PartialEq for Spell {
     }
 }
 
-impl Spell {
-    pub fn link_stat_blocks(&mut self, stat_blocks: &HashMap<String, Arc<Mutex<StatBlock>>>) {
-        self.appended_stat_blocks.iter_mut().for_each(|stat_block| {
-            if let Link::NotFound(name) = stat_block {
-                if let Some(found) = stat_blocks.get(name) {
-                    *stat_block = Link::Found(Arc::clone(found));
+impl Linkable for Spell {
+    fn link_external_stat_blocks(&mut self, stat_blocks: &[Arc<Mutex<StatBlock>>]) -> &mut Self {
+        for stat_block in stat_blocks {
+            for appended in &mut self.appended_stat_blocks {
+                if let Link::NotFound(name) = appended {
+                    if stat_block.force_lock().name == *name {
+                        *appended = Link::Found(stat_block.clone());
+                    }
                 }
             }
-        });
-    }
+        }
 
+        self
+    }
+}
+
+impl Spell {
     pub fn serialize(&self) -> Result<String> {
         serde_json::to_string(self).map_err(Into::into)
     }

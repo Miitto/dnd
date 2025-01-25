@@ -8,6 +8,7 @@ use super::Table;
 use crate::extensions::AstToString;
 use crate::meta::Link;
 use crate::stat_block::StatBlock;
+use crate::traits::Linkable;
 
 pub use markdown::mdast::Node;
 
@@ -28,8 +29,8 @@ pub struct Description {
     pub lines: Vec<DescriptionLine>,
 }
 
-impl Description {
-    pub fn link_tables(&mut self, tables: &[Table]) {
+impl Linkable for Description {
+    fn clone_external_tables(&mut self, tables: &[Table]) -> &mut Self {
         for line in &mut self.lines {
             if let DescriptionLine::Embed(embed) = line {
                 if let DescriptionEmbed::Table(link) = &mut **embed {
@@ -41,9 +42,10 @@ impl Description {
                 }
             }
         }
+        self
     }
 
-    pub fn link_stat_blocks(&mut self, stat_blocks: &[StatBlock]) {
+    fn clone_external_stat_blocks(&mut self, stat_blocks: &[StatBlock]) -> &mut Self {
         for line in self.lines.iter_mut() {
             if let DescriptionLine::Embed(ref mut embed) = *line {
                 if let DescriptionEmbed::StatBlock(ref mut boxed) = **embed {
@@ -55,6 +57,7 @@ impl Description {
                 }
             }
         }
+        self
     }
 }
 

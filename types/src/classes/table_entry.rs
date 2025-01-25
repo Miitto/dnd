@@ -6,30 +6,24 @@ use crate::fs::deserializers::deserialize_hashmap;
 pub struct TableEntry {
     #[serde(default)]
     pub interpolate: bool,
-    #[serde(flatten)]
-    #[serde(deserialize_with = "deserialize_hashmap")]
+    #[serde(flatten, deserialize_with = "deserialize_hashmap")]
     pub entries: HashMap<u8, String>,
 }
 
 impl TableEntry {
     pub fn get(&self, level: u8) -> String {
-        if !self.interpolate {
-            return self
+        let level = if self.interpolate {
+            *self
                 .entries
-                .get(&level)
-                .unwrap_or(&String::new())
-                .to_string();
-        }
-
-        let mut highest = 0;
-        for lvl in self.entries.keys() {
-            if *lvl <= level && *lvl > highest {
-                highest = *lvl;
-            }
-        }
+                .keys()
+                .reduce(|acc, e| if *e > *acc && *e <= level { e } else { acc })
+                .unwrap_or(&0u8)
+        } else {
+            level
+        };
 
         self.entries
-            .get(&highest)
+            .get(&level)
             .unwrap_or(&String::new())
             .to_string()
     }

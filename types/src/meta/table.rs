@@ -2,8 +2,7 @@ use std::fmt;
 
 use serde::{
     de::{self, MapAccess, SeqAccess, Visitor},
-    ser::SerializeSeq,
-    Deserialize, Deserializer, Serialize, Serializer,
+    Deserialize, Deserializer, Serialize,
 };
 
 use crate::extensions::IsFalse;
@@ -24,21 +23,21 @@ impl Named for Table {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(into = "Vec<String>", from = "Vec<String>")]
 pub struct TableRow {
     pub columns: Vec<String>,
 }
 
-impl Serialize for TableRow {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut seq = serializer.serialize_seq(Some(self.columns.len()))?;
-        for column in &self.columns {
-            seq.serialize_element(column)?;
-        }
-        seq.end()
+impl From<Vec<String>> for TableRow {
+    fn from(value: Vec<String>) -> TableRow {
+        TableRow { columns: value }
+    }
+}
+
+impl From<TableRow> for Vec<String> {
+    fn from(value: TableRow) -> Vec<String> {
+        value.columns
     }
 }
 
@@ -140,16 +139,6 @@ impl<'de> Deserialize<'de> for Table {
 
         const FIELDS: &[&str] = &["name", "rows", "ordered", "show_name"];
         deserializer.deserialize_struct("Table", FIELDS, TableVisitor)
-    }
-}
-
-impl<'a> Deserialize<'a> for TableRow {
-    fn deserialize<D>(deserializer: D) -> Result<TableRow, D::Error>
-    where
-        D: Deserializer<'a>,
-    {
-        let columns = Vec::<String>::deserialize(deserializer)?;
-        Ok(TableRow { columns })
     }
 }
 

@@ -14,6 +14,7 @@ pub mod race;
 pub mod spells;
 pub mod stat_block;
 pub mod stores;
+pub mod traits;
 
 pub mod extensions;
 
