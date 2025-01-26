@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use crate::{
     mechanics::Skill,
     meta::{Description, NamedDescription, Source, Table},
@@ -21,7 +23,7 @@ pub struct Background {
     #[serde(default, skip_serializing)]
     pub category: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embedded_tables: Vec<Table>,
+    pub embedded_tables: Vec<Arc<Mutex<Table>>>,
 }
 
 impl Background {
@@ -38,9 +40,9 @@ impl Linkable for Background {
     fn link_tables(&mut self) -> &mut Self {
         let tables = &self.embedded_tables;
         for feature in &mut self.features {
-            feature.description.clone_external_tables(tables);
+            feature.description.link_external_tables(tables);
         }
-        self.description.clone_external_tables(tables);
+        self.description.link_external_tables(tables);
 
         self
     }

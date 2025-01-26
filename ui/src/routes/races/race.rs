@@ -54,8 +54,8 @@ pub fn Race(id: String) -> Element {
                     PairLi { name: "Speed", "Your base walking speed is {race.speed} feet." }
                     PairLi { name: "Languages", "{race.languages}" }
                     hr {}
-                    for (key , val) in &race.unique {
-                        PairLi { name: "{key}", "{val}" }
+                    for nd in race.features {
+                        PairLi { name: nd.name, Description { description: nd.description} }
                     }
 
                     for table in race.tables {

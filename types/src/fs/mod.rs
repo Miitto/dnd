@@ -14,11 +14,11 @@ use anyhow::Result;
 
 use parsers::{parse_dir, recurse_category};
 
-use crate::{background::Background, race::Race, spells::SpellList, CategoryMut};
+use crate::{background::Background, race::Race, spells::SpellList, traits::Linkable, CategoryMut};
 
 fn cat<P: AsRef<Path>, T>(resource_path: P, join: &str) -> Result<Vec<T>>
 where
-    T: serde::de::DeserializeOwned + CategoryMut,
+    T: serde::de::DeserializeOwned + CategoryMut + Linkable,
 {
     let resource_path = resource_path.as_ref();
 
@@ -29,7 +29,7 @@ where
 
 fn dir<P: AsRef<Path>, T>(resource_path: P, join: &str) -> Result<Vec<T>>
 where
-    T: serde::de::DeserializeOwned,
+    T: serde::de::DeserializeOwned + Linkable,
 {
     let resource_path = resource_path.as_ref();
 
@@ -45,7 +45,7 @@ pub fn get_races<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Race>> {
 pub fn get_backgrounds<P: AsRef<Path>>(resource_path: P) -> Result<Vec<Background>> {
     cat(resource_path, BACKGROUND_PATH).map(|mut backgrounds: Vec<Background>| {
         for background in &mut backgrounds {
-            background.sync();
+            background.link();
         }
 
         backgrounds

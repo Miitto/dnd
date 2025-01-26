@@ -1,6 +1,7 @@
 use crate::{
     mechanics::Attributes,
     meta::{Description, Source},
+    traits::Linkable,
 };
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Default)]
@@ -29,3 +30,5 @@ impl crate::Named for Feat {
         self.name.clone()
     }
 }
+
+impl Linkable for Feat {}

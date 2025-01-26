@@ -1,6 +1,6 @@
 use std::{fs::DirEntry, path::Path};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use crate::traits::Linkable;
 
@@ -35,16 +35,13 @@ where
         }
     };
 
-    let parsed = serde_json::from_str::<T>(&json);
+    let mut parsed = serde_json::from_str::<T>(&json);
 
-    match parsed {
-        Ok(parsed) => Ok(parsed),
-        Err(e) => Err(anyhow::anyhow!(
-            "Failed to parse file: {:?} | {:?}",
-            path,
-            e
-        )),
+    if let Ok(parsed) = &mut parsed {
+        parsed.link();
     }
+
+    parsed.context(format!("Failed to parse file: {:?}", path))
 }
 
 pub fn parse_dir<T, P: AsRef<Path>>(path: P) -> Result<Vec<T>>

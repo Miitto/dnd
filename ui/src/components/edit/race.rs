@@ -49,7 +49,7 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
     let mut languages = use_signal(|| race.languages.clone());
     let mut tables = use_signal(|| race.tables.clone());
     let mut category = use_signal(|| race.category.clone());
-    let unique = use_signal(|| race.unique.clone());
+    let features = use_signal(|| race.features.clone());
 
     drop(race);
     //endregion
@@ -70,7 +70,7 @@ pub fn RaceEdit(props: RaceEditProps) -> Element {
         race.speed = speed();
         race.languages = languages();
         race.tables = tables();
-        race.unique = unique();
+        race.features = features();
     });
     // endregion
 

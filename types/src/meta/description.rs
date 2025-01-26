@@ -1,4 +1,5 @@
 use std::fmt;
+use std::sync::{Arc, Mutex};
 
 use markdown::ParseOptions;
 use serde::de;
@@ -12,10 +13,25 @@ use crate::traits::Linkable;
 
 pub use markdown::mdast::Node;
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct NamedDescription {
     pub name: String,
     pub description: Description,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tables: Vec<Arc<Mutex<Table>>>,
+}
+
+impl PartialEq for NamedDescription {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name && self.description == other.description
+    }
+}
+
+impl Linkable for NamedDescription {
+    fn link_tables(&mut self) -> &mut Self {
+        self.description.link_external_tables(&self.tables);
+        self
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -26,8 +42,8 @@ pub enum DescriptionLine {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum DescriptionEmbed {
-    StatBlock(Box<Link<StatBlock>>),
-    Table(Link<Table>),
+    StatBlock(Box<Link<Arc<Mutex<StatBlock>>>>),
+    Table(Link<Arc<Mutex<Table>>>),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -36,12 +52,15 @@ pub struct Description {
 }
 
 impl Linkable for Description {
-    fn clone_external_tables(&mut self, tables: &[Table]) -> &mut Self {
+    fn link_external_tables(&mut self, tables: &[Arc<Mutex<Table>>]) -> &mut Self {
         for line in &mut self.lines {
             if let DescriptionLine::Embed(embed) = line {
                 if let DescriptionEmbed::Table(link) = &mut **embed {
                     if let Link::NotFound(name) = link {
-                        if let Some(table) = tables.iter().find(|t| t.name == *name) {
+                        if let Some(table) = tables
+                            .iter()
+                            .find(|t| t.lock().is_ok_and(|table| table.name == *name))
+                        {
                             *link = Link::Found(table.clone());
                         }
                     }
@@ -51,12 +70,15 @@ impl Linkable for Description {
         self
     }
 
-    fn clone_external_stat_blocks(&mut self, stat_blocks: &[StatBlock]) -> &mut Self {
+    fn link_external_stat_blocks(&mut self, stat_blocks: &[Arc<Mutex<StatBlock>>]) -> &mut Self {
         for line in self.lines.iter_mut() {
             if let DescriptionLine::Embed(ref mut embed) = *line {
                 if let DescriptionEmbed::StatBlock(ref mut boxed) = **embed {
                     if let Link::NotFound(ref name) = **boxed {
-                        if let Some(stat_block) = stat_blocks.iter().find(|s| s.name == *name) {
+                        if let Some(stat_block) = stat_blocks
+                            .iter()
+                            .find(|s| s.lock().is_ok_and(|stat_block| stat_block.name == *name))
+                        {
                             *boxed = Box::new(Link::Found(stat_block.clone()));
                         }
                     }

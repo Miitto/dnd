@@ -1,6 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
 use crate::meta::{Description, NamedDescription, Source};
+use crate::traits::Linkable;
 use crate::{extensions::StartsWithVowel, mechanics::Attribute};
 
 use super::{
@@ -8,7 +9,7 @@ use super::{
     casting::{CastLevel, CastType},
     subclass::Subclass,
     table_entry::TableEntry,
-    ClassFeature, ClassProficiencies,
+    ClassProficiencies,
 };
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -134,7 +135,13 @@ impl PartialEq<String> for Class {
 }
 
 impl Linkable for Class {
-    fn link(&self) -> String {
-        self.name.clone()
+    fn link_tables(&mut self) -> &mut Self {
+        for (_lvl, features) in &mut self.features {
+            for feature in features {
+                feature.link();
+            }
+        }
+
+        self
     }
 }

@@ -1,9 +1,6 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
-use crate::meta::Link;
+use crate::{meta::Link, traits::Linkable};
 
 use super::spell::Spell;
 
@@ -35,16 +32,6 @@ impl SpellList {
             if let Link::NotFound(n) = link {
                 if n == &name {
                     *link = Link::Found(Arc::clone(&spell));
-                }
-            }
-        });
-    }
-
-    pub fn link(&mut self, spells: &HashMap<String, Arc<Mutex<Spell>>>) {
-        self.spells.iter_mut().for_each(|spell| {
-            if let Link::NotFound(name) = spell {
-                if let Some(found) = spells.get(name) {
-                    *spell = Link::Found(Arc::clone(found));
                 }
             }
         });
@@ -90,5 +77,20 @@ impl SpellList {
 impl crate::Named for SpellList {
     fn name(&self) -> String {
         self.name.clone()
+    }
+}
+
+impl Linkable for SpellList {
+    fn link_external_spells(&mut self, spells: &[Arc<Mutex<Spell>>]) -> &mut Self {
+        for spell in spells {
+            for link in &mut self.spells {
+                if let Link::NotFound(name) = link {
+                    if spell.lock().is_ok_and(|s| s.name == *name) {
+                        *link = Link::Found(spell.clone());
+                    }
+                }
+            }
+        }
+        self
     }
 }

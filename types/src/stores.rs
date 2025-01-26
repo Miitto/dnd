@@ -99,13 +99,19 @@ impl Store {
         }
 
         {
-            let spells = store.spells.store.force_lock();
+            let spells: Vec<Arc<Mutex<Spell>>> = store
+                .spells
+                .store
+                .force_lock()
+                .iter()
+                .map(|(_, spell)| spell.clone())
+                .collect();
             let lock = store.spell_lists.store.force_lock();
 
             for list in lock.values() {
                 list.lock()
                     .expect("Failed to lock spell list")
-                    .link(&spells);
+                    .link_external_spells(&spells);
             }
         }
 

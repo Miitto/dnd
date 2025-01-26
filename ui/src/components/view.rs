@@ -180,8 +180,8 @@ pub fn StatBlockView(stat_block: StatBlock) -> Element {
                         h2 { "Traits" }
                         hr {}
                         div { class: "flex flex-col gap-y-2",
-                            for (name , desc) in stat_block.traits.iter() {
-                                Pair { name, "{desc}" }
+                            for nd in stat_block.traits {
+                                Pair { name: nd.name, Description {description: nd.description} }
                             }
                         }
                     }
@@ -192,8 +192,8 @@ pub fn StatBlockView(stat_block: StatBlock) -> Element {
                         h2 { "Actions" }
                         hr {}
                         div { class: "flex flex-col gap-y-2",
-                            for (name , desc) in stat_block.actions.iter() {
-                                Pair { name, "{desc}" }
+                            for nd in stat_block.actions {
+                                Pair { name: nd.name, Description{ description: nd.description } }
                             }
                         }
                     }
@@ -204,8 +204,8 @@ pub fn StatBlockView(stat_block: StatBlock) -> Element {
                         h2 { "Reactions" }
                         hr {}
                         div { class: "flex flex-col gap-y-2",
-                            for (name , desc) in stat_block.reactions.iter() {
-                                Pair { name, "{desc}" }
+                            for nd in stat_block.reactions {
+                                Pair { name: nd.name, Description {description: nd.description} }
                             }
                         }
                     }

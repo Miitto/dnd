@@ -1,8 +1,7 @@
-use std::collections::HashMap;
-
 use crate::{
     mechanics::{Attributes, DescribedSize},
-    meta::{Description, Source, Table},
+    meta::{Description, NamedDescription, Source, Table},
+    traits::Linkable,
     Category, CategoryMut, Named,
 };
 
@@ -21,8 +20,8 @@ pub struct Race {
     pub tables: Vec<Table>,
     #[serde(default, skip_serializing)]
     pub category: String,
-    #[serde(flatten, default, skip_serializing_if = "HashMap::is_empty")]
-    pub unique: HashMap<String, String>,
+    #[serde(flatten, default, skip_serializing_if = "Vec::is_empty")]
+    pub features: Vec<NamedDescription>,
 }
 
 impl PartialEq<Race> for Race {
@@ -52,5 +51,14 @@ impl CategoryMut for Race {
 impl Category for Race {
     fn category(&self) -> String {
         self.category.clone()
+    }
+}
+
+impl Linkable for Race {
+    fn link(&mut self) -> &mut Self {
+        for feature in &mut self.features {
+            feature.link();
+        }
+        self
     }
 }

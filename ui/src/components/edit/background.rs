@@ -6,6 +6,7 @@ use types::background::Background;
 use types::extensions::ForceLock;
 use types::meta::{Description, NamedDescription};
 use types::stores::Store;
+use types::traits::Linkable;
 
 use crate::components::edit::{
     DescriptionInputSignal, NameDescriptionListSignal, SkillMultiSelect, SourceInputSignal,
@@ -77,12 +78,13 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
                     Some(NamedDescription {
                         name: k.clone(),
                         description: v.clone(),
+                        ..Default::default()
                     })
                 }
             })
             .collect();
 
-        background.sync();
+        background.link();
     });
     // endregion
 

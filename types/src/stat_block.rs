@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-
 use crate::{
     mechanics::{Alignment, Attribute, Attributes, CreatureType, Size, Skill},
+    meta::NamedDescription,
+    traits::Linkable,
     Named,
 };
 
@@ -15,36 +15,36 @@ pub struct StatBlock {
     pub hit_points: String,
     pub speed: u32,
     pub attributes: Attributes,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub saving_throws: Vec<Attribute>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub damage_resistances: Vec<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub damage_immunities: Vec<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub damage_vulnerabilities: Vec<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub condition_immunities: Vec<String>,
     pub darkvision: Option<u32>,
     pub passive_perception: Option<u32>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub senses: Vec<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub languages: Vec<String>,
     pub challenge_rating: Option<u8>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub proficiencies: Vec<Skill>,
     pub proficiency_bonus: Option<String>,
-    #[serde(default)]
-    pub traits: HashMap<String, String>,
-    #[serde(default)]
-    pub actions: HashMap<String, String>,
-    #[serde(default)]
-    pub reactions: HashMap<String, String>,
-    #[serde(default)]
-    pub legendary_actions: HashMap<String, String>,
-    #[serde(default)]
-    pub special_abilities: HashMap<String, String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub traits: Vec<NamedDescription>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub actions: Vec<NamedDescription>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub reactions: Vec<NamedDescription>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub legendary_actions: Vec<NamedDescription>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub special_abilities: Vec<NamedDescription>,
 }
 
 impl PartialEq<str> for StatBlock {
@@ -56,5 +56,27 @@ impl PartialEq<str> for StatBlock {
 impl Named for StatBlock {
     fn name(&self) -> String {
         self.name.to_owned()
+    }
+}
+
+impl Linkable for StatBlock {
+    fn link(&mut self) -> &mut Self {
+        for t in &mut self.traits {
+            t.link();
+        }
+
+        for action in &mut self.actions {
+            action.link();
+        }
+
+        for reaction in &mut self.reactions {
+            reaction.link();
+        }
+
+        for special_ability in &mut self.special_abilities {
+            special_ability.link();
+        }
+
+        self
     }
 }

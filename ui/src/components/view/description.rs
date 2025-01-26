@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use types::extensions::ForceLock;
 use types::meta::{
     description::Node, Description as DescriptionT, DescriptionEmbed, DescriptionLine, Link,
 };
@@ -27,7 +28,7 @@ fn LineView(line: DescriptionLine, in_list: bool) -> Element {
             DescriptionEmbed::StatBlock(link) => match *link {
                 Link::Found(stat_block) => {
                     rsx! {
-                        StatBlockView { stat_block }
+                        StatBlockView { stat_block: stat_block.force_lock().clone() }
                     }
                 }
                 Link::NotFound(name) => {
@@ -43,7 +44,7 @@ fn LineView(line: DescriptionLine, in_list: bool) -> Element {
             DescriptionEmbed::Table(link) => match link {
                 Link::Found(table) => {
                     rsx! {
-                        Table { table }
+                        Table { table: table.force_lock().clone() }
                     }
                 }
                 Link::NotFound(name) => {
