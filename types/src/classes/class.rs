@@ -3,11 +3,13 @@ use std::{collections::HashMap, hash::Hash};
 use crate::meta::{Description, NamedDescription, Source};
 use crate::{extensions::StartsWithVowel, mechanics::Attribute};
 
-use super::cantrip::ClassCantrip;
-use super::casting::{CastLevel, CastType};
-use super::skills::ClassSkills;
-use super::subclass::Subclass;
-use super::table_entry::TableEntry;
+use super::{
+    cantrip::ClassCantrip,
+    casting::{CastLevel, CastType},
+    subclass::Subclass,
+    table_entry::TableEntry,
+    ClassFeature, ClassProficiencies,
+};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClassSubclasses {
@@ -131,26 +133,8 @@ impl PartialEq<String> for Class {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
-pub struct ClassProficiencies {
-    #[serde(default)]
-    pub armor: Vec<String>,
-    #[serde(default)]
-    pub weapons: Vec<String>,
-    #[serde(default)]
-    pub tools: Vec<String>,
-    #[serde(default)]
-    pub saving_throws: Vec<Attribute>,
-    #[serde(default)]
-    pub skills: ClassSkills,
-}
-
-impl ClassProficiencies {
-    pub fn is_empty(&self) -> bool {
-        self.armor.is_empty()
-            && self.weapons.is_empty()
-            && self.tools.is_empty()
-            && self.saving_throws.is_empty()
-            && self.skills.options.is_empty()
+impl Linkable for Class {
+    fn link(&self) -> String {
+        self.name.clone()
     }
 }

@@ -2,6 +2,8 @@ use std::{fs::DirEntry, path::Path};
 
 use anyhow::Result;
 
+use crate::traits::Linkable;
+
 #[allow(dead_code)]
 pub fn recurse_dirs<P: AsRef<Path>>(dir: P, vec: &mut Vec<DirEntry>) -> Result<()> {
     let dir = dir.as_ref();
@@ -21,7 +23,7 @@ pub fn recurse_dirs<P: AsRef<Path>>(dir: P, vec: &mut Vec<DirEntry>) -> Result<(
 
 pub fn parse_file<T, P: AsRef<Path>>(path: P) -> Result<T>
 where
-    T: serde::de::DeserializeOwned,
+    T: serde::de::DeserializeOwned + Linkable,
 {
     let path = path.as_ref();
     let read = std::fs::read_to_string(path);
@@ -47,11 +49,11 @@ where
 
 pub fn parse_dir<T, P: AsRef<Path>>(path: P) -> Result<Vec<T>>
 where
-    T: serde::de::DeserializeOwned,
+    T: serde::de::DeserializeOwned + Linkable,
 {
     let dirs = std::fs::read_dir(path)?.filter_map(|dir| {
         dir.ok().filter(|dir| {
-            dir.path().is_file() && dir.path().extension().map_or(false, |ext| ext == "json")
+            dir.path().is_file() && dir.path().extension().is_some_and(|ext| ext == "json")
         })
     });
 
@@ -78,7 +80,7 @@ where
 
 pub fn recurse_category<T, P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<Vec<T>>
 where
-    T: serde::de::DeserializeOwned + crate::CategoryMut,
+    T: serde::de::DeserializeOwned + crate::CategoryMut + Linkable,
 {
     let cats = std::fs::read_dir(&path)?.filter_map(|cat| {
         let cat = cat.ok()?;
