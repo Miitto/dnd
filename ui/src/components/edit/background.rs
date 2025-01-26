@@ -4,7 +4,7 @@ use dioxus::logger::tracing;
 use dioxus::prelude::*;
 use types::background::Background;
 use types::extensions::ForceLock;
-use types::meta::Description;
+use types::meta::{Description, NamedDescription};
 use types::stores::Store;
 
 use crate::components::edit::{
@@ -42,7 +42,8 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
     let mut category = use_signal(|| background.category.clone());
     let source = use_signal(|| background.source.clone());
     let description = use_signal(|| background.description.clone());
-    let equipment = use_signal(|| background.equipment.clone());
+    let equipment: Signal<Vec<String>> =
+        use_signal(|| background.equipment.iter().map(|e| e.to_string()).collect());
     let tool_proficiencies = use_signal(|| background.tool_proficiencies.clone());
     let mut languages = use_signal(|| background.languages.clone());
     let skill_list = use_signal(|| background.skill_proficiencies.clone());
@@ -63,7 +64,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
         background.source = source();
         background.category = category();
         background.description = description();
-        background.equipment = equipment();
+        background.equipment = equipment().into_iter().map(Description::from).collect();
         background.languages = languages();
         background.skill_proficiencies = skill_list();
         background.tool_proficiencies = tool_proficiencies();

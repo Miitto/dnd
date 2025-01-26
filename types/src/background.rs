@@ -16,8 +16,8 @@ pub struct Background {
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub languages: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub equipment: Vec<String>,
     pub features: Vec<BackgroundFeature>,
+    pub equipment: Vec<Description>,
     #[serde(default, skip_serializing)]
     pub category: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -38,12 +38,6 @@ impl Background {
     pub fn tool_string(&self) -> String {
         self.tool_proficiencies.join(", ")
     }
-
-    pub fn equip_string(&self) -> String {
-        self.equipment.join(", ")
-    }
-
-    pub fn sync(&mut self) {}
 }
 
 impl Linkable for Background {

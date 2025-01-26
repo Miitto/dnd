@@ -14,7 +14,8 @@ pub fn Background(id: String) -> Element {
     if let Some(background) = background {
         let skills = background.skill_string();
         let tools = background.tool_string();
-        let equip = background.equip_string();
+        let equipment = background.equipment;
+        let length = equipment.len();
 
         rsx! {
             span { class: "w-full inline-flex justify-between items-center",
@@ -47,8 +48,19 @@ pub fn Background(id: String) -> Element {
                         PairLi { name: "Languages", "{background.languages}" }
                     }
 
-                    if !equip.is_empty() {
-                        PairLi { name: "Equipment", {equip} }
+                    if !equipment.is_empty() {
+                        PairLi { name: "Equipment",
+                            for (idx , equip) in equipment.into_iter().enumerate() {
+                                span { class: "mr-1",
+                                    Description { description: equip }
+                                    if idx < length - 2 {
+                                        ","
+                                    } else if idx == length - 2 {
+                                        " and"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
