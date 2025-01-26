@@ -74,7 +74,7 @@ pub fn BackgroundEdit(props: BackgroundEditProps) -> Element {
                 if k.is_empty() {
                     None
                 } else {
-                    Some(types::background::BackgroundFeature {
+                    Some(NamedDescription {
                         name: k.clone(),
                         description: v.clone(),
                     })

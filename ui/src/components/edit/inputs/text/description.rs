@@ -64,9 +64,12 @@ fn NameDescription(
             label {
                 b { "Description" }
             }
-            DescriptionInput { description, onchange: move |e| {
-        on_change_description.call(e);
-    } }
+            DescriptionInput {
+                description,
+                onchange: move |e| {
+                    on_change_description.call(e);
+                },
+            }
             button {
                 class: "px-4 py-2 w-fit border rounded",
                 onclick: move |_| {

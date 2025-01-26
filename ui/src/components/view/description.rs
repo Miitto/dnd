@@ -95,7 +95,7 @@ fn NodeRender(node: Node) -> Element {
         }
         Node::Paragraph(paragraph) => {
             rsx! {
-                p {
+                span {
                     for node in paragraph.children {
                         NodeRender { node }
                     }
@@ -195,7 +195,7 @@ fn NodeRender(node: Node) -> Element {
         }
         Node::InlineCode(inline_code) => {
             rsx! {
-                code { {inline_code.value} }
+                InlineCode { text: inline_code.value }
             }
         }
         Node::Code(code_block) => {
@@ -229,5 +229,23 @@ fn NodeRender(node: Node) -> Element {
                 p { "Unhandled node" }
             }
         }
+    }
+}
+
+#[component]
+pub fn InlineCode(text: String) -> Element {
+    if let Some(text) = text.strip_prefix("hover:") {
+        let mut parts = text.split('|');
+
+        let name = parts.next().context("InlineHover has no name")?;
+        let hover = parts.next().context("InlineHover has no hover text")?;
+
+        return rsx! {
+            span { class:"underline", title: hover, {name} }
+        };
+    }
+
+    rsx! {
+        code { {text} }
     }
 }

@@ -1,6 +1,6 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::meta::{Description, Source};
+use crate::meta::{Description, NamedDescription, Source};
 use crate::{extensions::StartsWithVowel, mechanics::Attribute};
 
 use super::cantrip::ClassCantrip;
@@ -8,7 +8,6 @@ use super::casting::{CastLevel, CastType};
 use super::skills::ClassSkills;
 use super::subclass::Subclass;
 use super::table_entry::TableEntry;
-use super::ClassFeature;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClassSubclasses {
@@ -41,7 +40,7 @@ pub struct Class {
     pub hit_die: u8,
     pub proficiencies: ClassProficiencies,
     pub equipment: Vec<String>,
-    pub features: HashMap<u8, Vec<ClassFeature>>,
+    pub features: HashMap<u8, Vec<NamedDescription>>,
     pub spellcasting: Option<Attribute>,
     #[serde(default)]
     pub ritual_casting: bool,

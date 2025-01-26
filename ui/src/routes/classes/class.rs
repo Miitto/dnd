@@ -2,13 +2,15 @@ use std::sync::Arc;
 
 use dioxus::prelude::*;
 use types::{
-    classes::{Class as ClassT, ClassFeature as ClassFeatureT, ClassProficiencies},
-    is_asi_level, proficiency_bonus,
+    classes::{Class as ClassT, ClassProficiencies},
+    is_asi_level,
+    meta::NamedDescription,
+    proficiency_bonus,
     stores::Store,
 };
 
 use crate::{
-    components::view::{Description, Pair, Table},
+    components::view::{Description, Pair},
     routes::Routes,
     DashIfZero, Ordinal,
 };
@@ -143,7 +145,7 @@ pub fn ClassTable(class: Arc<ClassT>) -> Element {
                                     li { "ASI" }
                                 }
                                 for (_ , feature) in class.features.iter().filter(|(&lvl, _)| lvl == level) {
-                                    for ClassFeatureT { name , .. } in feature.iter() {
+                                    for NamedDescription { name , .. } in feature.iter() {
                                         li { "{name}" }
                                     }
                                 }
@@ -185,15 +187,10 @@ pub fn Proficiencies(proficiencies: ClassProficiencies) -> Element {
 }
 
 #[component]
-pub fn ClassFeature(feature: ClassFeatureT) -> Element {
+pub fn ClassFeature(feature: NamedDescription) -> Element {
     rsx! {
         br {}
         h3 { "{feature.name}" }
         Description { description: feature.description }
-        if !feature.tables.is_empty() {
-            for table in feature.tables.iter() {
-                Table { table: table.clone() }
-            }
-        }
     }
 }

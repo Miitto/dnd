@@ -1,6 +1,6 @@
 use crate::{
     mechanics::Skill,
-    meta::{Description, Source, Table},
+    meta::{Description, NamedDescription, Source, Table},
     traits::Linkable,
 };
 
@@ -16,18 +16,12 @@ pub struct Background {
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub languages: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub features: Vec<BackgroundFeature>,
     pub equipment: Vec<Description>,
+    pub features: Vec<NamedDescription>,
     #[serde(default, skip_serializing)]
     pub category: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub embedded_tables: Vec<Table>,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct BackgroundFeature {
-    pub name: String,
-    pub description: Description,
 }
 
 impl Background {

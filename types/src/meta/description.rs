@@ -12,6 +12,12 @@ use crate::traits::Linkable;
 
 pub use markdown::mdast::Node;
 
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+pub struct NamedDescription {
+    pub name: String,
+    pub description: Description,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum DescriptionLine {
     Text(Node),
