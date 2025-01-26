@@ -1,0 +1,27 @@
+{
+  "name": "Charlatan",
+  "source": {
+    "Official": "Player's Handbook"
+  },
+  "description": "",
+  "skill_proficiencies": ["Deception", "SleightOfHand"],
+  "tool_proficiencies": ["Disguise kit", "forgery kit"],
+  "languages": "None",
+  "equipment": [
+    "`hover:A set of fine clothes|15gp, 6lbs`",
+    "`hover:a disguise kit|25gp, 3lbs`",
+    "tools of the con of your choice (ten stoppered `hover:bottles|2gp, 2lbs per` filled with colored liquid, a set of weighted `hover:dice|1sp, 0lbs`, a deck of marked `hover:cards|5sp, 0lbs`, or a `hover:signet ring|5gp, 0lbs` of an imaginary duke)",
+    "a `hover:pouch|5sp, 0lbs` containing 15gp"
+  ],
+  "features": [
+    {
+      "name": "Favorite Schemes",
+      "description": "Every charlatan has an angle they use in preference to other schemes. Choose a favorite scam or roll on the table below.\n{table:Favorite Schemes}"
+    },
+    {
+      "name": "False Identity",
+      "description": "You have created a second identity that includes documentation, established acquaintances, and disguises that allow you to assume that persona. Additionally, you can forge documents including official papers and personal letters, as long as you have seen an example of the kind of document or the handwriting you are trying to copy."
+    }
+  ]
+}
+

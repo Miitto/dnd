@@ -1,0 +1,44 @@
+{
+  "name": "Athlete",
+  "source": {
+    "Official": "Mythic Odysseys of Theros"
+  },
+  "description": "You strive to perfect yourself physically and in execution of everything you do. The thrill of competition lights fire in your blood, and the roar of the crowd drives you forward. Tales of your exploits precede you and might open doors or loosen tongues.\nWhether in one of the poleis, between them, or among the nonhuman peoples of Theros, physical contests and those who pursue them command respect bordering on reverence. Athletes arise from all walks of life and all cultures and quite often cross paths with one another.",
+  "skill_proficiencies": ["Acrobatics", "Athletics"],
+  "tool_proficiencies": ["Vehicles (Land)"],
+  "languages": "One of your choice",
+  "equipment": [
+    "A bronze discus or leather ball",
+    "a lucky charm or past trophy",
+    "a set of traveler's clothes",
+    "a pouch containing 10 gp"
+  ],
+  "features": [
+    {
+      "name": "Favored Event",
+      "description": "While many athletes practice various games and events, most excel at a single form of competition. Roll or choose from the options in the Favored Events table to determine the athletic event in which you excel.\n{table:Favored Events}"
+    },
+    {
+      "name": "Echoes of Victory",
+      "description": "You have attracted admiration among spectators, fellow athletes, and trainers in the region that hosted your past athletic victories. When visiting any settlement within 100 miles of where you grew up, there is a 50 percent chance you can find someone there who admires you and is willing to provide information and temporary shelter.\nBetween adventures, you might compete in athletic events sufficient enough to maintain a comfortable lifestyle, as per the \"Practicing a Profession\" downtime activity in chapter 8 of the Players Handbook."
+    }
+  ],
+  "embedded_tables": [
+    {
+      "name": "Favored Events",
+      "rows": [
+        ["d8", "Favored Event"],
+        ["Marathon"],
+        ["Long-distance running"],
+        ["Wrestling"],
+        ["Boxing"],
+        ["Chariot or horse race"],
+        ["Pankration (mixed unarmed combat)"],
+        ["Hoplite race (raceing in full armor with a unit)"],
+        ["Pentathlon (running, long jump, discus, bavelin, wrestling)"]
+      ],
+      "ordered": true
+    }
+  ]
+}
+
