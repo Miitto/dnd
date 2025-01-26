@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "tailwindcss -i ./input.css -o ./ui/assets/styling/tailwind.css"
+    "build": "tailwindcss -i ./input.css -o ./ui/assets/styling/tailwind.css",
+    "watch": "tailwindcss -i ./input.css -o ./ui/assets/styling/tailwind.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
