@@ -20,7 +20,7 @@ pub struct Race {
     pub tables: Vec<Table>,
     #[serde(default, skip_serializing)]
     pub category: String,
-    #[serde(flatten, default, skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub features: Vec<NamedDescription>,
 }
 

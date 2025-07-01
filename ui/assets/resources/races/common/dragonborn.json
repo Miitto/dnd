@@ -28,7 +28,7 @@
     },
     {
       "name": "Draconic Ancestry",
-      "description": "You are distantly related to a particular kind of dragon. Choose a type of dragon from the below list; this determines the damage and area of your breath weapon, and the type of resistance you gain.",
+      "description": "You are distantly related to a particular kind of dragon. Choose a type of dragon from the below list; this determines the damage and area of your breath weapon, and the type of resistance you gain.\n{table:Draconic Ancestry}",
       "tables": [
         [
           "Draconic Ancestry",

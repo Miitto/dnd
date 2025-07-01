@@ -1,0 +1,82 @@
+{
+  "name": "Warlock",
+  "source": {
+    "Official": "Player's Handbook"
+  },
+  "description": "Warlocks are seekers of the knowledge that lies hidden in the fabric of the multiverse. Through pacts made with mysterious beings of supernatural power, warlocks unlock magical effects both subtle and spectacular.",
+  "requirements": {
+    "charisma": 13
+  },
+  "hit_die": 8,
+  "proficiencies": {
+    "armor": ["Light"],
+    "weapons": ["Simple"],
+    "tools": [],
+    "saving_throws": ["wisdom", "charisma"],
+    "skills": {
+      "choose": 2,
+      "options": [
+        "Arcana",
+        "Deception",
+        "History",
+        "Intimidation",
+        "Investigation",
+        "Nature",
+        "Religion"
+      ]
+    }
+  },
+  "equipment": [
+    "(A) a light crossbow and 20 bolts or (B) any simple weapon",
+    "(A) a component pouch or (B) an arcanse focus",
+    "(A) a scholar's pack or (B) a dungeoneer's pack",
+    "Leather armour, any simple weapon, and two daggers"
+  ],
+  "spellcasting": "charisma",
+  "ritual_casting": false,
+  "spell_lists": ["Warlock"],
+  "cast_type": "Known",
+  "cast_level": "Half",
+  "cantrips": {
+    "list": ["Warlock"],
+    "progression": {
+      "1": 2,
+      "4": 3,
+      "10": 4
+    }
+  },
+  "subclass_unlock": 1,
+  "table_entries": {
+    "Invocations Known": {
+      "interpolate": true,
+      "1": "-",
+      "2": "2",
+      "5": "3",
+      "7": "4",
+      "9": "5",
+      "12": "6",
+      "15": "7",
+      "18": "8"
+    }
+  },
+  "features": {
+    "0": [
+      {
+        "name": "Pact Magic",
+        "description": "Your arcane research and the magic bestowed on you by your patron have given you facility with spells.\nSpells cast using Pact Magic are always cast at the highest level available."
+      }
+    ],
+    "2": [
+      {
+        "name": "Eldritch Invocations",
+        "description": "In your study of occult lore, you have unearthed Eldritch Invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.\nAt 2nd level, you gain two eldritch invocations of your choice. When you gain certain warlock levels, you gain additional invocations of your choice, as shown in the Invocations Known column of the Warlock table. A level prerequisite refers to your level in this class.\nAdditionally, when you gain a level in this class, you can choose one of the invocations you know and replace it with another invocation that you could learn at that level."
+      }
+    ],
+    "3": [
+      {
+        "name": "Pact Boon",
+        "description": "At 3rd level, your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice.\n#### Pact of the Blade\n- You can use your action to create a pact weapon in your empty hand. You can choose the form that this melee weapon takes each time you create it. You are proficient with it while you wield it. This weapon counts as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.\n- Your pact weapon disappears if it is more than 5 feet away from you for 1 minute or more. It also disappears if you use this feature again, if you dismiss the weapon (no action required), or if you die.\n- You can transform one magic weapon into your pact weapon by performing a special ritual while you hold the weapon. You perform the ritual over the course of 1 hour, which can be done during a short rest.\n- You can then dismiss the weapon, shunting it into an extradimensional space, and it appears whenever you create your pact weapon thereafter. You can't affect an artifact or a sentient weapon in this way. The weapon ceases being your pact weapon if you die, if you perform the 1-hour ritual on a different weapon, or if you use a 1-hour ritual to break your bond to it. The weapon appears at your feet if it is in the extradimensional space when the bond breaks."
+      }
+    ]
+  }
+}

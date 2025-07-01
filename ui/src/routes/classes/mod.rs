@@ -23,7 +23,7 @@ pub fn Classes() -> Element {
     });
 
     rsx! {
-        h1 { class: "underline", "Races" }
+        h1 { class: "underline", "Classes" }
         ul { class: "list-disc pl-6",
             for class in classes() {
                 li { key: class.name,
