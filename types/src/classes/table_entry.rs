@@ -13,11 +13,13 @@ pub struct TableEntry {
 impl TableEntry {
     pub fn get(&self, level: u8) -> String {
         let level = if self.interpolate {
-            *self
-                .entries
-                .keys()
-                .reduce(|acc, e| if *e > *acc && *e <= level { e } else { acc })
-                .unwrap_or(&0u8)
+            let mut sorted = self.entries.keys().copied().collect::<Vec<u8>>();
+            sorted.sort();
+
+            sorted
+                .into_iter()
+                .reduce(|acc, e| if e > acc && e <= level { e } else { acc })
+                .unwrap_or(0u8)
         } else {
             level
         };
