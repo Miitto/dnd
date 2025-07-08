@@ -98,9 +98,9 @@ pub trait Ordinal {
 impl Ordinal for u8 {
     fn ordinal(&self) -> String {
         let suffix = match self % 10 {
-            1 => "st",
-            2 => "nd",
-            3 => "rd",
+            1 if *self != 11 => "st",
+            2 if *self != 12 => "nd",
+            3 if *self != 13 => "rd",
             _ => "th",
         };
 

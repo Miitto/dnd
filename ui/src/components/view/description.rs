@@ -224,6 +224,17 @@ fn NodeRender(node: Node) -> Element {
                 }
             }
         }
+        Node::Link(link) => {
+            rsx! {
+                Link {
+                    to: link.url,
+                    class: "underline",
+                    for node in link.children {
+                        NodeRender { node }
+                    }
+                }
+            }
+        }
         _ => {
             eprintln!("Unhandled node: {:?}", node);
             rsx! {

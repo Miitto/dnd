@@ -36,7 +36,7 @@
   "ritual_casting": false,
   "spell_lists": ["Warlock"],
   "cast_type": "Known",
-  "cast_level": "Half",
+  "cast_level": "None",
   "cantrips": {
     "list": ["Warlock"],
     "progression": {
@@ -57,6 +57,38 @@
       "12": "6",
       "15": "7",
       "18": "8"
+    },
+    "Spells Known": {
+      "interpolate": true,
+      "1": "2",
+      "2": "3",
+      "3": "4",
+      "4": "5",
+      "5": "6",
+      "6": "7",
+      "7": "8",
+      "8": "9",
+      "9": "10",
+      "11": "11",
+      "13": "12",
+      "15": "13",
+      "17": "14",
+      "19": "15"
+    },
+    "Spell Slots": {
+      "interpolate": true,
+      "1": "1",
+      "2": "2",
+      "11": "3",
+      "17": "4"
+    },
+    "Spell Level": {
+      "interpolate": true,
+      "1": "1st",
+      "3": "2nd",
+      "5": "3rd",
+      "7": "4th",
+      "9": "5th"
     }
   },
   "features": {
@@ -75,7 +107,49 @@
     "3": [
       {
         "name": "Pact Boon",
-        "description": "At 3rd level, your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice.\n#### Pact of the Blade\n- You can use your action to create a pact weapon in your empty hand. You can choose the form that this melee weapon takes each time you create it. You are proficient with it while you wield it. This weapon counts as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.\n- Your pact weapon disappears if it is more than 5 feet away from you for 1 minute or more. It also disappears if you use this feature again, if you dismiss the weapon (no action required), or if you die.\n- You can transform one magic weapon into your pact weapon by performing a special ritual while you hold the weapon. You perform the ritual over the course of 1 hour, which can be done during a short rest.\n- You can then dismiss the weapon, shunting it into an extradimensional space, and it appears whenever you create your pact weapon thereafter. You can't affect an artifact or a sentient weapon in this way. The weapon ceases being your pact weapon if you die, if you perform the 1-hour ritual on a different weapon, or if you use a 1-hour ritual to break your bond to it. The weapon appears at your feet if it is in the extradimensional space when the bond breaks."
+        "description": "At 3rd level, your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice.\n#### Pact of the Blade\n- You can use your action to create a pact weapon in your empty hand. You can choose the form that this melee weapon takes each time you create it. You are proficient with it while you wield it. This weapon counts as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.\n- Your pact weapon disappears if it is more than 5 feet away from you for 1 minute or more. It also disappears if you use this feature again, if you dismiss the weapon (no action required), or if you die.\n- You can transform one magic weapon into your pact weapon by performing a special ritual while you hold the weapon. You perform the ritual over the course of 1 hour, which can be done during a short rest.\n- You can then dismiss the weapon, shunting it into an extradimensional space, and it appears whenever you create your pact weapon thereafter. You can't affect an artifact or a sentient weapon in this way. The weapon ceases being your pact weapon if you die, if you perform the 1-hour ritual on a different weapon, or if you use a 1-hour ritual to break your bond to it. The weapon appears at your feet if it is in the extradimensional space when the bond breaks.\n#### Pact of the Chain\n- You learn the [find familiar](/spells/find_familiar) spell and can cast it as a ritual. The spell doesn't count against your number of spells known.\n- When you cast the spell, you can choose one of the normal forms for your familiar or one of the following special forms: imp, pseudodragon, quasit, or sprite.\n- Additionally, when you take the Attack action, you can forgo one of your own attacks to allow your familiar to make one attack with its reaction.\n#### Pact of the Tome\n- Your patron gives you a grimoire called a Book of Shadows. When you gain this feature, choose three cantrips from any class's spell list (the three needn't be from the same list). While the book is on your person, you can cast those cantrips at will. They don't count against your number of cantrips known. If they don't appear on the warlock spell list, they are nonetheless warlock spells for you.\n- If you lose your Book of Shadows, you can perform a 1-hour ceremony to receive a replacement from your patron. This ceremony can be performed during a short or long rest, and it destroys the previous book. The book turns to ash when you die.\n#### Pact of the Talisman\n- Your patron gives you an amulet, a talisman that can aid the wearer when the need is great. When the wearer fails an ability check, they can add a d4 to the roll, potentially turning the roll into a success. This benefit can be used a number of times equal to your proficiency bonus, and all expended uses are restored when you finish a long rest.\n- If you lose the talisman, you can perform a 1-hour ceremony to receive a replacement from your patron. This ceremony can be performed during a short or long rest, and it destroys the previous amulet. The talisman turns to ash when you die.\n#### Pact of the Star Chain (UA)\n- **Prerequisite: Seeker Patron**\n- The Seeker grants you a chain forged from starlight, decorated with seven gleaming motes of brightness. While the chain is on your person, you know the [augury](/spells/augury) spell and can cast it as a ritual. The spell doesn't count against your number of spells known.\n- Additionally, you can invoke the Seeker's power to gain advantage on an Intelligence check while you carry this item. Once you use this ability, you cannot use it again until you complete a short or long rest.\n- If you lose your Star Chain, you can perform a 1-hour ceremony to receive a replacement from the Seeker. The ceremony can be performed during a short or long rest, and it destroys the previous chain. The chain disappears in a flash of light when you die.\n- The exact form of this item might be different depending on your patron. The Star Chain is inspired by the Greyhawk deity Celestian."
+      }
+    ],
+    "4": [
+      {
+        "name": "Eldritch Versatility (Optional)",
+        "description": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, representing a change of focus in your occult studies:\n- Replace one cantrip you learned from this class's Pact Magic feature with another cantrip from the warlock spell list.\n- Replace the option you chose for the Pact Boon feature with one of that feature's other options."
+      }
+    ],
+    "8": [
+      {
+        "name": "Eldritch Versatility (Optional)",
+        "description": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, representing a change of focus in your occult studies:\n- Replace one cantrip you learned from this class's Pact Magic feature with another cantrip from the warlock spell list.\n- Replace the option you chose for the Pact Boon feature with one of that feature's other options."
+      }
+    ],
+    "11": [
+      {
+        "name": "Mystic Arcanum",
+        "description": "At 11th level, your patron bestows upon you a magical secret called an arcanum. Choose one 6th-level spell from the warlock spell list as this arcanum.\nYou can cast your arcanum spell once without expending a spell slot. You must finish a long rest before you can do so again.\nAt higher levels, you gain more warlock spells of your choice that can be cast in this way: one 7th-level spell at 13th level, one 8th-level spell at 15th level, and one 9th-level spell at 17th level. You regain all uses of your Mystic Arcanum when you finish a long rest."
+      }
+    ],
+    "12": [
+      {
+        "name": "Eldritch Versatility (Optional)",
+        "description": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, representing a change of focus in your occult studies:\n- Replace one cantrip you learned from this class's Pact Magic feature with another cantrip from the warlock spell list.\n- Replace the option you chose for the Pact Boon feature with one of that feature's other options.\n- If you're 12th level or higher, replace one spell from your Mystic Arcanum feature with another warlock spell of the same level.\nIf this change makes you ineligible for any of your Eldritch Invocations, you must also replace them now, choosing invocations for which you qualify."
+      }
+    ],
+    "16": [
+      {
+        "name": "Eldritch Versatility (Optional)",
+        "description": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, representing a change of focus in your occult studies:\n- Replace one cantrip you learned from this class's Pact Magic feature with another cantrip from the warlock spell list.\n- Replace the option you chose for the Pact Boon feature with one of that feature's other options.\n- If you're 12th level or higher, replace one spell from your Mystic Arcanum feature with another warlock spell of the same level.\nIf this change makes you ineligible for any of your Eldritch Invocations, you must also replace them now, choosing invocations for which you qualify."
+      }
+    ],
+    "19": [
+      {
+        "name": "Eldritch Versatility (Optional)",
+        "description": "Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, representing a change of focus in your occult studies:\n- Replace one cantrip you learned from this class's Pact Magic feature with another cantrip from the warlock spell list.\n- Replace the option you chose for the Pact Boon feature with one of that feature's other options.\n- If you're 12th level or higher, replace one spell from your Mystic Arcanum feature with another warlock spell of the same level.\nIf this change makes you ineligible for any of your Eldritch Invocations, you must also replace them now, choosing invocations for which you qualify."
+      }
+    ],
+    "20": [
+      {
+        "name": "Eldritch Master",
+        "description": "At 20th level, you can draw on your inner reserve of mystical power while entreating your patron to regain expended spell slots. You can spend 1 minute entreating your patron for aid to regain all your expended spell slots from your Pact Magic feature. Once you regain spell slots with this feature, you must finish a long rest before you can do so again."
       }
     ]
   }

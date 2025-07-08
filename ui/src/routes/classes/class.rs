@@ -119,7 +119,7 @@ pub fn Class(id: String) -> Element {
 #[component]
 pub fn ClassTable(class: Arc<ClassT>) -> Element {
     rsx! {
-        table { class: "border",
+        table { class: "border w-fit",
             thead {
                 tr { class: "*:px-2 *:py-1 *:text-left border-b",
                     th { "Level" }
