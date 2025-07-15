@@ -29,7 +29,7 @@ pub fn Feat(id: String) -> Element {
                     br {}
                     h2 { "You gain the following attributes:" }
                     ul { class: "list-disc pl-6",
-                        for (attr , value) in feat.attributes.iter() {
+                        for (attr , value) in feat.attributes.iter().filter(|(_, val)| *val > 0) {
                             li { key: attr,
                                 p { "{attr}: {value}" }
                             }
