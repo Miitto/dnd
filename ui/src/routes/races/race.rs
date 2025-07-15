@@ -33,7 +33,7 @@ pub fn Race(id: String) -> Element {
                         p { class: "inline-flex gap-x-2",
                             b { "Ability Score Increase:" }
                             for (attribute , change) in race.default_asi.iter().filter(|(_, change)| *change != 0) {
-                                span { key: asi.attribute, "{attribute}: {change}" }
+                                span { key: attribute, "{attribute}: {change}" }
                             }
                         }
                     }
