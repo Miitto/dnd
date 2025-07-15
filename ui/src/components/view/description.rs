@@ -96,7 +96,8 @@ fn NodeRender(node: Node) -> Element {
         }
         Node::Paragraph(paragraph) => {
             rsx! {
-                span {
+                p {
+                    class: "my-1",
                     for node in paragraph.children {
                         NodeRender { node }
                     }
